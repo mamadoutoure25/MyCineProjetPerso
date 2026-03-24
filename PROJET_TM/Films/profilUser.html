@@ -222,15 +222,24 @@
                             Mes acteurs favoris
                         </h2>
                         <div class="section-actions">
-                            <button class="btn btn-outline-primary" id="sort-actors">
-                                <i class="ph ph-sort-ascending me-2"></i>Trier
+                            <button class="btn btn-outline-primary" id="sort-actors-name-asc" title="Trier par nom A-Z">
+                                <i class="ph ph-sort-ascending me-2"></i>Nom A-Z
+                            </button>
+                            <button class="btn btn-outline-primary" id="sort-actors-name-desc" title="Trier par nom Z-A">
+                                <i class="ph ph-sort-descending me-2"></i>Nom Z-A
+                            </button>
+                            <button class="btn btn-outline-primary" id="sort-actors-age-asc" title="Trier par âge (jeune)">
+                                <i class="ph ph-sort-ascending me-2"></i>Âge (jeune)
+                            </button>
+                            <button class="btn btn-outline-primary" id="sort-actors-age-desc" title="Trier par âge (ancien)">
+                                <i class="ph ph-sort-descending me-2"></i>Âge (ancien)
                             </button>
                             <button class="btn btn-outline-danger" id="clear-actors">
                                 <i class="ph ph-trash me-2"></i>Tout supprimer
                             </button>
                         </div>
                     </div>
-                    <div id="actors-favorites" class="actors-grid">
+                    <div id="actors-favorites" class="movies-grid">
                         <div class="loading-container">
                             <div class="spinner-border text-info" role="status">
                                 <span class="visually-hidden">Chargement...</span>

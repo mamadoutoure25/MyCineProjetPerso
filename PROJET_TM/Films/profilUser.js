@@ -400,20 +400,33 @@ function configurerEcouteursEvenements() {
         { id: "sort-favorites", type: "favorites" },
         { id: "sort-watchlist", type: "watchlist" },
         { id: "sort-watched", type: "watched" },
-        { id: "sort-actors", type: "actors" },
     ];
     boutonsTri.forEach(({ id, type }) => {
         const bouton = document.getElementById(id);
         if (bouton) {
             bouton.addEventListener("click", () => {
-                if (type === "actors") {
-                    gererTriActeurs();
-                } else {
-                    gererTri(type);
-                }
+                gererTri(type);
             });
         }
     });
+
+    // Boutons de tri spécifiques pour les acteurs
+    const boutonTriActeurs = [
+        { id: "sort-actors-name-asc", ordre: "name_asc", label: "Nom (A-Z)" },
+        { id: "sort-actors-name-desc", ordre: "name_desc", label: "Nom (Z-A)" },
+        { id: "sort-actors-age-asc", ordre: "age_asc", label: "Âge (jeune)" },
+        { id: "sort-actors-age-desc", ordre: "age_desc", label: "Âge (ancien)" },
+    ];
+    boutonTriActeurs.forEach(({ id, ordre, label }) => {
+        const bouton = document.getElementById(id);
+        if (bouton) {
+            bouton.addEventListener("click", () => {
+                trierActeurs(ordre);
+                afficherNotification(`Tri par ${label}`, "info");
+            });
+        }
+    });
+
     const boutonsSuppressionTotale = [
         { id: "clear-favorites", type: "favorites", nom: "favoris" },
         { id: "clear-watchlist", type: "watchlist", nom: "watchlist" },
@@ -478,7 +491,7 @@ function configurerEcouteursCartesFilms(conteneur, typeListe) {
 
 
 /**
- * Afficher les acteurs favoris sous forme de cartes
+ * Afficher les acteurs favoris sous forme de cartes (comme les films favoris)
  */
 function afficherActeursFavoris() {
     if (!DOM.actorsFavorites) return;
@@ -491,7 +504,7 @@ function afficherActeursFavoris() {
 
     console.log(`🎬 Affichage de ${ETAT_PROFIL.acteursFavoris.length} acteurs favoris`);
     
-    const html = ETAT_PROFIL.acteursFavoris.map((acteur) => creerCarteActeur(acteur)).join("");
+    const html = ETAT_PROFIL.acteursFavoris.map((acteur) => creerCarteActeurCommeFilm(acteur)).join("");
     DOM.actorsFavorites.innerHTML = html;
     
     configurerEcouteursCartesActeurs();
@@ -505,43 +518,39 @@ function afficherActeursFavoris() {
 }
 
 /**
- * Créer une carte d'acteur
+ * Créer une carte d'acteur comme les films favoris
  */
-function creerCarteActeur(acteur) {
+function creerCarteActeurCommeFilm(acteur) {
     const nomActeur = acteur.name || "Acteur inconnu";
     const photoUrl = acteur.profile_path 
         ? `${CONFIG.URL_IMAGE}${acteur.profile_path}` 
         : "https://via.placeholder.com/300x450?text=Pas+de+photo";
-    const popularite = acteur.popularity ? acteur.popularity.toFixed(1) : "N/A";
-    const nombreFilms = acteur.known_for_department || "Acteur";
+    const age = acteur.age !== null ? `${acteur.age} ans` : "Âge inconnu";
+    const origine = acteur.place_of_birth || "Lieu inconnu";
 
     return `
-        <div class="actor-favorite-card" data-id="${acteur.id}">
-            <div class="actor-card-img-container">
+        <div class="profile-movie-card actor-favorite-card" data-id="${acteur.id}" data-actor-name="${nomActeur}" draggable="true">
+            <div class="card-img-container">
                 <img src="${photoUrl}" 
-                     class="actor-card-img" 
+                     class="card-img-top" 
                      alt="${nomActeur}"
                      loading="lazy"
                      onerror="this.src='https://via.placeholder.com/300x450?text=Pas+de+photo'">
-                <div class="actor-overlay">
-                    <button class="view-btn" data-actor-id="${acteur.id}" title="Voir le profil">
+                <div class="movie-overlay">
+                    <button class="play-btn view-btn" data-actor-id="${acteur.id}" title="Voir le profil">
                         <i class="ph ph-arrow-up-right"></i>
                     </button>
                 </div>
-                <button class="remove-actor-btn" data-actor-id="${acteur.id}" title="Retirer des favoris">
-                    <i class="ph ph-trash"></i>
-                </button>
-            </div>
-            <div class="actor-card-body">
-                <h6 class="actor-card-title">${nomActeur}</h6>
-                <p class="actor-card-info">
-                    <small class="text-muted">${nombreFilms}</small>
-                </p>
-                <div class="actor-meta">
-                    <span class="badge bg-secondary">
-                        <i class="ph ph-fire me-1"></i>${popularite}
-                    </span>
+                <div class="actor-name-overlay">
+                    <span class="actor-name-text">${nomActeur}</span>
+                    <div class="actor-info-details">
+                        <p class="actor-age"><i class="ph ph-cake me-1"></i>${age}</p>
+                        <p class="actor-origin"><i class="ph ph-map-pin me-1"></i>${origine}</p>
+                    </div>
                 </div>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">${nomActeur}</h6>
             </div>
         </div>
     `;
@@ -576,38 +585,136 @@ function afficherActeursVide() {
 function configurerEcouteursCartesActeurs() {
     if (!DOM.actorsFavorites) return;
 
+    let isDragging = false;
+
     // Boutons pour voir le profil
     DOM.actorsFavorites.querySelectorAll(".view-btn").forEach((bouton) => {
         bouton.addEventListener("click", (e) => {
             e.stopPropagation();
-            const actorId = bouton.dataset.actorId;
-            if (actorId) {
-                window.location.href = `actor-details.html?id=${actorId}`;
+            if (!isDragging) {
+                const actorId = bouton.dataset.actorId;
+                if (actorId) {
+                    window.location.href = `actor-details.html?id=${actorId}`;
+                }
             }
         });
     });
 
     // Clic sur la carte pour voir le profil
     DOM.actorsFavorites.querySelectorAll(".actor-favorite-card").forEach((carte) => {
+        carte.addEventListener("mousedown", () => {
+            isDragging = false;
+        });
+
+        carte.addEventListener("dragstart", () => {
+            isDragging = true;
+        });
+
+        carte.addEventListener("dragend", () => {
+            setTimeout(() => { isDragging = false; }, 100);
+        });
+
         carte.addEventListener("click", (e) => {
-            if (e.target.closest(".remove-actor-btn")) return;
-            const actorId = carte.dataset.id;
-            if (actorId) {
-                window.location.href = `actor-details.html?id=${actorId}`;
+            if (!isDragging) {
+                const actorId = carte.dataset.id;
+                if (actorId) {
+                    window.location.href = `actor-details.html?id=${actorId}`;
+                }
             }
         });
     });
 
-    // Boutons de suppression
-    DOM.actorsFavorites.querySelectorAll(".remove-actor-btn").forEach((bouton) => {
-        bouton.addEventListener("click", async (e) => {
-            e.stopPropagation();
-            const actorId = bouton.dataset.actorId;
-            if (actorId) {
-                await supprimerActeurDeFavoris(actorId);
+    // Configuration du drag and drop
+    configurerDragAndDropActeurs();
+}
+
+/**
+ * Configurer le drag and drop pour les cartes d'acteurs
+ */
+function configurerDragAndDropActeurs() {
+    const cartes = DOM.actorsFavorites.querySelectorAll(".actor-favorite-card");
+    let draggedElement = null;
+
+    cartes.forEach(carte => {
+        // Début du drag
+        carte.addEventListener("dragstart", (e) => {
+            draggedElement = carte;
+            carte.style.opacity = "0.5";
+            carte.style.cursor = "grabbing";
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/html", carte.innerHTML);
+        });
+
+        // Survol pendant le drag
+        carte.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            if (carte !== draggedElement) {
+                carte.style.opacity = "0.7";
+                carte.style.transform = "scale(0.98)";
             }
         });
+
+        // Sortie du drag
+        carte.addEventListener("dragleave", (e) => {
+            if (carte !== draggedElement) {
+                carte.style.opacity = "1";
+                carte.style.transform = "scale(1)";
+            }
+        });
+
+        // Dépôt
+        carte.addEventListener("drop", (e) => {
+            e.preventDefault();
+            if (carte !== draggedElement && draggedElement) {
+                // Échanger les éléments
+                const conteneur = DOM.actorsFavorites;
+                const carteArray = Array.from(conteneur.querySelectorAll(".actor-favorite-card"));
+                const indexDragged = carteArray.indexOf(draggedElement);
+                const indexTarget = carteArray.indexOf(carte);
+
+                if (indexDragged < indexTarget) {
+                    carte.parentNode.insertBefore(draggedElement, carte.nextSibling);
+                } else {
+                    carte.parentNode.insertBefore(draggedElement, carte);
+                }
+
+                // Sauvegarder le nouvel ordre
+                sauvegarderOrdreActeurs();
+            }
+        });
+
+        // Fin du drag
+        carte.addEventListener("dragend", (e) => {
+            carte.style.opacity = "1";
+            carte.style.transform = "scale(1)";
+            carte.style.cursor = "grab";
+            draggedElement = null;
+        });
     });
+}
+
+/**
+ * Sauvegarder l'ordre des acteurs dans localStorage
+ */
+function sauvegarderOrdreActeurs() {
+    const cartes = DOM.actorsFavorites.querySelectorAll(".actor-favorite-card");
+    const ordreActeurs = Array.from(cartes).map(carte => {
+        return parseInt(carte.dataset.id);
+    });
+
+    // Récupérer les acteurs complets
+    const actorFavorites = localStorage.getItem('actor_favorites');
+    const actors = actorFavorites ? JSON.parse(actorFavorites) : [];
+
+    // Réorganiser selon le nouvel ordre
+    const actorsOrdonnes = ordreActeurs.map(id => 
+        actors.find(a => a.id === id)
+    ).filter(a => a !== undefined);
+
+    localStorage.setItem('actor_favorites', JSON.stringify(actorsOrdonnes));
+    console.log('✅ Ordre des acteurs sauvegardé');
+    afficherNotification('Ordre réorganisé avec succès', 'success');
 }
 
 /**
@@ -683,6 +790,20 @@ function trierActeurs(ordre) {
                 (b.name || "").localeCompare(a.name || "")
             );
             break;
+        case "age_asc":
+            ETAT_PROFIL.acteursFavoris.sort((a, b) => {
+                const ageA = a.age !== null ? a.age : Infinity;
+                const ageB = b.age !== null ? b.age : Infinity;
+                return ageA - ageB;
+            });
+            break;
+        case "age_desc":
+            ETAT_PROFIL.acteursFavoris.sort((a, b) => {
+                const ageA = a.age !== null ? a.age : -Infinity;
+                const ageB = b.age !== null ? b.age : -Infinity;
+                return ageB - ageA;
+            });
+            break;
         case "popularity_asc":
             ETAT_PROFIL.acteursFavoris.sort((a, b) => 
                 (a.popularity || 0) - (b.popularity || 0)
@@ -691,16 +812,6 @@ function trierActeurs(ordre) {
         case "popularity_desc":
             ETAT_PROFIL.acteursFavoris.sort((a, b) => 
                 (b.popularity || 0) - (a.popularity || 0)
-            );
-            break;
-        case "date_asc":
-            ETAT_PROFIL.acteursFavoris.sort((a, b) => 
-                new Date(a.date_ajout || 0) - new Date(b.date_ajout || 0)
-            );
-            break;
-        case "date_desc":
-            ETAT_PROFIL.acteursFavoris.sort((a, b) => 
-                new Date(b.date_ajout || 0) - new Date(a.date_ajout || 0)
             );
             break;
     }
@@ -741,26 +852,6 @@ function gererTri(typeListe) {
     const nouveauTri = options[nouvelIndex];
     ETAT_PROFIL.triActuel[typeListe] = nouveauTri;
     trierListe(typeListe, nouveauTri);
-    afficherNotification(`Tri par ${optionsTri[nouveauTri]}`, "info");
-}
-
-/**
- * Gérer le tri des acteurs favoris
- */
-function gererTriActeurs() {
-    const optionsTri = {
-        name_asc: "Nom (A-Z)",
-        name_desc: "Nom (Z-A)",
-        popularity_desc: "Popularité (élevée)",
-        popularity_asc: "Popularité (faible)",
-        date_desc: "Date (récent)",
-        date_asc: "Date (ancien)",
-    };
-    const options = Object.keys(optionsTri);
-    const indexActuel = options.indexOf(ETAT_PROFIL.triActuel.acteurs);
-    const nouvelIndex = (indexActuel + 1) % options.length;
-    const nouveauTri = options[nouvelIndex];
-    trierActeurs(nouveauTri);
     afficherNotification(`Tri par ${optionsTri[nouveauTri]}`, "info");
 }
 
@@ -998,31 +1089,12 @@ async function chargerActeursFavoris() {
         const actors = actorFavorites ? JSON.parse(actorFavorites) : [];
 
         console.log('✅ Acteurs trouvés:', actors.length);
-        console.log('📋 Détails:', actors);
-
-        const container = document.getElementById('actors-favorites');
-        const badge = document.getElementById('actors-badge');
-
-        if (!container) {
-            console.error('❌ Conteneur #actors-favorites non trouvé');
-            return;
-        }
-
-        if (!badge) {
-            console.warn('⚠️ Badge #actors-badge non trouvé');
-        } else {
-            badge.textContent = actors.length;
-        }
-
+        ETAT_PROFIL.acteursFavoris = actors;
+        
         if (actors.length === 0) {
             console.log('ℹ️ Aucun acteur favori');
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="ph ph-user-circle" style="font-size: 3rem; opacity: 0.5;"></i>
-                    <p class="mt-3 text-muted">Vous n'avez pas encore d'acteurs favoris</p>
-                    <p class="text-muted small">Consultez des films et ajoutez des acteurs à vos favoris !</p>
-                </div>
-            `;
+            afficherActeursVide();
+            mettreAJourBadgeActeurs();
             return;
         }
 
@@ -1039,9 +1111,26 @@ async function chargerActeursFavoris() {
                     if (response.ok) {
                         const data = await response.json();
                         console.log(`✓ Image chargée pour ${actor.name}`);
+                        
+                        // Calculer l'âge depuis la date de naissance
+                        let age = null;
+                        if (data.birthday) {
+                            const birthDate = new Date(data.birthday);
+                            const today = new Date();
+                            age = today.getFullYear() - birthDate.getFullYear();
+                            const monthDiff = today.getMonth() - birthDate.getMonth();
+                            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                                age--;
+                            }
+                        }
+                        
                         return {
                             ...actor,
-                            profile_path: data.profile_path || null
+                            profile_path: data.profile_path || null,
+                            popularity: data.popularity || actor.popularity || 0,
+                            birthday: data.birthday || null,
+                            age: age,
+                            place_of_birth: data.place_of_birth || null
                         };
                     }
                     console.warn(`⚠️ Pas d'image pour ${actor.name} (${response.status})`);
@@ -1053,72 +1142,13 @@ async function chargerActeursFavoris() {
             })
         );
 
-        console.log('🎨 Rendu des acteurs...');
-
-        container.innerHTML = `
-            <div class="row g-4" id="actors-row">
-                ${actorsWithImages.map((actor, index) => {
-                    const imageUrl = actor.profile_path 
-                        ? `${CONFIG.URL_IMAGE}${actor.profile_path}` 
-                        : `https://via.placeholder.com/300x450?text=${encodeURIComponent(actor.name)}`;
-                    
-                    return `
-                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 actor-card-col" 
-                             draggable="true" 
-                             data-actor-id="${actor.id}" 
-                             data-actor-index="${index}"
-                             style="cursor: grab;">
-                            <div class="movie-card position-relative rounded overflow-hidden actor-draggable" 
-                                 style="cursor: pointer; height: 300px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transition: all 0.3s ease;"
-                                 onclick="if(!event.target.closest('.btn-actor-favorite')) { window.location.href = 'actor-details.html?id=${actor.id}'; }">
-                                <div class="movie-card-inner position-relative h-100">
-                                    <img src="${imageUrl}"
-                                         class="movie-card-img img-fluid w-100 h-100 object-fit-cover"
-                                         alt="${actor.name}"
-                                         loading="lazy"
-                                         style="transition: transform 0.3s ease; pointer-events: none;"
-                                         onerror="this.src='https://via.placeholder.com/300x450?text=${encodeURIComponent(actor.name)}'">
-                                    
-                                    <div class="movie-card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-3" style="background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.8) 100%); opacity: 0; transition: opacity 0.3s ease;">
-                                        <div class="text-white w-100">
-                                            <h6 class="mb-1 fw-bold movie-title" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${actor.name}</h6>
-                                        </div>
-                                    </div>
-
-                                    <button class="btn-actor-favorite position-absolute top-2 end-2" 
-                                            data-actor-id="${actor.id}"
-                                            data-actor-name="${actor.name}"
-                                            onclick="event.stopPropagation(); removeActorFavorite(${actor.id}, '${actor.name.replace(/'/g, "\\'")}');"
-                                            title="Retirer des favoris"
-                                            style="background: rgba(239, 68, 68, 0.9); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; z-index: 10;">
-                                        <i class="ph ph-trash" style="font-size: 1.2rem;"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-        `;
-
-        // Configurer les animations de survol et drag-and-drop
-        initializeActorsDragAndDrop(container, actorsWithImages);
-
+        ETAT_PROFIL.acteursFavoris = actorsWithImages;
+        afficherActeursFavoris();
+        
         console.log('✨ Acteurs affichés avec succès');
     } catch (error) {
         console.error('❌ Erreur critique lors du chargement des acteurs favoris:', error);
-        const container = document.getElementById('actors-favorites');
-        if (container) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="ph ph-warning-circle text-danger" style="font-size: 3rem;"></i>
-                    <p class="mt-3 text-danger">Erreur lors du chargement</p>
-                    <button class="btn btn-outline-primary mt-2" onclick="location.reload()">
-                        <i class="ph ph-arrow-clockwise me-2"></i>Réessayer
-                    </button>
-                </div>
-            `;
-        }
+        afficherErreurChargement(DOM.actorsFavorites, "acteurs favoris");
     }
 }
 

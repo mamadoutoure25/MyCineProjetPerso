@@ -357,7 +357,7 @@ function afficherSocietesDropdown() {
                 // Ctrl/Cmd + Clic = voir les détails
                 e.preventDefault();
                 const societeId = link.dataset.societeId;
-                window.open(`PROJET_TM_GRoupe/Films/company-details.html?id=${societeId}`, '_blank');
+                window.open(`PROJET_TM/Films/company-details.html?id=${societeId}`, '_blank');
             } else {
                 // Simple clic = filtrer par société
                 e.preventDefault();
