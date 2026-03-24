@@ -1,0 +1,514 @@
+/* ajouterFilms.css - Styles for the movie addition page with corrected light/dark themes, aligned with modifierFilms.css */
+:root {
+    --primary: #d4a017; /* Golden yellow */
+    --secondary: #00d4ff; /* Cyan */
+    --accent: #ff3366; /* Pink */
+    --text: #ffffff; /* White */
+    --text-secondary: #a0a0a0; /* Light gray */
+    --background: #0a0a0a; /* Near-black */
+    --card-bg: #1c1c1c; /* Dark gray */
+    --glass-bg: rgba(255, 255, 255, 0.05); /* Glass effect */
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+    font-size: clamp(14px, 2.5vw, 16px);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.6s ease, color 0.3s ease;
+}
+
+body {
+    padding-top: clamp(70px, 10vw, 80px);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+    --background: #fafafa; /* White background for light theme */
+    --card-bg: #ffffff; /* White for cards */
+    --text: #1a1a1a; /* Dark text */
+    --text-secondary: #666666; /* Gray for secondary text */
+    --glass-bg: rgba(255, 255, 255, 0.3); /* Light glass effect */
+}
+
+[data-theme="light"] html,
+[data-theme="light"] body {
+    background-color: var(--background); /* Ensure white background */
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.8));
+    backdrop-filter: blur(12px);
+    padding: clamp(0.8rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+    box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    transition: var(--transition);
+}
+
+[data-theme="light"] .navbar {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4vw, 1.8rem);
+    color: var(--primary) !important;
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.5vw, 10px);
+    transition: var(--transition);
+}
+
+.navbar-brand:hover {
+    color: var(--secondary) !important;
+}
+
+.navbar-brand img {
+    height: clamp(30px, 6vw, 40px);
+    transition: var(--transition);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.navbar-brand:hover img {
+    transform: rotate(10deg) scale(1.1);
+}
+
+.navbar-toggler {
+    border: none;
+    color: var(--text);
+    font-size: clamp(1.2rem, 3vw, 1.4rem);
+    padding: clamp(6px, 1.5vw, 8px);
+    transition: var(--transition);
+}
+
+.navbar-toggler:hover {
+    color: var(--primary);
+    transform: scale(1.05);
+}
+
+.navbar-toggler:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.nav-link {
+    font-weight: 500;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+    color: var(--text-secondary) !important;
+    padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.8rem, 2vw, 1rem) !important;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary) !important;
+    background: var(--glass-bg);
+    box-shadow: inset 0 0 8px rgba(212, 160, 23, 0.15);
+}
+
+.dropdown-menu {
+    background: var(--glass-bg);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    padding: clamp(0.8rem, 2vw, 1rem);
+    min-width: clamp(160px, 40vw, 200px);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+    color: var(--text);
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+    padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
+    border-radius: 6px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.dropdown-item:hover {
+    background: var(--primary);
+    color: var(--background);
+}
+
+[data-theme="light"] .dropdown-menu {
+    background: var(--card-bg);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    background: var(--glass-bg);
+    border: none;
+    color: var(--text);
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    padding: clamp(0.4rem, 1vw, 0.5rem);
+    border-radius: 50%;
+    width: clamp(32px, 5vw, 36px);
+    height: clamp(32px, 5vw, 36px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.theme-toggle:hover {
+    background: var(--primary);
+    color: var(--background);
+    transform: rotate(360deg);
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    padding: clamp(1.5rem, 4vw, 2rem) clamp(1rem, 3vw, 1.5rem);
+    background-color: var(--background);
+    transition: var(--transition);
+}
+
+/* Form Container */
+.form-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+[data-theme="light"] .form-container {
+    background: var(--card-bg);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.form-container:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Form Title */
+.form-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.2rem);
+    color: var(--text);
+    text-align: center;
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    position: relative;
+    transition: var(--transition);
+}
+
+[data-theme="light"] .form-title {
+    text-shadow: none;
+}
+
+.form-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+/* Alert Container */
+#alert-container {
+    max-width: 900px;
+    margin: 0 auto 1.5rem auto;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+/* Form Fields */
+.form-control,
+.form-select,
+textarea {
+    background: var(--glass-bg);
+    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: clamp(0.5rem, 1vw, 0.75rem);
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+    transition: var(--transition);
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(212, 160, 23, 0.25);
+    background: var(--glass-bg);
+    color: var(--text);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.form-select[multiple] {
+    height: 150px;
+    padding: 0.5rem;
+}
+
+[data-theme="light"] .form-control,
+[data-theme="light"] .form-select,
+[data-theme="light"] textarea {
+    background: var(--glass-bg);
+    color: var(--text);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: 500;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    display: block;
+    transition: var(--transition);
+}
+
+.form-label.required::after {
+    content: '*';
+    color: var(--accent);
+    margin-left: 0.25rem;
+}
+
+/* Buttons */
+.btn {
+    font-weight: 600;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+    border-radius: 40px;
+    padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(1.2rem, 3vw, 1.5rem);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--background);
+}
+
+.btn-primary:hover {
+    background: var(--secondary);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+}
+
+.btn-primary:active {
+    transform: scale(1);
+}
+
+.btn-secondary.tmdb-lookup {
+    background: var(--glass-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    margin-top: 0.5rem;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    padding: clamp(0.4rem, 1vw, 0.6rem) clamp(0.8rem, 2vw, 1rem);
+}
+
+.btn-secondary.tmdb-lookup:hover {
+    background: var(--primary);
+    color: var(--background);
+    transform: scale(1.05);
+}
+
+[data-theme="light"] .btn-secondary.tmdb-lookup {
+    background: var(--glass-bg);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(30deg);
+    transition: var(--transition);
+}
+
+.btn:hover::after {
+    left: 100%;
+}
+
+/* Toast */
+#toast-container .toast {
+    background: var(--glass-bg);
+    color: var(--text);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    постараем: clamp(0.9rem, 2.5vw, 1rem);
+    transition: var(--transition);
+}
+
+#toast-container .toast.bg-success {
+    background: #28a745;
+    border-color: #28a745;
+}
+
+#toast-container .toast.bg-danger {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+#toast-container .toast.bg-info {
+    background: var(--secondary);
+    border-color: var(--secondary);
+}
+
+#toast-container .toast.bg-warning {
+    background: #ffc107;
+    border-color: #ffc107;
+}
+
+#toast-container .toast .btn-close {
+    filter: brightness(1.5);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+#toast-container .toast .btn-close:hover {
+    opacity: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .form-container {
+        max-width: 95vw;
+        padding: clamp(1rem, 2vw, 1.5rem);
+    }
+
+    .form-title {
+        font-size: clamp(1.5rem, 3.5vw, 2rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(0.8rem, 2vw, 1rem);
+    }
+
+    .navbar-brand {
+        font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+    }
+
+    .navbar-brand img {
+        height: clamp(24px, 5vw, 32px);
+    }
+
+    .form-container {
+        margin: 1.5rem;
+        padding: clamp(0.8rem, 1.5vw, 1rem);
+    }
+
+    .form-title {
+        font-size: clamp(1.2rem, 3vw, 1.75rem);
+    }
+
+    .form-select[multiple] {
+        height: 120px;
+    }
+
+    .btn {
+        padding: clamp(0.5rem, 1vw, 0.65rem) clamp(1rem, 2vw, 1.2rem);
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: clamp(1rem, 3vw, 1.3rem);
+    }
+
+    .navbar-brand img {
+        height: clamp(20px, 4vw, 28px);
+    }
+
+    .navbar-toggler {
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+    }
+
+    .nav-link {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+
+    .theme-toggle {
+        font-size: clamp(0.9rem, 2vw, 1rem);
+        width: clamp(28px, 4vw, 32px);
+        height: clamp(28px, 4vw, 32px);
+    }
+
+    .form-container {
+        margin: 1rem;
+        padding: clamp(0.6rem, 1vw, 0.8rem);
+    }
+
+    .form-title {
+        font-size: clamp(1rem, 2.5vw, 1.5rem);
+    }
+
+    .form-label {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+
+    .form-control,
+    .form-select,
+    textarea {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        padding: clamp(0.4rem, 0.8vw, 0.6rem);
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .row > div {
+        margin-bottom: clamp(0.8rem, 1.5vw, 1rem);
+    }
+}

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCiné - Découvrez les meilleurs films</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
+    <link rel="stylesheet" href="PROJET_TM_GRoupe/Films/projet.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <div class="logo-container">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="brand-text ms-2">MyCiné</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link active" href="#">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="series.html">Séries</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Explorer</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="PROJET_TM_GRoupe/Films/projetBD.html"><i class="ph ph-film-strip me-2"></i> Base de Données</a></li>
+                        <li><a class="dropdown-item" href="PROJET_TM_GRoupe/Films/collections-browse.html"><i class="ph ph-stack me-2"></i> Collections</a></li>
+                        <li><a class="dropdown-item" href="PROJET_TM_GRoupe/Films/companies-browse.html"><i class="ph ph-buildings me-2"></i> Sociétés</a></li>
+                        <li><a class="dropdown-item" href="PROJET_TM_GRoupe/Cine_map/cine_map.html"><i class="ph ph-map-pin me-2"></i> CineMap</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Sociétés</a>
+                    <ul class="dropdown-menu" id="companies-container"></ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Années</a>
+                    <ul class="dropdown-menu" id="years-container"></ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Genres</a>
+                    <ul class="dropdown-menu" id="genres-container"></ul>
+                </li>
+            </ul>
+            <form class="d-flex search-container" id="search-form">
+                <div class="search-input-wrapper">
+                    <input class="form-control search-input" id="search-input" type="search" placeholder="Rechercher un film..." aria-label="Search">
+                    <button class="btn search-btn" type="submit"><i class="ph ph-magnifying-glass"></i></button>
+                </div>
+                <div class="search-results" id="search-results" style="display: none;"></div>
+            </form>
+            <ul class="navbar-nav ms-3">
+                <li class="nav-item"><a class="nav-link" id="login-link" href="PROJET_TM_GRoupe/connexion/connexion.html"><i class="ph ph-sign-in me-2"></i> Se connecter</a></li>
+                <li class="nav-item d-none" id="profile-link"><a class="nav-link" href="PROJET_TM_GRoupe/Films/profilUser.html"><i class="ph ph-user me-2"></i> Profil</a></li>
+                <li class="nav-item d-none" id="favorites-link"><a class="nav-link" href="#"><i class="ph ph-heart me-2"></i> Favoris</a></li>
+                <li class="nav-item d-none" id="admin-link"><a class="nav-link" href="#"><i class="ph ph-gear me-2"></i> Admin</a></li>
+                <li class="nav-item d-none" id="logout-link"><a class="nav-link" href="#" onclick="gererDeconnexion()"><i class="ph ph-sign-out me-2"></i> Déconnexion</a></li>
+            </ul>
+            <button class="btn theme-toggle ms-3" id="theme-toggle"><i class="ph ph-moon" id="theme-icon"></i></button>
+        </div>
+    </div>
+</nav>
+
+<!-- Section Hero -->
+<section id="hero-section" class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">Bienvenue sur MyCiné</h1>
+        <p class="hero-description">Découvrez les meilleurs films et où les regarder</p>
+        <button class="btn btn-hero">Explorer maintenant</button>
+    </div>
+</section>
+
+
+
+<!-- Section Genres -->
+<section class="content-section" id="genre-browser-section">
+    <h2 class="section-title text-uppercase">Trouve ton contenu par genre</h2>
+    <div class="d-flex overflow-auto pb-3 genre-carousel" id="genre-carousel">
+        <!-- Généré dynamiquement par JavaScript -->
+    </div>
+</section>
+<!-- Section Collections Populaires -->
+<section class="content-section" id="collections-section">
+    <div class="section-header">
+        <h2 class="section-title"><i class="ph ph-film-slate me-2"></i>Collections Populaires</h2>
+        <a href="PROJET_TM_GRoupe/Films/collections-browse.html" class="view-all-btn">Voir toutes les collections</a>
+    </div>
+    <div class="collections-grid" id="home-collections-grid">
+        <!-- Généré dynamiquement par JavaScript -->
+    </div>
+</section>
+
+
+
+<!-- Section Tendances -->
+<section class="content-section" id="trending-section">
+    <div class="section-header">
+        <h2 class="section-title">Tendances du jour</h2>
+        <a href="#" id="view-trending" class="view-all-btn">Voir tout</a>
+    </div>
+    <div class="movie-carousel-container">
+        <div class="movie-carousel" id="trending-carousel"></div>
+    </div>
+</section>
+<!-- Section Lecture en cours -->
+<section class="content-section" id="now-playing-section">
+    <div class="section-header">
+        <h2 class="section-title"><i class="ph ph-play-circle me-2"></i>Lecture en cours</h2>
+        <a href="#" id="view-now-playing" class="view-all-btn">Voir tout</a>
+    </div>
+    <div class="movie-carousel-container">
+        <div class="movie-carousel" id="now-playing-carousel"></div>
+    </div>
+</section>
+<!-- Section Filtres Actifs -->
+<section class="content-section mb-4" id="genre-section" style="display: none;">
+    <div class="filter-tags mb-3" id="filter-tags"></div>
+</section>
+
+<!-- Section Films Filtrés -->
+<section class="content-section" id="filtered-movies-section" style="display: none;">
+    <div class="section-header">
+        <h2 class="section-title" id="filtered-movies-title">Films filtrés</h2>
+        <button class="btn btn-outline-secondary" id="clear-filters-btn">
+            <i class="ph ph-x"></i> Effacer les filtres
+        </button>
+    </div>
+    <div class="movies-grid" id="filtered-movies"></div>
+    <!-- Supprimé le bouton "Charger plus" -->
+</section>
+
+<!-- Section Populaires -->
+<section class="content-section" id="popular-section">
+    <div class="section-header">
+        <h2 class="section-title">Populaires</h2>
+        <a href="#" id="view-popular" class="view-all-btn">Voir tout</a>
+    </div>
+    <div class="movies-grid" id="popular-movies"></div>
+</section>
+
+<!-- Section Mieux Notés -->
+<section class="content-section" id="top-rated-section">
+    <div class="section-header">
+        <h2 class="section-title">Mieux notés</h2>
+        <a href="#" id="view-top-rated" class="view-all-btn">Voir tout</a>
+    </div>
+    <div class="movies-grid" id="top-rated-movies"></div>
+</section>
+
+<!-- Section À Venir -->
+<section class="content-section" id="upcoming-section">
+    <div class="section-header">
+        <h2 class="section-title">À venir</h2>
+        <a href="#" id="view-upcoming" class="view-all-btn">Voir tout</a>
+    </div>
+    <div class="movies-grid" id="upcoming-movies"></div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="footer-brand">
+                    <div class="logo-container">
+                        <span class="logo-text">M</span>
+                    </div>
+                    <span class="brand-text ms-2">MyCiné</span>
+                </div>
+                <p class="footer-description">Votre destination pour découvrir les meilleurs films et où les regarder.</p>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h5 class="footer-title">Explorer</h5>
+                <ul class="footer-links">
+                    <li><a href="PROJET_TM_GRoupe/Films/projetBD.html">Films</a></li>
+                    <li><a href="PROJET_TM_GRoupe/Films/collections-browse.html">Collections</a></li>
+                    <li><a href="PROJET_TM_GRoupe/Cine_map/cine_map.html">CineMap</a></li>
+                    <li><a href="#">Années</a></li>
+                </ul>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h5 class="footer-title">Liens utiles</h5>
+                <ul class="footer-links">
+                    <li><a href="#">À propos</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                    <li><a href="#">Politique de confidentialité</a></li>
+                </ul>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h5 class="footer-title">Mon compte</h5>
+                <ul class="footer-links">
+                    <li><a href="PROJET_TM_GRoupe/connexion/connexion.html">Se connecter</a></li>
+                    <li><a href="#">Ma watchlist</a></li>
+                    <li><a href="#">Films vus</a></li>
+                </ul>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h5 class="footer-title">Suivez-nous</h5>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="ph ph-facebook-logo"></i></a>
+                    <a href="#" class="social-link"><i class="ph ph-twitter-logo"></i></a>
+                    <a href="#" class="social-link"><i class="ph ph-instagram-logo"></i></a>
+                </div>
+            </div>
+
+
+<!-- Container pour les notifications -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="PROJET_TM_GRoupe/Films/collections-home.js"></script>
+<script src="PROJET_TM_GRoupe/Films/projet.js"></script>
+<script src="PROJET_TM_GRoupe/Films/sombre_clair.js"></script>
+</body>
+</html>

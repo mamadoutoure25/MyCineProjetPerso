@@ -1,0 +1,277 @@
+/* supprimerFilms.css - Styles pour la page de suppression de films avec thèmes sombre et clair */
+:root {
+    --primary-color: #007bff;
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --text-color-light: #1c2526;
+    --text-color-dark: #e0e0e0;
+    --bg-color-light: #f8f9fa;
+    --bg-color-dark: #1c2526;
+    --card-bg-light: #ffffff;
+    --card-bg-dark: #2c3e50;
+    --input-bg-light: #ffffff;
+    --input-bg-dark: #0a0a0a;
+    --border-color-light: rgba(0, 0, 0, 0.15);
+    --border-color-dark: rgba(255, 255, 255, 0.15);
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-dark: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --transition: all 0.3s ease;
+}
+
+[data-theme="light"] {
+    --text-color: var(--text-color-light);
+    --bg-color: var(--bg-color-light);
+    --card-bg: var(--card-bg-light);
+    --input-bg: var(--input-bg-light);
+    --border-color: var(--border-color-light);
+    --shadow: var(--shadow-light);
+}
+
+[data-theme="dark"] {
+    --text-color: var(--text-color-dark);
+    --bg-color: var(--bg-color-dark);
+    --card-bg: var(--card-bg-dark);
+    --input-bg: var(--input-bg-dark);
+    --border-color: var(--border-color-dark);
+    --shadow: var(--shadow-dark);
+}
+
+html, body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: var(--transition);
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.navbar-brand img {
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+    transform: scale(1.1);
+}
+
+.nav-link {
+    color: var(--text-color);
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.2);
+}
+
+main {
+    flex: 1;
+    padding-top: 80px; /* Pour éviter chevauchement avec la navbar fixe */
+    transition: var(--transition);
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.form-label.required::after {
+    content: '*';
+    color: var(--danger-color);
+    margin-left: 0.25rem;
+}
+
+.form-select,
+.form-control {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    outline: none;
+}
+
+.btn-danger {
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.75rem;
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: #fff;
+    transition: var(--transition);
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    transform: translateY(-2px);
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+}
+
+.alert {
+    border-radius: 8px;
+    font-size: 0.9rem;
+    padding: 1rem;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: var(--danger-color);
+    color: var(--text-color);
+}
+
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.1);
+    border-color: var(--info-color);
+    color: var(--text-color);
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: var(--success-color);
+    color: var(--text-color);
+}
+
+#toast-container .toast {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    font-size: 0.9rem;
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+#toast-container .toast.bg-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+#toast-container .toast.bg-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+#toast-container .toast.bg-info {
+    background-color: var(--info-color);
+    border-color: var(--info-color);
+}
+
+#toast-container .toast .btn-close {
+    filter: brightness(1.5);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+#toast-container .toast .btn-close:hover {
+    opacity: 1;
+}
+
+/* Styles responsifs */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1.5rem;
+        margin: 1.5rem;
+    }
+
+    .form-title {
+        font-size: 1.75rem;
+    }
+
+    .btn-danger {
+        padding: 0.65rem;
+    }
+
+    main {
+        padding-top: 70px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand img {
+        height: 32px !important;
+    }
+
+    .nav-link {
+        font-size: 0.9rem;
+    }
+
+    .form-container {
+        padding: 1rem;
+        margin: 1rem;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+
+    .theme-toggle {
+        font-size: 1.25rem;
+    }
+}

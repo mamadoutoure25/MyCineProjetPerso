@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de l'acteur - MyCiné</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="actor-details.css" rel="stylesheet">
+</head>
+<body class="actor-details-page">
+    <!-- Navigation (style index.html) -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../../index.html">
+                <div class="logo-container">
+                    <span class="logo-text">M</span>
+                </div>
+                <span class="brand-text ms-2">MyCiné</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="ph ph-list"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../../index.html"><i class="ph ph-house me-1"></i> Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="projetBD.html"><i class="ph ph-film-strip me-1"></i> Films</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../../series.html"><i class="ph ph-television me-1"></i> Séries</a>
+                    </li>
+                </ul>
+                <button class="btn theme-toggle ms-lg-3" id="theme-toggle"><i class="ph ph-moon" id="theme-icon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero acteur -->
+    <section class="content-section actor-hero-section">
+        <div class="row g-4 align-items-start">
+            <div class="col-md-4">
+                <div class="actor-poster-container">
+                    <img id="actor-photo" src="https://via.placeholder.com/500x750?text=Chargement..." class="img-fluid rounded shadow" alt="Photo de l'acteur">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="actor-info card-like">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <h1 id="actor-name" class="section-title mb-0"></h1>
+                        <button id="add-actor-to-favorites" class="btn-actor-favorite" title="Ajouter aux favoris">
+                            <i class="ph ph-heart"></i>
+                        </button>
+                    </div>
+                    <div class="actor-details mb-0">
+                        <p id="actor-birthday" class="mb-2"></p>
+                        <p id="actor-birthplace" class="mb-3"></p>
+                        <p id="actor-biography" class="lead"></p>
+                        <div id="external-ids" class="external-ids-container mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filmographie -->
+    <section class="content-section pt-0">
+        <div class="section-header">
+            <h2 class="section-title"><i class="ph ph-film-strip me-2"></i> Filmographie</h2>
+        </div>
+        <ul class="nav nav-tabs" id="filmographyTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="movies-tab" data-bs-toggle="tab" data-bs-target="#movies" type="button" role="tab">
+                    <i class="ph ph-film-strip me-1"></i> Films
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tv-tab" data-bs-toggle="tab" data-bs-target="#tv" type="button" role="tab">
+                    <i class="ph ph-television me-1"></i> Séries TV
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="filmographyTabContent">
+            <div class="tab-pane fade show active" id="movies" role="tabpanel">
+                <div id="actor-movies" class="row g-4 mt-4"></div>
+            </div>
+            <div class="tab-pane fade" id="tv" role="tabpanel">
+                <div id="actor-tv" class="row g-4 mt-4"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (style index.html) -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="footer-brand">
+                        <div class="logo-container">
+                            <span class="logo-text">M</span>
+                        </div>
+                        <span class="brand-text ms-2">MyCiné</span>
+                    </div>
+                    <p class="footer-description">Votre destination pour decouvrir les meilleurs films et ou les regarder.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Explorer</h5>
+                    <ul class="footer-links">
+                        <li><a href="../../index.html">Accueil</a></li>
+                        <li><a href="projetBD.html">Films</a></li>
+                        <li><a href="../../series.html">Series</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Mon compte</h5>
+                    <ul class="footer-links">
+                        <li><a href="../connexion/connexion.html">Se connecter</a></li>
+                        <li><a href="../connexion/inscription.html">S'inscrire</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Liens utiles</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">A propos</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Politique</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Suivez-nous</h5>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="ph ph-facebook-logo"></i></a>
+                        <a href="#" class="social-link"><i class="ph ph-twitter-logo"></i></a>
+                        <a href="#" class="social-link"><i class="ph ph-instagram-logo"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="actor-details.js"></script>
+    <script src="projet.js"></script>
+    <script src="sombre_clair.js"></script>
+</body>
+</html>

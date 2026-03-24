@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCine</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
+    <link rel="stylesheet" href="collection.css">
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem("theme");
+                var system = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+                document.documentElement.setAttribute("data-theme", saved || system);
+            } catch (e) {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="../../index.html">
+            <div class="logo-container">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="brand-text ms-2">MyCine</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="../../index.html">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="projetBD.html">Films</a></li>
+                <li class="nav-item"><a class="nav-link" href="../../series.html">Series</a></li>
+            </ul>
+            <button class="btn theme-toggle ms-lg-3 mt-3 mt-lg-0" id="theme-toggle" type="button" aria-label="Basculer le theme">
+                <i class="ph ph-moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<section id="collection-hero" class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="container collection-info">
+        <div class="row align-items-center g-4">
+            <div class="col-md-3">
+                <img id="collection-poster" src="https://via.placeholder.com/300x450?text=Aucune+affiche" alt="Collection Poster" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-md-9">
+                <h1 id="collection-title" class="hero-title mb-3"></h1>
+                <p id="collection-overview" class="hero-description mb-4"></p>
+                <div class="d-flex flex-wrap gap-3">
+                    <span class="badge rounded-pill" id="movies-count">0 films</span>
+                    <span class="badge rounded-pill" id="collection-years">Annees inconnues</span>
+                    <span class="badge rounded-pill" id="collection-revenue">Non divulgue</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content-section" id="collection-content">
+    <div class="container-fluid px-md-4 px-3">
+        <h2 class="section-title">Distribution en vedette</h2>
+        <div id="collection-cast" class="people-grid mb-5"></div>
+
+        <h2 class="section-title">Equipe en vedette</h2>
+        <div id="collection-crew" class="people-grid mb-5"></div>
+
+        <div class="section-header">
+            <h2 class="section-title mb-0">Films de la collection</h2>
+        </div>
+        <div id="movies-grid" class="movies-grid" style="display: none;"></div>
+
+        <div id="loading" class="text-center py-4">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="collection.js"></script>
+</body>
+</html>

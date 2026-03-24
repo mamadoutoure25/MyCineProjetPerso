@@ -1,0 +1,89 @@
+-- Table Utilisateurs
+CREATE TABLE Utilisateurs (
+                              id INT AUTO_INCREMENT PRIMARY KEY,
+                              pseudo VARCHAR(50) NOT NULL UNIQUE,
+                              email VARCHAR(100) NOT NULL UNIQUE,
+                              mot_de_passe VARCHAR(255) NOT NULL,
+                              date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
+                              role ENUM('user', 'guest', 'admin') DEFAULT 'guest',
+                              avatar VARCHAR(255) DEFAULT NULL,
+                              bio TEXT,
+                              last_login DATETIME,
+                              is_active BOOLEAN DEFAULT TRUE
+);
+
+
+-- Table Listes
+CREATE TABLE Listes (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        utilisateur_id INT NOT NULL,
+                        nom VARCHAR(100) NOT NULL,
+                        description TEXT,
+                        est_publique BOOLEAN DEFAULT FALSE,
+                        couverture_path VARCHAR(255),
+                        date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        date_modification DATETIME ON UPDATE CURRENT_TIMESTAMP,
+                        FOREIGN KEY (utilisateur_id) REFERENCES Utilisateurs(id) ON DELETE CASCADE,
+                        INDEX idx_utilisateur (utilisateur_id)
+);
+
+-- Table Listes_Films
+CREATE TABLE Listes_Films (
+                              liste_id INT NOT NULL,
+                              film_id INT NOT NULL,
+                              ordre INT,
+                              date_ajout DATETIME DEFAULT CURRENT_TIMESTAMP,
+                              note_utilisateur DECIMAL(2,1),
+                              commentaire TEXT,
+                              PRIMARY KEY (liste_id, film_id),
+                              FOREIGN KEY (liste_id) REFERENCES Listes(id) ON DELETE CASCADE,
+                              FOREIGN KEY (film_id) REFERENCES Films(id) ON DELETE CASCADE
+);
+
+-- Table Commentaires
+CREATE TABLE Commentaires (
+                              id INT AUTO_INCREMENT PRIMARY KEY,
+                              utilisateur_id INT NOT NULL,
+                              film_id INT NOT NULL,
+                              contenu TEXT NOT NULL,
+                              date_publication DATETIME DEFAULT CURRENT_TIMESTAMP,
+                              date_modification DATETIME ON UPDATE CURRENT_TIMESTAMP,
+                              is_approved BOOLEAN DEFAULT TRUE,
+                              FOREIGN KEY (utilisateur_id) REFERENCES Utilisateurs(id) ON DELETE CASCADE,
+                              FOREIGN KEY (film_id) REFERENCES Films(id) ON DELETE CASCADE,
+                              INDEX idx_film (film_id),
+                              INDEX idx_utilisateur (utilisateur_id)
+);
+
+-- Table Votes_Commentaires
+CREATE TABLE Votes_Commentaires (
+                                    utilisateur_id INT NOT NULL,
+                                    commentaire_id INT NOT NULL,
+                                    is_upvote BOOLEAN,
+                                    date_vote DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                    PRIMARY KEY (utilisateur_id, commentaire_id),
+                                    FOREIGN KEY (utilisateur_id) REFERENCES Utilisateurs(id) ON DELETE CASCADE,
+                                    FOREIGN KEY (commentaire_id) REFERENCES Commentaires(id) ON DELETE CASCADE
+);
+
+-- Table Historique_Activite
+CREATE TABLE Historique_Activite (
+                                     id INT AUTO_INCREMENT PRIMARY KEY,
+                                     utilisateur_id INT NOT NULL,
+                                     type_activite ENUM('login', 'logout', 'film_view', 'film_rate', 'comment', 'list_create', 'list_update') NOT NULL,
+                                     film_id INT,
+                                     liste_id INT,
+                                     commentaire_id INT,
+                                     details TEXT,
+                                     date_activite DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                     FOREIGN KEY (utilisateur_id) REFERENCES Utilisateurs(id) ON DELETE CASCADE,
+                                     FOREIGN KEY (film_id) REFERENCES Films(id) ON DELETE SET NULL,
+                                     FOREIGN KEY (liste_id) REFERENCES Listes(id) ON DELETE SET NULL,
+                                     FOREIGN KEY (commentaire_id) REFERENCES Commentaires(id) ON DELETE SET NULL,
+                                     INDEX idx_utilisateur_date (utilisateur_id, date_activite)
+);
+
+-- Insertion d'un admin par défaut
+-- Mot de passe: "admin123" (hashé avec bcrypt)
+INSERT INTO Utilisateurs (pseudo, email, mot_de_passe, role)
+VALUES ('admin', 'admin@cinehub.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');

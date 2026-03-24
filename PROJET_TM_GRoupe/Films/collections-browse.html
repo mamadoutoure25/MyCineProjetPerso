@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collections - MyCiné</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
+    <link rel="stylesheet" href="collection.css">
+    <style>
+        .collections-hero {
+            background: linear-gradient(135deg, var(--background) 0%, var(--background-alt) 100%);
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .collections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .collection-card-link {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .collection-card-preview {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 2/3;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--card-bg);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .collection-card-link:hover .collection-card-preview {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(245, 158, 11, 0.25), 0 0 30px rgba(245, 158, 11, 0.1);
+        }
+
+        .collection-card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .collection-card-link:hover .collection-card-image {
+            transform: scale(1.1);
+        }
+
+        .collection-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.98) 0%,
+                rgba(0, 0, 0, 0.85) 30%,
+                rgba(0, 0, 0, 0.4) 70%,
+                transparent 100%
+            );
+            z-index: 2;
+        }
+
+        .collection-card-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            z-index: 3;
+            color: white;
+        }
+
+        .collection-card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .collection-card-meta {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .collection-card-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .no-collections {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .no-collections i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .sort-label {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .sort-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sort-btn {
+            padding: 0.5rem 1.2rem;
+            border: 2px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .sort-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .sort-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .collections-hero {
+                padding: 2rem 0;
+                margin-bottom: 2rem;
+            }
+
+            .collections-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .collection-card-title {
+                font-size: 0.95rem;
+            }
+
+            .collection-card-meta {
+                font-size: 0.75rem;
+            }
+
+            .sort-controls {
+                margin-bottom: 1.5rem;
+                gap: 0.75rem;
+            }
+
+            .sort-btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem("theme");
+                var system = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+                document.documentElement.setAttribute("data-theme", saved || system);
+            } catch (e) {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="../../index.html">
+            <div class="logo-container">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="brand-text ms-2">MyCiné</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="../../index.html">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="projetBD.html">Films</a></li>
+                <li class="nav-item"><a class="nav-link" href="../../series.html">Séries</a></li>
+            </ul>
+            <button class="btn theme-toggle ms-lg-3 mt-3 mt-lg-0" id="theme-toggle" type="button" aria-label="Basculer le theme">
+                <i class="ph ph-moon" id="theme-icon"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="collections-hero">
+    <div class="container">
+        <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">
+            <i class="ph ph-film-slate me-3"></i>Collections de Films
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--text-secondary); margin: 0;">
+            Découvrez les franchises cinématographiques les plus populaires
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="sort-controls">
+        <span class="sort-label"><i class="ph ph-funnel me-2"></i>Trier par :</span>
+        <div class="sort-buttons">
+            <button class="sort-btn active" data-sort="original" id="sort-original">
+                <i class="ph ph-list me-1"></i>Par défaut
+            </button>
+            <button class="sort-btn" data-sort="name" id="sort-name">
+                <i class="ph ph-sort-ascending me-1"></i>Nom (A-Z)
+            </button>
+            <button class="sort-btn" data-sort="name-desc" id="sort-name-desc">
+                <i class="ph ph-sort-descending me-1"></i>Nom (Z-A)
+            </button>
+            <button class="sort-btn" data-sort="movies-desc" id="sort-movies-desc">
+                <i class="ph ph-sort-descending me-1"></i>Films (Plus &gt; Moins)
+            </button>
+            <button class="sort-btn" data-sort="movies-asc" id="sort-movies-asc">
+                <i class="ph ph-sort-ascending me-1"></i>Films (Moins &gt; Plus)
+            </button>
+        </div>
+    </div>
+
+    <div class="collections-grid" id="collections-grid">
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="no-collections" class="no-collections" style="display: none;">
+    <i class="ph ph-warning-circle"></i>
+    <p style="font-size: 1.2rem; font-weight: 600;">Aucune collection trouvée</p>
+    <p>Les collections apparaîtront à mesure que vous explorez les films.</p>
+    <a href="projetBD.html" class="btn btn-primary mt-3">
+        <i class="ph ph-play-circle me-2"></i>Explorer les films
+    </a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="collections-browse.js"></script>
+</body>
+</html>
+

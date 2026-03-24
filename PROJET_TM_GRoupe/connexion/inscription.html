@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Inscription - MyCiné</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
+	<link rel="stylesheet" href="connexion.css">
+</head>
+<body>
+	<!-- Navigation -->
+	<nav class="navbar navbar-expand-lg fixed-top">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="../../index.html">
+				<div class="logo-container">
+					<span class="logo-text">M</span>
+				</div>
+				<span class="brand-text ms-2">MyCiné</span>
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<i class="ph ph-list"></i>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="../../index.html">
+							<i class="ph ph-house"></i> Accueil
+						</a>
+					</li>
+				</ul>
+				<button class="btn theme-toggle ms-3" id="theme-toggle"><i class="ph ph-moon" id="theme-icon"></i></button>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Hero Section -->
+	<section class="auth-hero-section">
+		<div class="auth-hero-overlay"></div>
+		<div class="auth-hero-content">
+			<div class="auth-hero-card">
+				<div class="auth-header">
+					<h1 class="auth-title">Créer un compte MyCiné</h1>
+					<p class="auth-subtitle">Rejoignez notre plateforme cinématographique et créez votre watchlist</p>
+				</div>
+
+				<form id="registerForm" class="auth-form">
+					<!-- Username Field -->
+					<div class="form-group">
+						<label for="pseudo" class="form-label">
+							<i class="ph ph-user"></i> Nom d'utilisateur
+						</label>
+						<input
+							type="text"
+							id="pseudo"
+							class="form-control auth-input"
+							placeholder="Choisissez un pseudo"
+							autocomplete="username"
+							required
+						>
+						<div class="form-error"></div>
+					</div>
+
+					<!-- Email Field -->
+					<div class="form-group">
+						<label for="email" class="form-label">
+							<i class="ph ph-envelope"></i> Adresse e-mail
+						</label>
+						<input
+							type="email"
+							id="email"
+							class="form-control auth-input"
+							placeholder="Entrez votre email"
+							autocomplete="email"
+							required
+						>
+						<div class="form-error"></div>
+					</div>
+
+					<!-- Password Field -->
+					<div class="form-group">
+						<label for="password" class="form-label">
+							<i class="ph ph-lock"></i> Mot de passe
+						</label>
+						<div class="password-wrapper">
+							<input
+								type="password"
+								id="password"
+								class="form-control auth-input"
+								placeholder="Créez un mot de passe sécurisé"
+								autocomplete="new-password"
+								required
+							>
+							<button type="button" class="toggle-password-btn" id="togglePassword">
+								<i class="ph ph-eye"></i>
+							</button>
+						</div>
+						<div class="form-error"></div>
+					</div>
+
+					<!-- Error Message -->
+					<div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
+
+					<!-- Submit Button -->
+					<button type="submit" class="btn btn-auth-submit">
+						<i class="ph ph-user-plus"></i>
+						<span class="btn-text">S'inscrire</span>
+					</button>
+				</form>
+
+				<!-- Links Section -->
+				<div class="auth-links">
+					<p>Vous avez déjà un compte ?
+						<a href="connexion.html" class="link-auth">Se connecter</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Toast Container -->
+	<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+	<!-- Footer -->
+	<footer class="footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 mb-4">
+					<div class="footer-brand">
+						<div class="logo-container">
+							<span class="logo-text">M</span>
+						</div>
+						<span class="brand-text ms-2">MyCiné</span>
+					</div>
+					<p class="footer-description">Votre destination pour découvrir les meilleurs films et où les regarder.</p>
+				</div>
+				<div class="col-md-2 mb-4">
+					<h5 class="footer-title">Explorer</h5>
+					<ul class="footer-links">
+						<li><a href="#">Genres</a></li>
+						<li><a href="#">Années</a></li>
+						<li><a href="#">Sociétés</a></li>
+					</ul>
+				</div>
+				<div class="col-md-2 mb-4">
+					<h5 class="footer-title">Compte</h5>
+					<ul class="footer-links">
+						<li><a href="connexion.html">Se connecter</a></li>
+						<li><a href="inscription.html">S'inscrire</a></li>
+						<li><a href="#">Conditions</a></li>
+					</ul>
+				</div>
+				<div class="col-md-2 mb-4">
+					<h5 class="footer-title">Liens utiles</h5>
+					<ul class="footer-links">
+						<li><a href="#">À propos</a></li>
+						<li><a href="#">Contact</a></li>
+						<li><a href="#">Politique</a></li>
+					</ul>
+				</div>
+				<div class="col-md-2 mb-4">
+					<h5 class="footer-title">Suivez-nous</h5>
+					<div class="social-links">
+						<a href="#" class="social-link"><i class="ph ph-facebook-logo"></i></a>
+						<a href="#" class="social-link"><i class="ph ph-twitter-logo"></i></a>
+						<a href="#" class="social-link"><i class="ph ph-instagram-logo"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="inscription.js"></script>
+	<script src="../Films/sombre_clair.js"></script>
+</body>
+</html>

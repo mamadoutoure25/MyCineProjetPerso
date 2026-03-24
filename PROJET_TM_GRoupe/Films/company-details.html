@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de la Société - MyCiné</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="projet.css" rel="stylesheet">
+    <link href="actor-details.css" rel="stylesheet">
+    <style>
+        .company-hero-section {
+            padding-top: 120px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        .company-logo-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 350px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .company-logo-container img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+        }
+
+        .company-info {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .company-stat {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--glass-bg);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+        }
+
+        .company-stat i {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 15px;
+        }
+
+        .company-stat-content h6 {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .company-stat-content p {
+            color: var(--text);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .company-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: var(--transition);
+            margin-top: 15px;
+        }
+
+        .company-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+            color: white;
+        }
+
+        .parent-company {
+            background: var(--glass-bg);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .parent-company h5 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .parent-company p {
+            margin: 0;
+            color: var(--text);
+        }
+
+        .films-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .film-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .film-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .film-poster {
+            width: 100%;
+            height: 300px;
+            background: var(--glass-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .film-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .film-card:hover .film-poster img {
+            transform: scale(1.05);
+        }
+
+        .film-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .film-title {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+
+        .film-year {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .film-rating {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .image-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .image-container {
+            width: 100%;
+            height: 200px;
+            background: var(--glass-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 15px;
+            transition: var(--transition);
+        }
+
+        .image-card:hover .image-container img {
+            transform: scale(1.05);
+        }
+
+        .image-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-type {
+            display: inline-block;
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .image-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .image-stat {
+            text-align: center;
+            flex: 1;
+        }
+
+        .image-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .image-stat-value {
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 4px;
+        }
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .section-header {
+            margin-bottom: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .company-hero-section {
+                padding-top: 100px;
+                padding-bottom: 40px;
+            }
+
+            .company-logo-container {
+                min-height: 250px;
+            }
+
+            .films-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+
+            .company-info {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="company-details-page">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../../index.html">
+                <div class="logo-container">
+                    <span class="logo-text">M</span>
+                </div>
+                <span class="brand-text ms-2">MyCiné</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="ph ph-list"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../../index.html"><i class="ph ph-house me-1"></i> Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="projetBD.html"><i class="ph ph-film-strip me-1"></i> Films</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../../series.html"><i class="ph ph-television me-1"></i> Séries</a>
+                    </li>
+                </ul>
+                <button class="btn theme-toggle ms-lg-3" id="theme-toggle"><i class="ph ph-moon" id="theme-icon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Société -->
+    <section class="content-section company-hero-section">
+        <div class="row g-4 align-items-start">
+            <!-- Logo -->
+            <div class="col-md-4">
+                <div class="company-logo-container">
+                    <img id="company-logo" src="https://via.placeholder.com/500x300?text=Logo" alt="Logo de la société" onerror="this.src='https://via.placeholder.com/500x300?text=Aucun+logo'">
+                </div>
+            </div>
+
+            <!-- Infos -->
+            <div class="col-md-8">
+                <div class="company-info">
+                    <h1 id="company-name" class="section-title mb-4"></h1>
+
+                    <!-- Description -->
+                    <div id="company-description-container" class="mb-4">
+                        <p id="company-description" class="lead"></p>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="company-stats">
+                        <!-- Pays d'origine -->
+                        <div class="company-stat">
+                            <i class="ph ph-globe"></i>
+                            <div class="company-stat-content">
+                                <h6>Pays d'origine</h6>
+                                <p id="company-country">--</p>
+                            </div>
+                        </div>
+
+                        <!-- Siège social -->
+                        <div class="company-stat">
+                            <i class="ph ph-map-pin"></i>
+                            <div class="company-stat-content">
+                                <h6>Siège social</h6>
+                                <p id="company-headquarters">--</p>
+                            </div>
+                        </div>
+
+                        <!-- Website -->
+                        <div id="website-container" class="company-stat" style="display: none;">
+                            <i class="ph ph-link"></i>
+                            <div class="company-stat-content">
+                                <h6>Site web</h6>
+                                <p><a id="company-website" href="#" target="_blank" rel="noopener noreferrer" class="text-primary">Visiter le site</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lien vers le site -->
+                    <div id="homepage-container" style="display: none;">
+                        <a id="company-homepage" href="#" target="_blank" rel="noopener noreferrer" class="company-link">
+                            <i class="ph ph-arrow-up-right"></i>
+                            <span>Visiter le site officiel</span>
+                        </a>
+                    </div>
+
+                    <!-- Société mère -->
+                    <div id="parent-company-container" style="display: none;">
+                        <div class="parent-company">
+                            <h5><i class="ph ph-tree"></i> Société mère</h5>
+                            <p id="parent-company-name"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Films de la société -->
+    <section class="content-section">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title"><i class="ph ph-film-strip me-2"></i> Films produits</h2>
+                <p class="text-secondary" id="films-count" style="font-size: 1rem; margin-top: 0.5rem;"></p>
+            </div>
+        </div>
+
+        <!-- Filtres -->
+        <div class="filters-section" style="background: var(--glass-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 2rem;">
+            <div class="row g-3 align-items-end">
+                <!-- Filtre par année -->
+                <div class="col-md-3">
+                    <label for="filter-year" class="form-label">Année</label>
+                    <select id="filter-year" class="form-select" style="background: var(--card-bg); border: 1px solid var(--border); color: var(--text);">
+                        <option value="">Toutes les années</option>
+                    </select>
+                </div>
+
+                <!-- Filtre par note minimale -->
+                <div class="col-md-3">
+                    <label for="filter-rating" class="form-label">Note minimale</label>
+                    <select id="filter-rating" class="form-select" style="background: var(--card-bg); border: 1px solid var(--border); color: var(--text);">
+                        <option value="">Toutes les notes</option>
+                        <option value="9">9.0+</option>
+                        <option value="8">8.0+</option>
+                        <option value="7">7.0+</option>
+                        <option value="6">6.0+</option>
+                        <option value="5">5.0+</option>
+                    </select>
+                </div>
+
+                <!-- Filtre par statut évaluation -->
+                <div class="col-md-3">
+                    <label for="filter-evaluated" class="form-label">Évaluation</label>
+                    <select id="filter-evaluated" class="form-select" style="background: var(--card-bg); border: 1px solid var(--border); color: var(--text);">
+                        <option value="">Tous les films</option>
+                        <option value="evaluated">Évalués</option>
+                        <option value="not-evaluated">Non évalués</option>
+                    </select>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="col-md-3">
+                    <button id="apply-filters" class="btn btn-primary w-100" style="margin-bottom: 0;">
+                        <i class="ph ph-funnel me-2"></i> Appliquer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtres actifs -->
+            <div id="active-filters" style="margin-top: 15px; display: none;">
+                <div class="d-flex gap-2 flex-wrap align-items-center">
+                    <small style="color: var(--text-secondary);">Filtres actifs:</small>
+                    <div id="filter-tags" class="d-flex gap-2 flex-wrap"></div>
+                    <button id="clear-filters" class="btn btn-sm btn-outline-danger">
+                        <i class="ph ph-x me-1"></i> Effacer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="films-loading" style="text-align: center; padding: 40px 20px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p class="text-secondary mt-3">Chargement des films...</p>
+        </div>
+
+        <!-- Films grid -->
+        <div id="films-container" class="films-grid" style="display: none;"></div>
+
+        <!-- No films message -->
+        <div id="no-films" class="no-data" style="display: none;">
+            <i class="ph ph-film-strip"></i>
+            <p>Aucun film trouvé pour cette société</p>
+        </div>
+
+        <!-- Summary stats -->
+        <div id="films-summary" style="display: none; margin-top: 3rem; padding: 20px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--border);">
+            <h5 class="mb-3">📊 Résumé des films</h5>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h3 class="text-primary mb-1" id="stats-total">0</h3>
+                        <p class="text-secondary">Films totaux</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h3 class="text-success mb-1" id="stats-rated">0</h3>
+                        <p class="text-secondary">Évalués</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h3 class="text-warning mb-1" id="stats-avg-rating">0</h3>
+                        <p class="text-secondary">Note moyenne</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h3 class="text-info mb-1" id="stats-year-range">--</h3>
+                        <p class="text-secondary">Années</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Images/Logos de la société -->
+    <section class="content-section" id="images-section" style="display: none;">
+        <div class="section-header">
+            <h2 class="section-title"><i class="ph ph-image me-2"></i> Images et Logos</h2>
+            <p class="text-secondary" id="images-count" style="font-size: 1rem; margin-top: 0.5rem;"></p>
+        </div>
+
+        <!-- Tabs pour filtrer les types d'images -->
+        <ul class="nav nav-tabs" id="imagesTabs" role="tablist" style="margin-bottom: 2rem; border-bottom: 2px solid var(--border);">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="logos-tab" data-bs-toggle="tab" data-bs-target="#logos" type="button" role="tab" style="color: var(--text); border: none;">
+                    <i class="ph ph-trademark me-2"></i>Logos
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab content -->
+        <div class="tab-content" id="imagesTabContent">
+            <div class="tab-pane fade show active" id="logos" role="tabpanel">
+                <div id="logos-container" class="images-grid"></div>
+                <div id="no-logos" class="no-data" style="display: none;">
+                    <i class="ph ph-image"></i>
+                    <p>Aucun logo trouvé pour cette société</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sociétés parentes/filiales -->
+    <section class="content-section" id="related-companies-section" style="display: none;">
+        <div class="section-header">
+            <h2 class="section-title"><i class="ph ph-tree me-2"></i> Sociétés associées</h2>
+        </div>
+        <div id="related-companies-container"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="footer-brand">
+                        <div class="logo-container">
+                            <span class="logo-text">M</span>
+                        </div>
+                        <span class="brand-text ms-2">MyCiné</span>
+                    </div>
+                    <p class="footer-description">Votre destination pour découvrir les meilleurs films et où les regarder.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Explorer</h5>
+                    <ul class="footer-links">
+                        <li><a href="projetBD.html">Films</a></li>
+                        <li><a href="collections-browse.html">Collections</a></li>
+                        <li><a href="cine_map/cine_map.html">CineMap</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Liens utiles</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">À propos</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Conditions d'utilisation</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Mon compte</h5>
+                    <ul class="footer-links">
+                        <li><a href="../connexion/connexion.html">Se connecter</a></li>
+                        <li><a href="#">Ma watchlist</a></li>
+                        <li><a href="#">Films vus</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Suivez-nous</h5>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="ph ph-facebook-logo"></i></a>
+                        <a href="#" class="social-link"><i class="ph ph-twitter-logo"></i></a>
+                        <a href="#" class="social-link"><i class="ph ph-instagram-logo"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Container pour les notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="sombre_clair.js"></script>
+    <script src="company-details.js"></script>
+</body>
+</html>
+

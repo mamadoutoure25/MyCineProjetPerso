@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemple - Détails Film avec Vidéos et Galerie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="projet.css">
+</head>
+<body data-theme="dark">
+
+<main class="container-fluid">
+
+    <!-- ==================== SECTION LECTURE EN COURS ==================== -->
+    <section class="content-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="ph ph-play-circle me-2"></i>Lecture en cours
+            </h2>
+        </div>
+        <div class="movie-carousel-container">
+            <div class="movie-carousel" id="now-playing-carousel">
+                <!-- Rempli par JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION VIDÉOS ==================== -->
+    <section class="content-section videos-section">
+        <h3 class="gallery-title">
+            <i class="ph ph-video me-2"></i>
+            Vidéos (4 disponibles)
+        </h3>
+
+        <div class="video-grid" id="videos-container">
+            <!-- Exemple statique -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://img.youtube.com/vi/VIDEOID1/0.jpg" alt="Trailer principal">
+                    <button class="video-play-btn" onclick="alert('Lancer la vidéo')">
+                        <i class="ph ph-play-fill"></i>
+                    </button>
+                </div>
+                <div class="video-info">
+                    <span class="video-type official">Official</span>
+                    <div class="video-title">Fight Club (1999) Trailer - Starring Brad Pitt</div>
+                    <div class="video-date">05/03/2016</div>
+                </div>
+            </div>
+
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://img.youtube.com/vi/VIDEOID2/0.jpg" alt="Trailer bonus">
+                    <button class="video-play-btn" onclick="alert('Lancer la vidéo')">
+                        <i class="ph ph-play-fill"></i>
+                    </button>
+                </div>
+                <div class="video-info">
+                    <span class="video-type">Fan Made</span>
+                    <div class="video-title">#TBT Trailer</div>
+                    <div class="video-date">02/10/2014</div>
+                </div>
+            </div>
+
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://img.youtube.com/vi/VIDEOID3/0.jpg" alt="Clip">
+                    <button class="video-play-btn" onclick="alert('Lancer la vidéo')">
+                        <i class="ph ph-play-fill"></i>
+                    </button>
+                </div>
+                <div class="video-info">
+                    <span class="video-type official">Official</span>
+                    <div class="video-title">Behind the Scenes</div>
+                    <div class="video-date">15/11/2020</div>
+                </div>
+            </div>
+
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://img.youtube.com/vi/VIDEOID4/0.jpg" alt="Featurette">
+                    <button class="video-play-btn" onclick="alert('Lancer la vidéo')">
+                        <i class="ph ph-play-fill"></i>
+                    </button>
+                </div>
+                <div class="video-info">
+                    <span class="video-type official">Official</span>
+                    <div class="video-title">Making of Documentary</div>
+                    <div class="video-date">10/08/2018</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION GALERIE D'IMAGES ==================== -->
+    <section class="content-section gallery-section">
+        <h3 class="gallery-title">
+            <i class="ph ph-image me-2"></i>
+            Galerie (45 images)
+        </h3>
+
+        <!-- Tabs -->
+        <div class="gallery-tabs">
+            <button class="gallery-tab active" data-tab="backdrops" onclick="afficherTab('backdrops', this)">
+                <i class="ph ph-image me-2"></i>Arrière-plans (28)
+            </button>
+            <button class="gallery-tab" data-tab="posters" onclick="afficherTab('posters', this)">
+                <i class="ph ph-card-photo me-2"></i>Affiches (12)
+            </button>
+            <button class="gallery-tab" data-tab="logos" onclick="afficherTab('logos', this)">
+                <i class="ph ph-trademark me-2"></i>Logos (5)
+            </button>
+        </div>
+
+        <!-- Grille d'images -->
+        <div class="gallery-grid" id="gallery-backdrops">
+            <!-- Exemple statique - Arrière-plans -->
+            <div class="gallery-item" onclick="agrandirImage(this)">
+                <img src="https://image.tmdb.org/t/p/w500/hZkgoQYus5vegHoetLkCJzb17zJ.jpg" alt="Backdrop 1">
+                <div class="gallery-overlay">
+                    <div class="gallery-icon">
+                        <i class="ph ph-magnifying-glass-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-badge">1422x800</div>
+            </div>
+
+            <div class="gallery-item" onclick="agrandirImage(this)">
+                <img src="https://image.tmdb.org/t/p/w500/fygeMr16EcxJiYhdiO1LEr7iHtI.jpg" alt="Backdrop 2">
+                <div class="gallery-overlay">
+                    <div class="gallery-icon">
+                        <i class="ph ph-magnifying-glass-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-badge">1280x720</div>
+            </div>
+
+            <div class="gallery-item" onclick="agrandirImage(this)">
+                <img src="https://image.tmdb.org/t/p/w500/b9HyPoxwxjxkWEUL5ErZdhApQe2.jpg" alt="Backdrop 3">
+                <div class="gallery-overlay">
+                    <div class="gallery-icon">
+                        <i class="ph ph-magnifying-glass-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-badge">1920x1080</div>
+            </div>
+
+            <div class="gallery-item" onclick="agrandirImage(this)">
+                <img src="https://image.tmdb.org/t/p/w500/c6OLXfKAk5BKeR6broC8pYiCquX.jpg" alt="Backdrop 4">
+                <div class="gallery-overlay">
+                    <div class="gallery-icon">
+                        <i class="ph ph-magnifying-glass-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-badge">2560x1440</div>
+            </div>
+
+            <div class="gallery-item" onclick="agrandirImage(this)">
+                <img src="https://image.tmdb.org/t/p/w500/3nv2TEz2u178xPXzdKlZdUh5uOI.jpg" alt="Backdrop 5">
+                <div class="gallery-overlay">
+                    <div class="gallery-icon">
+                        <i class="ph ph-magnifying-glass-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-badge">1920x1080</div>
+            </div>
+
+            <div class="gallery-item" onclick="agrandirImage(this)">
+                <img src="https://image.tmdb.org/t/p/w500/yguBaPk5V0nZCcSBthre4YFMAgk.jpg" alt="Backdrop 6">
+                <div class="gallery-overlay">
+                    <div class="gallery-icon">
+                        <i class="ph ph-magnifying-glass-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-badge">1920x1080</div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="gallery-pagination">
+            <button class="pagination-btn" disabled onclick="changerPage(-1)">
+                <i class="ph ph-caret-left"></i>
+            </button>
+            <button class="pagination-btn active" onclick="allerPage(1)">1</button>
+            <button class="pagination-btn" onclick="allerPage(2)">2</button>
+            <button class="pagination-btn" onclick="allerPage(3)">3</button>
+            <button class="pagination-btn" onclick="allerPage(4)">4</button>
+            <button class="pagination-btn" onclick="changerPage(1)">
+                <i class="ph ph-caret-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION RETROUVEZ EN LIGNE ==================== -->
+    <section class="content-section">
+        <h3 class="gallery-title">
+            <i class="ph ph-broadcast me-2"></i>
+            Retrouvez ce film en ligne
+        </h3>
+
+        <div class="providers-grid">
+            <!-- Abonnements -->
+            <div class="provider-category">
+                <h4>
+                    <i class="ph ph-check-circle me-2"></i>
+                    Inclus dans votre abonnement
+                </h4>
+                <div class="providers-list d-flex gap-3 flex-wrap">
+                    <div class="provider-item" title="Netflix">
+                        <img src="PROJET_TM_GRoupe/Films/images/netflix.png" alt="Netflix" class="vod-provider-icon">
+                    </div>
+                    <div class="provider-item" title="Disney Plus">
+                        <img src="PROJET_TM_GRoupe/Films/images/disney_plus.png" alt="Disney Plus" class="vod-provider-icon">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="provider-category mt-3">
+                <h4>
+                    <i class="ph ph-tag me-2"></i>
+                    En location
+                </h4>
+                <div class="providers-list d-flex gap-3 flex-wrap">
+                    <div class="provider-item" title="Amazon Prime Video">
+                        <img src="PROJET_TM_GRoupe/Films/images/amazon_prime_video.png" alt="Amazon Prime" class="vod-provider-icon">
+                    </div>
+                    <div class="provider-item" title="Apple TV">
+                        <img src="PROJET_TM_GRoupe/Films/images/apple_tv.png" alt="Apple TV" class="vod-provider-icon">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achat -->
+            <div class="provider-category mt-3">
+                <h4>
+                    <i class="ph ph-shopping-cart me-2"></i>
+                    À l'achat
+                </h4>
+                <div class="providers-list d-flex gap-3 flex-wrap">
+                    <div class="provider-item" title="Google Play">
+                        <img src="PROJET_TM_GRoupe/Films/images/google_play_movies.png" alt="Google Play" class="vod-provider-icon">
+                    </div>
+                    <div class="provider-item" title="YouTube">
+                        <img src="PROJET_TM_GRoupe/Films/images/youtube.png" alt="YouTube" class="vod-provider-icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION DISTRIBUTION (18 MAX) ==================== -->
+    <section class="content-section">
+        <h3 class="gallery-title">
+            <i class="ph ph-users me-2"></i>
+            Distribution (Affiche 18 acteurs max)
+        </h3>
+
+        <div class="actors-limited">
+            <!-- Exemples d'acteurs -->
+            <div class="actor-card">
+                <div class="actor-image">
+                    <img src="https://via.placeholder.com/150x225/666/999?text=Brad+Pitt" alt="Brad Pitt">
+                </div>
+                <div class="actor-name">Brad Pitt</div>
+                <div class="actor-role">Tyler Durden</div>
+            </div>
+
+            <div class="actor-card">
+                <div class="actor-image">
+                    <img src="https://via.placeholder.com/150x225/666/999?text=Edward+Norton" alt="Edward Norton">
+                </div>
+                <div class="actor-name">Edward Norton</div>
+                <div class="actor-role">The Narrator</div>
+            </div>
+
+            <div class="actor-card">
+                <div class="actor-image">
+                    <img src="https://via.placeholder.com/150x225/666/999?text=Helena+Bonham+Carter" alt="Helena Bonham Carter">
+                </div>
+                <div class="actor-name">Helena Bonham Carter</div>
+                <div class="actor-role">Marla Singer</div>
+            </div>
+
+            <!-- + 15 autres acteurs (non affichés pour l'exemple) -->
+        </div>
+
+        <div class="gallery-count">
+            <i class="ph ph-info"></i>
+            <span>Affiche les 18 premiers acteurs. Total: 27 acteurs dans le casting.</span>
+        </div>
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Fonctions exemples
+function afficherTab(tabName, element) {
+    // Désactiver tous les tabs
+    document.querySelectorAll('.gallery-tab').forEach(tab => tab.classList.remove('active'));
+    element.classList.add('active');
+
+    // Afficher la grille appropriée
+    console.log('Tab switched to:', tabName);
+}
+
+function agrandirImage(element) {
+    const img = element.querySelector('img');
+    alert('Image cliquée: ' + img.alt + '\nURL complète: ' + img.src);
+    // Intégrer une vraie modal ici
+}
+
+function changerPage(direction) {
+    console.log('Changer page de', direction > 0 ? 'suivante' : 'précédente');
+}
+
+function allerPage(numPage) {
+    console.log('Aller page:', numPage);
+}
+
+// Simuler le chargement de vidéos
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Page exemple chargée');
+    console.log('Les sections vidéos et galerie sont correctement stylisées');
+});
+</script>
+
+</body>
+</html>
+

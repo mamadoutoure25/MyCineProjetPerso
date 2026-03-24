@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supprimer un film - MyCiné</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="../projet.css" rel="stylesheet">
+    <link href="supprimerFilms.css" rel="stylesheet">
+</head>
+<body>
+<!-- Barre de navigation -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="../../index.html">
+            <img src="../Films/images/logo.png" alt="Logo MyCiné" class="me-2" style="height: 40px;">
+            <span>MyCiné</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Basculer la navigation">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="../../index.html">
+                        <i class="ph ph-house me-1"></i> Accueil
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème">
+                    <i class="ph ph-sun" id="theme-icon"></i>
+                </button>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ph ph-user me-1"></i> <span id="username-display" class="d-none"></span> Compte
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" id="user-menu">
+                            <li><a class="dropdown-item" href="../connexion/connexion.html" id="login-link"><i class="ph ph-sign-in me-2"></i> Se connecter</a></li>
+                            <li><a class="dropdown-item d-none" href="../profilUser.html" id="profile-link"><i class="ph ph-user me-2"></i> Mon profil</a></li>
+                            <li class="dropdown-submenu d-none" id="admin-link">
+                                <a class="dropdown-item" href="ajouterFilms.html"><i class="ph ph-plus me-2"></i> Ajouter un film</a>
+                                <a class="dropdown-item" href="modifierFilms.html"><i class="ph ph-pencil me-2"></i> Modifier un film</a>
+                            </li>
+                            <li><a class="dropdown-item d-none" href="../profilUser.html" id="favorites-link"><i class="ph ph-heart me-2"></i> Mes favoris</a></li>
+                            <li><hr class="dropdown-divider d-none" id="divider"></li>
+                            <li><a class="dropdown-item d-none" href="../projet.html" id="logout-link"><i class="ph ph-sign-out me-2"></i> Déconnexion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenu principal -->
+<main class="container mt-5 pt-4">
+    <div class="form-container">
+        <h1 class="form-title">Supprimer un film</h1>
+        <div id="alert-container" class="mb-3"></div>
+        <form id="deleteFilmForm">
+            <div class="mb-3">
+                <label for="film_select" class="form-label required">Sélectionner un film</label>
+                <select class="form-select" id="film_select" name="film_id" required>
+                    <option value="">Choisissez un film...</option>
+                    <!-- Options remplies dynamiquement -->
+                </select>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-danger">Supprimer le film</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- Conteneur pour les notifications -->
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="../Films/sombre_clair.js"></script>
+<script src="../connexion/restrictAdmin.js"></script>
+<script src="../connexion/navbarAuth.js"></script>
+<script src="supprimerFilms.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93cb7b52494e4554',t:'MTc0NjczMzc4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

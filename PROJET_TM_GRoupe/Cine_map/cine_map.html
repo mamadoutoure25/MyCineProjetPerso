@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinémas en Belgique</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+    <link rel="stylesheet" href="cine_map.css">
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="../Films/images/logo.png" alt="MyCiné Logo" class="me-2 rounded">
+                <span class="d-none d-sm-inline">MyCiné</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="../../index.html" id="nav-home">
+                            <i class="fas fa-home me-1"></i> Accueil
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème" aria-label="Changer de thème">
+                        <i class="ph ph-sun" id="theme-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1><i class="fas fa-film"></i> Cinémas en Belgique</h1>
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Rechercher par ville, nom..." aria-label="Rechercher des cinémas">
+                <button id="search-btn" aria-label="Rechercher"><i class="fas fa-search"></i></button>
+                <button id="reset-btn" aria-label="Réinitialiser les filtres"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <div class="filter-box">
+                <select id="province-filter" aria-label="Filtrer par province">
+                    <option value="all">Toutes provinces</option>
+                </select>
+                <select id="category-filter" aria-label="Filtrer par catégorie">
+                    <option value="all">Toutes catégories</option>
+                    <option value="cinéma">Cinémas</option>
+                    <option value="ciné-club">Ciné-clubs</option>
+                    <option value="centre culturel">Centres culturels</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container main-content">
+    <div id="map" class="map-container">
+        <div class="loading-spinner" id="map-loading">
+            <i class="fas fa-spinner fa-spin"></i> Chargement de la carte...
+        </div>
+    </div>
+    <div id="results" class="results">
+        <div class="loading-spinner" id="results-loading">
+            <i class="fas fa-spinner fa-spin"></i> Chargement des cinémas...
+        </div>
+    </div>
+</main>
+
+<footer class="container">
+    <p>Données mises à jour le <span id="update-date">N/A</span></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="cine_map.js"></script>
+<script src="../Films/sombre_clair.js"></script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+[17-Apr-2025 13:10:41 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'langue_originale' inconnu dans field list
+[17-Apr-2025 13:14:48 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'langue_originale' inconnu dans field list
+[17-Apr-2025 13:28:54 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'langue_originale' inconnu dans field list
+[17-Apr-2025 14:43:11 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/27?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:43:11 UTC] PHP Stack trace:
+[17-Apr-2025 14:43:11 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:43:11 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/27?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:43:11 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:43:15 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:43:15 UTC] PHP Stack trace:
+[17-Apr-2025 14:43:15 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:43:15 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:43:15 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:43:18 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:43:18 UTC] PHP Stack trace:
+[17-Apr-2025 14:43:18 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:43:18 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:43:18 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:43:18 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:43:18 UTC] PHP Stack trace:
+[17-Apr-2025 14:43:18 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:43:18 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:43:18 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:43:19 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:43:19 UTC] PHP Stack trace:
+[17-Apr-2025 14:43:19 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:43:19 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:43:19 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:43:24 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:43:24 UTC] PHP Stack trace:
+[17-Apr-2025 14:43:24 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:43:24 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:43:24 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:43:28 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:43:28 UTC] PHP Stack trace:
+[17-Apr-2025 14:43:28 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:43:28 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:43:28 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:43:29 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:43:29 UTC] PHP Stack trace:
+[17-Apr-2025 14:43:29 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:43:29 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:43:29 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:46:05 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 22
+[17-Apr-2025 14:46:05 UTC] PHP Stack trace:
+[17-Apr-2025 14:46:05 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:46:05 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=YOUR_TMDB_API_KEY&language=fr-FR') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:22
+[17-Apr-2025 14:46:05 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:48:50 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:48:50 UTC] PHP Stack trace:
+[17-Apr-2025 14:48:50 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:48:50 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&language=fr-FR', $flags = FALSE, $context = resource(2) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:48:50 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:48:52 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:48:52 UTC] PHP Stack trace:
+[17-Apr-2025 14:48:52 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:48:52 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/500?api_key=YOUR_TMDB_API_KEY&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:48:52 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:51:16 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:51:16 UTC] PHP Stack trace:
+[17-Apr-2025 14:51:16 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:51:16 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:51:16 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:51:18 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:51:18 UTC] PHP Stack trace:
+[17-Apr-2025 14:51:18 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:51:18 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:51:18 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:51:28 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:51:28 UTC] PHP Stack trace:
+[17-Apr-2025 14:51:28 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:51:28 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:51:28 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:51:33 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans field list
+[17-Apr-2025 14:53:40 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:53:40 UTC] PHP Stack trace:
+[17-Apr-2025 14:53:40 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:53:40 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:53:40 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:53:41 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:53:41 UTC] PHP Stack trace:
+[17-Apr-2025 14:53:41 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:53:41 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/60?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:53:41 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:53:45 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/7?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:53:45 UTC] PHP Stack trace:
+[17-Apr-2025 14:53:45 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:53:45 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/7?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:53:45 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:53:46 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/7?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:53:46 UTC] PHP Stack trace:
+[17-Apr-2025 14:53:46 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:53:46 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/7?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:53:46 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:53:54 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:53:54 UTC] PHP Stack trace:
+[17-Apr-2025 14:53:54 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:53:54 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:53:54 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:53:54 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:53:54 UTC] PHP Stack trace:
+[17-Apr-2025 14:53:54 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:53:54 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:53:54 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:54:30 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/7777?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:54:30 UTC] PHP Stack trace:
+[17-Apr-2025 14:54:30 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:54:30 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/7777?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:54:30 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:54:33 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans field list
+[17-Apr-2025 14:55:45 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:55:45 UTC] PHP Stack trace:
+[17-Apr-2025 14:55:45 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:55:45 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:55:45 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:55:46 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:55:46 UTC] PHP Stack trace:
+[17-Apr-2025 14:55:46 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:55:46 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:55:46 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:55:54 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 14:55:54 UTC] PHP Stack trace:
+[17-Apr-2025 14:55:54 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 14:55:54 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 14:55:54 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 14:55:58 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'id' inconnu dans where clause
+[17-Apr-2025 15:05:38 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:05:38 UTC] PHP Stack trace:
+[17-Apr-2025 15:05:38 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:05:38 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=YOUR_TMDB_API_KEY&language=fr-FR', $flags = FALSE, $context = resource(2) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:05:38 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:05:45 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:05:45 UTC] PHP Stack trace:
+[17-Apr-2025 15:05:45 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:05:45 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=YOUR_TMDB_API_KEY&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:05:45 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:05:49 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/12?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:05:49 UTC] PHP Stack trace:
+[17-Apr-2025 15:05:49 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:05:49 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/12?api_key=YOUR_TMDB_API_KEY&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:05:49 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:05:52 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/13?api_key=YOUR_TMDB_API_KEY&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 401 Unauthorized
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:05:52 UTC] PHP Stack trace:
+[17-Apr-2025 15:05:52 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:05:52 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/13?api_key=YOUR_TMDB_API_KEY&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:05:52 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:06:35 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:06:35 UTC] PHP Stack trace:
+[17-Apr-2025 15:06:35 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:06:35 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(2) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:06:35 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:06:45 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:06:45 UTC] PHP Stack trace:
+[17-Apr-2025 15:06:45 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:06:45 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:06:45 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:06:47 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'film_id' inconnu dans where clause
+[17-Apr-2025 15:14:31 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:14:31 UTC] PHP Stack trace:
+[17-Apr-2025 15:14:31 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:14:31 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(2) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:14:31 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:15:12 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:15:17 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:15:18 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:15:18 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:16:07 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:16:14 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:16:19 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:16:19 UTC] PHP Stack trace:
+[17-Apr-2025 15:16:19 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:16:19 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:16:19 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:16:34 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:16:46 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:16:47 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:18:06 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:18:06 UTC] PHP Stack trace:
+[17-Apr-2025 15:18:06 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:18:06 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:18:06 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:18:18 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:18:24 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:18:25 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:21:22 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:21:22 UTC] PHP Stack trace:
+[17-Apr-2025 15:21:22 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:21:22 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:21:22 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:21:32 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'description' inconnu dans field list
+[17-Apr-2025 15:26:04 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 23
+[17-Apr-2025 15:26:04 UTC] PHP Stack trace:
+[17-Apr-2025 15:26:04 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:26:04 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR', $flags = FALSE, $context = resource(1) of type (stream-context)) C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:23
+[17-Apr-2025 15:26:04 UTC] Erreur dans fetchTMDB.php: Erreur lors de la requête à l'API TMDB
+[17-Apr-2025 15:26:12 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans field list
+[17-Apr-2025 15:27:07 UTC] Erreur PDO dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans field list
+[17-Apr-2025 15:33:06 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:33:06 UTC] PHP Stack trace:
+[17-Apr-2025 15:33:06 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:33:06 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 15:33:18 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:33:21 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:33:34 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:33:34 UTC] PHP Stack trace:
+[17-Apr-2025 15:33:34 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:33:34 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 15:33:42 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:33:59 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:33:59 UTC] PHP Stack trace:
+[17-Apr-2025 15:33:59 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:33:59 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 15:34:07 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:34:25 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:34:47 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:34:47 UTC] PHP Stack trace:
+[17-Apr-2025 15:34:47 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:34:47 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 15:34:56 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:35:08 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:35:08 UTC] PHP Stack trace:
+[17-Apr-2025 15:35:08 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:35:08 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 15:35:16 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:35:29 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:35:29 UTC] PHP Stack trace:
+[17-Apr-2025 15:35:29 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:35:29 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 15:35:37 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:36:02 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:36:02 UTC] PHP Stack trace:
+[17-Apr-2025 15:36:02 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:36:02 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 15:36:03 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:36:03 UTC] PHP Stack trace:
+[17-Apr-2025 15:36:03 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:36:03 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 15:36:10 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'tmdb_id' inconnu dans where clause
+[17-Apr-2025 15:59:06 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 15:59:06 UTC] PHP Stack trace:
+[17-Apr-2025 15:59:06 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 15:59:06 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:04:49 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:04:49 UTC] PHP Stack trace:
+[17-Apr-2025 16:04:49 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:04:49 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:09:04 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:09:04 UTC] PHP Stack trace:
+[17-Apr-2025 16:09:04 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:09:04 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:09:04 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:09:04 UTC] PHP Stack trace:
+[17-Apr-2025 16:09:04 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:09:04 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:09:37 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'id' inconnu dans field list
+[17-Apr-2025 16:09:45 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'id' inconnu dans field list
+[17-Apr-2025 16:09:47 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'id' inconnu dans field list
+[17-Apr-2025 16:09:47 UTC] Erreur dans ajouterFilms.php: SQLSTATE[42S22]: Column not found: 1054 Champ 'id' inconnu dans field list
+[17-Apr-2025 16:12:21 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:12:21 UTC] PHP Stack trace:
+[17-Apr-2025 16:12:21 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:12:21 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:12:25 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:12:25 UTC] PHP Stack trace:
+[17-Apr-2025 16:12:25 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:12:25 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:12:26 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:12:26 UTC] PHP Stack trace:
+[17-Apr-2025 16:12:26 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:12:26 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/1?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:18:33 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:18:33 UTC] PHP Stack trace:
+[17-Apr-2025 16:18:33 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:18:33 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:18:35 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:18:35 UTC] PHP Stack trace:
+[17-Apr-2025 16:18:35 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:18:35 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:30:48 UTC] PHP Warning:  file_get_contents(https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&amp;language=fr-FR&amp;append_to_response=credits): failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+ in C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php on line 17
+[17-Apr-2025 16:30:48 UTC] PHP Stack trace:
+[17-Apr-2025 16:30:48 UTC] PHP   1. {main}() C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:0
+[17-Apr-2025 16:30:48 UTC] PHP   2. file_get_contents($filename = 'https://api.themoviedb.org/3/movie/10?api_key=04c35731a5ee918f014970082a0088b1&language=fr-FR&append_to_response=credits') C:\wamp64\www\PROJET_TM_GRoupeFonctionne\www\PROJET_TM_GRoupe\GestionFilmsBD\fetchTMDB.php:17
+[17-Apr-2025 16:36:12 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[17-Apr-2025 16:36:17 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[17-Apr-2025 16:36:18 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[17-Apr-2025 16:36:19 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[17-Apr-2025 16:36:19 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[17-Apr-2025 16:36:20 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[17-Apr-2025 16:36:20 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[17-Apr-2025 16:38:24 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[17-Apr-2025 16:39:16 UTC] Erreur dans fetchTMDB.php: Erreur cURL: SSL certificate problem: unable to get local issuer certificate
+[26-Apr-2025 19:20:11 UTC] Erreur de connexion à la base de données: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[26-Apr-2025 19:20:17 UTC] Erreur de connexion à la base de données: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:26:36 UTC] Erreur dans fetchActeurs.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:26:36 UTC] Erreur dans fetchGenres.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:26:40 UTC] Erreur dans fetchTMDB.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:27:35 UTC] Erreur dans fetchGenres.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:27:35 UTC] Erreur dans fetchActeurs.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:27:39 UTC] Erreur dans fetchTMDB.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:29:11 UTC] Erreur dans fetchActeurs.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:29:11 UTC] Erreur dans fetchGenres.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue
+[03-May-2025 09:29:16 UTC] Erreur dans fetchTMDB.php: SQLSTATE[HY000] [1049] Base 'cinescope' inconnue

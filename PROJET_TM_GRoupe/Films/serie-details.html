@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCiné - Détails de la Série</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../Films/movie-details.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="../../index.html">
+            <div class="logo-container me-2">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="brand-text d-none d-sm-inline">MyCiné</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="../../index.html" id="nav-home">
+                        <i class="ph ph-house me-1"></i> Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../series.html">
+                        <i class="ph ph-television me-1"></i> Séries
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème">
+                    <i class="ph ph-sun" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container-fluid mt-5 pt-4">
+    <section class="movie-hero-section mb-5 position-relative" id="serie-hero-section">
+        <div class="movie-hero-overlay"></div>
+        <div class="movie-hero-content container position-relative">
+            <div class="row align-items-end">
+                <div class="col-lg-8">
+                    <div class="hero-content-wrapper">
+                        <h1 class="movie-title" id="serie-title"></h1>
+                        <div class="movie-meta mb-3" id="serie-tags"></div>
+                        <p class="movie-overview" id="serie-overview"></p>
+
+                        <div class="action-buttons mb-4">
+                            <button class="btn btn-primary btn-action" id="add-to-favorites" title="Favoris">
+                                <i class="ph ph-heart"></i> <span class="btn-text">Ajouter aux favoris</span>
+                            </button>
+                            <button class="btn btn-warning btn-action" id="add-to-watchlist">
+                                <i class="ph ph-clock"></i> À regarder plus tard
+                            </button>
+                            <button class="btn btn-success btn-action" id="mark-as-watched">
+                                <i class="ph ph-check-circle"></i> Déjà vu
+                            </button>
+                            <a href="#" class="btn btn-outline-light btn-action" id="watch-trailer" style="display: none;">
+                                <i class="ph ph-play-circle"></i> Voir la bande-annonce
+                            </a>
+                        </div>
+
+                        <div class="rating-section">
+                            <p class="rating-label">Votre note locale :</p>
+                            <div class="star-rating" id="star-rating" aria-live="polite">
+                                <button type="button" class="star" data-value="1" title="1 etoile" aria-label="1 etoile">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="2" title="2 etoiles" aria-label="2 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="3" title="3 etoiles" aria-label="3 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="4" title="4 etoiles" aria-label="4 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="5" title="5 etoiles" aria-label="5 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="6" title="6 etoiles" aria-label="6 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="7" title="7 etoiles" aria-label="7 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="8" title="8 etoiles" aria-label="8 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="9" title="9 etoiles" aria-label="9 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                                <button type="button" class="star" data-value="10" title="10 etoiles" aria-label="10 etoiles">
+                                    <i class="ph ph-star"></i>
+                                </button>
+                            </div>
+                            <p id="rating-feedback" class="rating-feedback mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 d-none d-lg-block">
+                    <div class="poster-container">
+                        <img id="serie-poster" class="movie-poster" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E%3Crect fill='%23334155' width='300' height='450'/%3E%3C/svg%3E" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Distribution -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-users"></i></span>
+                Distribution
+            </h2>
+            <div class="cast-carousel" id="serie-cast"></div>
+        </div>
+    </section>
+
+    <!-- Saisons -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-stack"></i></span>
+                Saisons
+            </h2>
+            <div class="cast-carousel" id="serie-seasons"></div>
+        </div>
+    </section>
+
+    <!-- Production -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-factory"></i></span>
+                Production
+            </h2>
+            <div class="production-companies" id="serie-production"></div>
+        </div>
+    </section>
+
+    <!-- Plateformes de streaming -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-television"></i></span>
+                Où regarder ?
+            </h2>
+            <div class="providers-container" id="serie-providers"></div>
+            <div class="alert alert-info mt-3 d-none" id="noProviders">
+                <i class="ph ph-info me-2"></i> Cette série n'est actuellement disponible sur aucune plateforme en Belgique.
+            </div>
+        </div>
+    </section>
+
+    <!-- Bande-annonce -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-play"></i></span>
+                Bande-annonce
+            </h2>
+            <div class="trailer-container" id="serie-trailer"></div>
+        </div>
+    </section>
+</main>
+
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../Films/sombre_clair.js"></script>
+<script src="serie-details.js"></script>
+</body>
+</html>
