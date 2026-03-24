@@ -166,7 +166,7 @@ function mettreAJourInterfaceAuthentification() {
         : null;
 
     if (lienProfilAncre) {
-        lienProfilAncre.setAttribute("href", "PROJET_TM_GRoupe/Films/profilUser.html");
+        lienProfilAncre.setAttribute("href", "PROJET_TM/Films/profilUser.html");
     }
 
     // Mise a jour du nom d'utilisateur sans casser l'ancre

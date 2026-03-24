@@ -102,7 +102,7 @@ async function initialiserApplication() {
         console.log('Initialisation de l\'application, chemin:', window.location.pathname);
         verifierAuthentification();
         mettreAJourInterfaceAuthentification();
-        if (window.location.pathname.includes('PROJET_TM_GRoupe/Films/movie-details.html')) {
+        if (window.location.pathname.includes('PROJET_TM/Films/movie-details.html')) {
             const parametresUrl = new URLSearchParams(window.location.search);
             const idFilm = parametresUrl.get('id');
             console.log('ID du film depuis l\'URL:', idFilm);
