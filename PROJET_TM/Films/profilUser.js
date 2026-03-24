@@ -55,6 +55,7 @@ const ETAT_PROFIL = {
         filmsVus: "date_desc",
         acteurs: "name_asc",
     },
+    filtreActeurs: "all", // Filtre pour les acteurs favoris (all, Acting, Directing, Composing)
     actionEnCours: null,
 };
 
@@ -70,6 +71,10 @@ async function initialiserProfilUtilisateur() {
         }
         mettreAJourInterfaceAuthentification();
         configurerEcouteursEvenements();
+        
+        // Synchroniser les acteurs favoris du localStorage vers la BD
+        await synchroniserActeursFavorisBD();
+        
         await chargerToutesLesListes();
         console.log("✅ Profil utilisateur initialisé avec succès");
     } catch (erreur) {
@@ -147,8 +152,91 @@ async function chargerNotesUtilisateur() {
                 ETAT_PROFIL.notesParTmdb.set(tmdbId, note);
             }
         });
+
     } catch (erreur) {
         console.warn("⚠️ Impossible de charger les notes locales:", erreur);
+    }
+}
+
+/**
+ * Synchroniser les acteurs favoris du localStorage vers la BD
+ * Cette fonction est appelée au chargement du profil pour migrer les données existantes
+ */
+async function synchroniserActeursFavorisBD() {
+    const userId = ETAT_PROFIL.authentification?.userId;
+    if (!userId) return;
+
+    try {
+        // Récupérer les acteurs du localStorage
+        const acteursFavorisStored = localStorage.getItem('actor_favorites');
+        if (!acteursFavorisStored) {
+            console.log("ℹ️ Aucun acteur favori dans localStorage");
+            return;
+        }
+
+        const acteursList = JSON.parse(acteursFavorisStored);
+        if (!Array.isArray(acteursList) || acteursList.length === 0) {
+            console.log("ℹ️ La liste des acteurs favoris est vide");
+            return;
+        }
+
+        console.log(`🔄 Synchronisation de ${acteursList.length} acteurs favoris vers la BD...`);
+
+        // Vérifier quels acteurs sont déjà dans la BD
+        let acteursAjoutes = 0;
+        let acteursDejaPresents = 0;
+
+        for (const acteur of acteursList) {
+            try {
+                // Vérifier si l'acteur est déjà dans les favoris BD
+                const checkResponse = await fetch(`favorite-actors.php?user_id=${userId}&actor_id=${acteur.id}`);
+                
+                if (checkResponse.ok) {
+                    const checkData = await checkResponse.json();
+                    if (!checkData.is_favorite) {
+                        // L'acteur n'est pas dans la BD, l'ajouter
+                        const addResponse = await fetch('favorite-actors.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                user_id: userId,
+                                actor_id: acteur.id,
+                                actor_name: acteur.name || 'Acteur Inconnu'
+                            })
+                        });
+
+                        if (addResponse.ok) {
+                            const addData = await addResponse.json();
+                            if (addData.success) {
+                                console.log(`✅ ${acteur.name} ajouté à la BD`);
+                                acteursAjoutes++;
+                            } else {
+                                console.warn(`⚠️ Impossible d'ajouter ${acteur.name}:`, addData.message);
+                            }
+                        } else {
+                            console.warn(`⚠️ Erreur HTTP lors de l'ajout de ${acteur.name}`);
+                        }
+                    } else {
+                        console.log(`ℹ️ ${acteur.name} est déjà dans les favoris BD`);
+                        acteursDejaPresents++;
+                    }
+                }
+            } catch (erreur) {
+                console.warn(`⚠️ Erreur lors du traitement de ${acteur.name}:`, erreur);
+            }
+        }
+
+        const message = `✅ Synchronisation terminée: ${acteursAjoutes} ajouté(s), ${acteursDejaPresents} déjà présent(s)`;
+        console.log(message);
+        
+        if (acteursAjoutes > 0) {
+            afficherNotification(`${acteursAjoutes} acteur(s) ajouté(s) à votre BD`, "success");
+        }
+
+    } catch (erreur) {
+        console.error("❌ Erreur lors de la synchronisation des acteurs favoris:", erreur);
     }
 }
 
@@ -253,6 +341,88 @@ async function chargerFilmsVus() {
         afficherErreurChargement(DOM.watchedMovies, "films vus");
     } finally {
         ETAT_PROFIL.enChargement.filmsVus = false;
+    }
+}
+
+async function chargerActeursFavoris() {
+    if (ETAT_PROFIL.enChargement.acteurs) return;
+    try {
+        ETAT_PROFIL.enChargement.acteurs = true;
+        console.log("👥 Chargement des acteurs favoris...");
+        
+        const userId = ETAT_PROFIL.authentification?.userId;
+        let acteursList = [];
+        
+        // Charger depuis la BD si connecté
+        if (userId) {
+            try {
+                const response = await fetch(`favorite-actors.php?user_id=${userId}`);
+                if (response.ok) {
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const donnees = await response.json();
+                        if (donnees.success && donnees.favorite_actors) {
+                            // Convertir les résultats BD en format compatible
+                            acteursList = donnees.favorite_actors.map(actor => ({
+                                id: actor.tmdb_id,
+                                name: actor.nom,
+                                date_ajout: new Date().toISOString()
+                            }));
+                            console.log(`✅ ${acteursList.length} acteurs chargés depuis la BD`);
+                        }
+                    }
+                }
+            } catch (erreur) {
+                console.warn("⚠️ Erreur lors du chargement depuis la BD:", erreur);
+                // Continuer avec le localStorage en cas d'erreur
+            }
+        }
+        
+        // Si aucun acteur trouvé dans la BD, utiliser localStorage
+        if (acteursList.length === 0) {
+            const acteursFavorisStored = localStorage.getItem('actor_favorites');
+            acteursList = acteursFavorisStored ? JSON.parse(acteursFavorisStored) : [];
+        }
+        
+        if (acteursList.length === 0) {
+            ETAT_PROFIL.acteursFavoris = [];
+            afficherActeursVide();
+            return;
+        }
+        
+        // Récupérer les détails de chaque acteur
+        const acteursDetails = await Promise.all(
+            acteursList.map(async (acteur) => {
+                const details = await recupererDetailsActeur(acteur.id);
+                return details ? { ...details, date_ajout: acteur.date_ajout || new Date().toISOString() } : null;
+            })
+        );
+        
+        ETAT_PROFIL.acteursFavoris = acteursDetails.filter((acteur) => acteur !== null);
+        trierActeurs(ETAT_PROFIL.triActuel.acteurs);
+        afficherActeursFavoris();
+        
+    } catch (erreur) {
+        console.error("❌ Erreur lors du chargement des acteurs favoris:", erreur);
+        afficherActeursVide();
+    } finally {
+        ETAT_PROFIL.enChargement.acteurs = false;
+    }
+}
+
+async function recupererDetailsActeur(id) {
+    const url = `${CONFIG.URL_BASE}/person/${id}?api_key=${CONFIG.CLE_API}&language=fr-FR`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("La réponse n'est pas un JSON valide");
+        }
+        return await response.json();
+    } catch (erreur) {
+        console.error(`❌ Erreur API pour acteur ${id}:`, erreur);
+        return null;
     }
 }
 
@@ -361,6 +531,11 @@ function afficherListeVide(conteneur, typeListe, icone) {
             description: "Marquez les films que vous avez déjà regardés.",
             action: "Parcourir le catalogue",
         },
+        acteurs: {
+            titre: "Aucun acteur favori",
+            description: "Ajoutez des acteurs à vos favoris pour les voir ici.",
+            action: "Parcourir le catalogue",
+        },
     };
     const message = messages[typeListe] || messages.favorites;
     conteneur.innerHTML = `
@@ -375,18 +550,7 @@ function afficherListeVide(conteneur, typeListe, icone) {
     `;
 }
 
-function afficherErreurChargement(conteneur, typeListe) {
-    conteneur.innerHTML = `
-        <div class="empty-state">
-            <i class="ph ph-warning-circle text-danger"></i>
-            <h3>Erreur de chargement</h3>
-            <p>Impossible de charger ${typeListe}. Veuillez réessayer.</p>
-            <button class="btn btn-outline-primary" onclick="chargerToutesLesListes()">
-                <i class="ph ph-arrow-clockwise me-2"></i>Réessayer
-            </button>
-        </div>
-    `;
-}
+// Fonction de tri pour les acteurs - utilise afficherActeursFavoris pour l'affichage
 
 function configurerEcouteursEvenements() {
     console.log("🎧 Configuration des écouteurs d'événements du profil...");
@@ -463,6 +627,16 @@ function configurerEcouteursEvenements() {
         console.log("👥 Mise à jour des acteurs favoris détectée");
         chargerActeursFavoris();
     });
+
+    // Ajouter les écouteurs pour les filtres des acteurs
+    const filtresActeurs = document.querySelectorAll('input[name="actor-filter"]');
+    filtresActeurs.forEach((filtre) => {
+        filtre.addEventListener("change", (e) => {
+            ETAT_PROFIL.filtreActeurs = e.target.value;
+            console.log(`📊 Filtre appliqué: ${ETAT_PROFIL.filtreActeurs}`);
+            afficherActeursFavoris();
+        });
+    });
 }
 
 function configurerEcouteursCartesFilms(conteneur, typeListe) {
@@ -487,6 +661,33 @@ function configurerEcouteursCartesFilms(conteneur, typeListe) {
     });
 }
 
+function configurerEcouteursCartesActeurs() {
+    if (!DOM.actorsFavorites) return;
+    
+    // Clic sur la carte pour voir le profil
+    DOM.actorsFavorites.querySelectorAll(".actor-card-new").forEach((carte) => {
+        carte.addEventListener("click", (e) => {
+            const actorId = carte.dataset.id;
+            if (actorId) {
+                // Ajouter un petit effet avant la navigation
+                carte.style.transform = "scale(0.98)";
+                setTimeout(() => {
+                    window.location.href = `actor-details.html?id=${actorId}`;
+                }, 100);
+            }
+        });
+
+        // Ajouter un effet tactile sur mobile
+        carte.addEventListener("touchstart", () => {
+            carte.style.transform = "scale(0.98)";
+        });
+
+        carte.addEventListener("touchend", () => {
+            carte.style.transform = "";
+        });
+    });
+}
+
 // ==================== ACTEURS FAVORIS ====================
 
 
@@ -504,65 +705,105 @@ function afficherActeursFavoris() {
 
     console.log(`🎬 Affichage de ${ETAT_PROFIL.acteursFavoris.length} acteurs favoris`);
     
+    // Générer les cartes HTML
     const html = ETAT_PROFIL.acteursFavoris.map((acteur) => creerCarteActeurCommeFilm(acteur)).join("");
     DOM.actorsFavorites.innerHTML = html;
     
+    // Configurer les écouteurs d'événements
     configurerEcouteursCartesActeurs();
     mettreAJourBadgeActeurs();
     
-    // Animation des cartes
-    DOM.actorsFavorites.querySelectorAll(".actor-favorite-card").forEach((carte, index) => {
-        carte.style.animationDelay = `${index * 0.1}s`;
+    // Animations des cartes avec stagger effect
+    const cartes = DOM.actorsFavorites.querySelectorAll(".actor-card-new");
+    cartes.forEach((carte, index) => {
+        // Reset animation
+        carte.style.animation = "none";
+        carte.offsetHeight; // Trigger reflow
+        
+        // Apply animation with delay
+        carte.style.animationDelay = `${index * 0.08}s`;
         carte.classList.add("animate-fadeInScale");
     });
 }
 
 /**
- * Créer une carte d'acteur comme les films favoris
+ * Créer une carte d'acteur avec le nouveau design amélioré
  */
 function creerCarteActeurCommeFilm(acteur) {
     const nomActeur = acteur.name || "Acteur inconnu";
     const photoUrl = acteur.profile_path 
         ? `${CONFIG.URL_IMAGE}${acteur.profile_path}` 
-        : "https://via.placeholder.com/300x450?text=Pas+de+photo";
-    const age = acteur.age !== null ? `${acteur.age} ans` : "Âge inconnu";
-    const origine = acteur.place_of_birth || "Lieu inconnu";
+        : "https://via.placeholder.com/450x600?text=Pas+de+photo";
+    
+    // Calcul de l'âge
+    const age = acteur.birthday ? 
+        Math.floor((new Date() - new Date(acteur.birthday)) / (365.25 * 24 * 60 * 60 * 1000)) : 
+        null;
+    
+    // Lieu de naissance avec truncation si trop long
+    let origine = acteur.place_of_birth || "Lieu inconnu";
+    if (origine.length > 35) {
+        origine = origine.substring(0, 32) + "...";
+    }
+    
+    // Score de popularité formaté
+    const popularite = acteur.popularity ? Math.round(acteur.popularity) : 0;
+    
+    // Classe d'animation
+    const animationClass = "animate-fadeInScale";
 
     return `
-        <div class="profile-movie-card actor-favorite-card" data-id="${acteur.id}" data-actor-name="${nomActeur}" draggable="true">
-            <div class="card-img-container">
-                <img src="${photoUrl}" 
-                     class="card-img-top" 
-                     alt="${nomActeur}"
-                     loading="lazy"
-                     onerror="this.src='https://via.placeholder.com/300x450?text=Pas+de+photo'">
-                <div class="movie-overlay">
-                    <button class="play-btn view-btn" data-actor-id="${acteur.id}" title="Voir le profil">
-                        <i class="ph ph-arrow-up-right"></i>
-                    </button>
-                </div>
-                <div class="actor-name-overlay">
-                    <span class="actor-name-text">${nomActeur}</span>
-                    <div class="actor-info-details">
-                        <p class="actor-age"><i class="ph ph-cake me-1"></i>${age}</p>
-                        <p class="actor-origin"><i class="ph ph-map-pin me-1"></i>${origine}</p>
+        <div class="actor-card-new" data-id="${acteur.id}" data-actor-name="${nomActeur}">
+            <div class="actor-card-inner">
+                <!-- Image avec gradient overlay -->
+                <div class="actor-image-container">
+                    <img src="${photoUrl}" 
+                         class="actor-image" 
+                         alt="${nomActeur}"
+                         loading="lazy"
+                         title="${nomActeur}"
+                         onerror="this.src='https://via.placeholder.com/450x600?text=Pas+de+photo'">
+                    
+                    <!-- Overlay d'informations au survol -->
+                    <div class="actor-hover-overlay">
+                        <div class="overlay-content">
+                            <h4 class="overlay-name">${nomActeur}</h4>
+                            
+                            <div class="overlay-details">
+                                ${age !== null ? `<p class="overlay-item"><i class="ph ph-cake"></i> ${age} ans</p>` : ''}
+                                <p class="overlay-item"><i class="ph ph-map-pin"></i> ${origine}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <h6 class="card-title">${nomActeur}</h6>
+                
+                <!-- Section d'informations -->
+                <div class="actor-info">
+                    <h5 class="actor-name" title="${nomActeur}">${nomActeur}</h5>
+                    
+                    <!-- Métadonnées (âge, popularité) -->
+                    <div class="actor-meta">
+                        ${age !== null ? `<span class="actor-age" title="${age} ans"><i class="ph ph-cake"></i> <span>${age} ans</span></span>` : ''}
+                        ${popularite > 0 ? `<span class="actor-popularity" title="Popularité: ${popularite}"><i class="ph ph-fire"></i> <span>${popularite}</span></span>` : ''}
+                    </div>
+                    
+                    <!-- Lieu de naissance -->
+                    <p class="actor-birthplace" title="${acteur.place_of_birth || 'Lieu inconnu'}">
+                        <i class="ph ph-map-pin"></i> ${origine}
+                    </p>
+                </div>
             </div>
         </div>
     `;
 }
 
 /**
- * Afficher l'état vide des acteurs favoris
+ * Afficher l'état vide des acteurs favoris avec un message attrayant
  */
 function afficherActeursVide() {
     const messages = {
-        titre: "Aucun acteur favori",
-        description: "Commencez à ajouter des acteurs favoris pour les voir ici.",
+        titre: "Aucun acteur favori pour le moment",
+        description: "Explorez des films et ajoutez vos acteurs préférés à votre collection personnelle.",
         action: "Découvrir les films",
     };
 
@@ -571,8 +812,8 @@ function afficherActeursVide() {
             <i class="ph ph-user-circle"></i>
             <h3>${messages.titre}</h3>
             <p>${messages.description}</p>
-            <p class="text-muted small">Consultez des films et ajoutez des acteurs à vos favoris !</p>
-            <a href="projetBD.html" class="btn btn-primary">
+            <p class="text-muted small">🎬 Parcourez nos films et cliquez sur les acteurs pour les ajouter à vos favoris !</p>
+            <a href="projetBD.html" class="btn btn-primary mt-3">
                 <i class="ph ph-film-strip me-2"></i>${messages.action}
             </a>
         </div>
@@ -580,52 +821,33 @@ function afficherActeursVide() {
 }
 
 /**
- * Configurer les écouteurs pour les cartes d'acteurs
+ * Configurer les écouteurs pour les cartes d'acteurs améliorées
  */
 function configurerEcouteursCartesActeurs() {
     if (!DOM.actorsFavorites) return;
-
-    let isDragging = false;
-
-    // Boutons pour voir le profil
-    DOM.actorsFavorites.querySelectorAll(".view-btn").forEach((bouton) => {
-        bouton.addEventListener("click", (e) => {
-            e.stopPropagation();
-            if (!isDragging) {
-                const actorId = bouton.dataset.actorId;
-                if (actorId) {
-                    window.location.href = `actor-details.html?id=${actorId}`;
-                }
-            }
-        });
-    });
-
+    
     // Clic sur la carte pour voir le profil
-    DOM.actorsFavorites.querySelectorAll(".actor-favorite-card").forEach((carte) => {
-        carte.addEventListener("mousedown", () => {
-            isDragging = false;
-        });
-
-        carte.addEventListener("dragstart", () => {
-            isDragging = true;
-        });
-
-        carte.addEventListener("dragend", () => {
-            setTimeout(() => { isDragging = false; }, 100);
-        });
-
+    DOM.actorsFavorites.querySelectorAll(".actor-card-new").forEach((carte) => {
         carte.addEventListener("click", (e) => {
-            if (!isDragging) {
-                const actorId = carte.dataset.id;
-                if (actorId) {
+            const actorId = carte.dataset.id;
+            if (actorId) {
+                // Ajouter un petit effet avant la navigation
+                carte.style.transform = "scale(0.98)";
+                setTimeout(() => {
                     window.location.href = `actor-details.html?id=${actorId}`;
-                }
+                }, 100);
             }
         });
-    });
 
-    // Configuration du drag and drop
-    configurerDragAndDropActeurs();
+        // Ajouter un effet tactile sur mobile
+        carte.addEventListener("touchstart", () => {
+            carte.style.transform = "scale(0.98)";
+        });
+
+        carte.addEventListener("touchend", () => {
+            carte.style.transform = "";
+        });
+    });
 }
 
 /**
@@ -692,6 +914,69 @@ function configurerDragAndDropActeurs() {
             draggedElement = null;
         });
     });
+}
+
+/**
+ * Supprimer un acteur des favoris
+ */
+async function supprimerActeurDesFavoris(idActeur) {
+    try {
+        console.log(`🗑️ Suppression de l'acteur ${idActeur} des favoris`);
+        
+        // Récupérer les acteurs favoris depuis localStorage
+        let acteursFavorisStored = localStorage.getItem('actor_favorites');
+        let acteursList = acteursFavorisStored ? JSON.parse(acteursFavorisStored) : [];
+        
+        // Filtrer pour supprimer l'acteur
+        acteursList = acteursList.filter(a => a.id !== idActeur);
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem('actor_favorites', JSON.stringify(acteursList));
+        
+        // Mettre à jour l'état
+        ETAT_PROFIL.acteursFavoris = ETAT_PROFIL.acteursFavoris.filter(a => a.id !== idActeur);
+        
+        // Rafraîchir l'affichage
+        afficherActeursFavoris();
+        mettreAJourBadgeActeurs();
+        
+        afficherNotification("Acteur retiré des favoris", "success");
+        
+        // Synchroniser la suppression avec la BD si l'utilisateur est connecté
+        const userId = ETAT_PROFIL.authentification?.userId;
+        if (userId) {
+            try {
+                const response = await fetch('favorite-actors.php', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        actor_id: idActeur
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        console.log(`✅ Acteur ${idActeur} supprimé de la BD`);
+                    } else {
+                        console.warn(`⚠️ Erreur lors de la suppression de la BD:`, data.message);
+                    }
+                }
+            } catch (erreur) {
+                console.warn(`⚠️ Erreur lors de la suppression dans la BD:`, erreur);
+            }
+        }
+        
+        // Déclencher un événement pour synchroniser avec actor-details.js
+        window.dispatchEvent(new Event("actorFavoritesUpdated"));
+        
+    } catch (erreur) {
+        console.error("❌ Erreur lors de la suppression de l'acteur:", erreur);
+        afficherNotification("Erreur lors de la suppression", "danger");
+    }
 }
 
 /**
@@ -792,15 +1077,19 @@ function trierActeurs(ordre) {
             break;
         case "age_asc":
             ETAT_PROFIL.acteursFavoris.sort((a, b) => {
-                const ageA = a.age !== null ? a.age : Infinity;
-                const ageB = b.age !== null ? b.age : Infinity;
+                const ageA = a.birthday ? 
+                    Math.floor((new Date() - new Date(a.birthday)) / (365.25 * 24 * 60 * 60 * 1000)) : Infinity;
+                const ageB = b.birthday ? 
+                    Math.floor((new Date() - new Date(b.birthday)) / (365.25 * 24 * 60 * 60 * 1000)) : Infinity;
                 return ageA - ageB;
             });
             break;
         case "age_desc":
             ETAT_PROFIL.acteursFavoris.sort((a, b) => {
-                const ageA = a.age !== null ? a.age : -Infinity;
-                const ageB = b.age !== null ? b.age : -Infinity;
+                const ageA = a.birthday ? 
+                    Math.floor((new Date() - new Date(a.birthday)) / (365.25 * 24 * 60 * 60 * 1000)) : -Infinity;
+                const ageB = b.birthday ? 
+                    Math.floor((new Date() - new Date(b.birthday)) / (365.25 * 24 * 60 * 60 * 1000)) : -Infinity;
                 return ageB - ageA;
             });
             break;
@@ -826,11 +1115,39 @@ function trierActeurs(ordre) {
 async function supprimerTousLesActeurs() {
     try {
         console.log("🗑️ Suppression de tous les acteurs favoris");
+        
+        // Récupérer tous les acteurs avant suppression
+        const acteursActuels = ETAT_PROFIL.acteursFavoris;
+        
+        // Supprimer du localStorage
         localStorage.removeItem('actor_favorites');
         ETAT_PROFIL.acteursFavoris = [];
         afficherActeursVide();
         mettreAJourBadgeActeurs();
         afficherNotification("Tous les acteurs favoris ont été supprimés", "success");
+        
+        // Supprimer tous les acteurs de la BD
+        const userId = ETAT_PROFIL.authentification?.userId;
+        if (userId && acteursActuels.length > 0) {
+            try {
+                for (const acteur of acteursActuels) {
+                    await fetch('favorite-actors.php', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            actor_id: acteur.id
+                        })
+                    }).catch(err => console.warn(`⚠️ Erreur lors de la suppression de ${acteur.name}:`, err));
+                }
+                console.log(`✅ Tous les acteurs supprimés de la BD`);
+            } catch (erreur) {
+                console.warn(`⚠️ Erreur lors de la suppression dans la BD:`, erreur);
+            }
+        }
+        
     } catch (erreur) {
         console.error("❌ Erreur lors de la suppression des acteurs:", erreur);
         afficherNotification("Erreur lors de la suppression", "danger");
@@ -968,6 +1285,7 @@ function mettreAJourStatistiques() {
         favorites: ETAT_PROFIL.favoris.length,
         watchlist: ETAT_PROFIL.watchlist.length,
         watched: ETAT_PROFIL.filmsVus.length,
+        actors: ETAT_PROFIL.acteursFavoris.length,
     };
     if (DOM.favoritesCount) DOM.favoritesCount.textContent = stats.favorites;
     if (DOM.watchlistCount) DOM.watchlistCount.textContent = stats.watchlist;
@@ -975,6 +1293,7 @@ function mettreAJourStatistiques() {
     if (DOM.favoritesBadge) DOM.favoritesBadge.textContent = stats.favorites;
     if (DOM.watchlistBadge) DOM.watchlistBadge.textContent = stats.watchlist;
     if (DOM.watchedBadge) DOM.watchedBadge.textContent = stats.watched;
+    if (DOM.actorsBadge) DOM.actorsBadge.textContent = stats.actors;
     console.log("📊 Statistiques mises à jour:", stats);
 }
 
@@ -1081,76 +1400,6 @@ document.head.appendChild(styleAnimations);
 document.addEventListener("DOMContentLoaded", initialiserProfilUtilisateur);
 
 // Charger et afficher les acteurs favoris
-async function chargerActeursFavoris() {
-    try {
-        console.log('📺 Chargement des acteurs favoris...');
-
-        const actorFavorites = localStorage.getItem('actor_favorites');
-        const actors = actorFavorites ? JSON.parse(actorFavorites) : [];
-
-        console.log('✅ Acteurs trouvés:', actors.length);
-        ETAT_PROFIL.acteursFavoris = actors;
-        
-        if (actors.length === 0) {
-            console.log('ℹ️ Aucun acteur favori');
-            afficherActeursVide();
-            mettreAJourBadgeActeurs();
-            return;
-        }
-
-        console.log('🔄 Récupération des images pour', actors.length, 'acteurs...');
-
-        // Charger les détails et images des acteurs
-        const actorsWithImages = await Promise.all(
-            actors.map(async (actor) => {
-                try {
-                    const response = await fetch(
-                        `${CONFIG.URL_BASE}/person/${actor.id}?api_key=${CONFIG.CLE_API}&language=fr-FR`,
-                        { timeout: 5000 }
-                    );
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log(`✓ Image chargée pour ${actor.name}`);
-                        
-                        // Calculer l'âge depuis la date de naissance
-                        let age = null;
-                        if (data.birthday) {
-                            const birthDate = new Date(data.birthday);
-                            const today = new Date();
-                            age = today.getFullYear() - birthDate.getFullYear();
-                            const monthDiff = today.getMonth() - birthDate.getMonth();
-                            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                                age--;
-                            }
-                        }
-                        
-                        return {
-                            ...actor,
-                            profile_path: data.profile_path || null,
-                            popularity: data.popularity || actor.popularity || 0,
-                            birthday: data.birthday || null,
-                            age: age,
-                            place_of_birth: data.place_of_birth || null
-                        };
-                    }
-                    console.warn(`⚠️ Pas d'image pour ${actor.name} (${response.status})`);
-                    return actor;
-                } catch (err) {
-                    console.warn(`⚠️ Erreur API pour ${actor.name}:`, err);
-                    return actor;
-                }
-            })
-        );
-
-        ETAT_PROFIL.acteursFavoris = actorsWithImages;
-        afficherActeursFavoris();
-        
-        console.log('✨ Acteurs affichés avec succès');
-    } catch (error) {
-        console.error('❌ Erreur critique lors du chargement des acteurs favoris:', error);
-        afficherErreurChargement(DOM.actorsFavorites, "acteurs favoris");
-    }
-}
 
 function removeActorFavorite(actorId, actorName) {
     try {

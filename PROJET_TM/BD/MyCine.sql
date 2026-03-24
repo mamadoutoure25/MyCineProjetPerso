@@ -89,6 +89,14 @@ CREATE TABLE watched (
                          tmdb_id INT NOT NULL,
                          UNIQUE (user_id, tmdb_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE favorite_actors (
+                                 id INT AUTO_INCREMENT PRIMARY KEY,
+                                 user_id INT NOT NULL,
+                                 acteur_id INT NOT NULL,
+                                 UNIQUE (user_id, acteur_id),
+                                 FOREIGN KEY (user_id) REFERENCES Utilisateurs(id) ON DELETE CASCADE,
+                                 FOREIGN KEY (acteur_id) REFERENCES Acteurs(id) ON DELETE CASCADE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- Table Notes
 CREATE TABLE Notes (
                        utilisateur_id INT NOT NULL,

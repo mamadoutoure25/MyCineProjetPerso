@@ -470,9 +470,16 @@ async function gererRecherche(e) {
     if (!requete) return;
 
     try {
-        const donnees = await rechercherFilms(requete);
-        if (donnees?.results?.length) {
-            afficherResultatsRecherche(donnees.results);
+        const [filmsData, personnesData] = await Promise.all([
+            rechercherFilms(requete),
+            rechercherPersonnes(requete)
+        ]);
+
+        const films = filmsData?.results || [];
+        const personnes = personnesData?.results || [];
+
+        if (films.length || personnes.length) {
+            afficherResultatsRecherche(films, personnes);
         } else {
             afficherAucunResultatRecherche();
         }
@@ -491,9 +498,16 @@ async function gererRechercheTempsReel(e) {
     }
 
     try {
-        const donnees = await rechercherFilms(requete);
-        if (donnees?.results?.length) {
-            afficherResultatsRecherche(donnees.results);
+        const [filmsData, personnesData] = await Promise.all([
+            rechercherFilms(requete),
+            rechercherPersonnes(requete)
+        ]);
+
+        const films = filmsData?.results || [];
+        const personnes = personnesData?.results || [];
+
+        if (films.length || personnes.length) {
+            afficherResultatsRecherche(films, personnes);
         } else {
             afficherAucunResultatRecherche();
         }
@@ -507,31 +521,73 @@ async function rechercherFilms(requete) {
     return await recupererDonnees(url, "rechercheFilms");
 }
 
-function afficherResultatsRecherche(films) {
+async function rechercherPersonnes(requete) {
+    const url = `${CONFIG.URL_BASE}/search/person?api_key=${CONFIG.CLE_API}&language=fr-FR&query=${encodeURIComponent(requete)}&page=1`;
+    return await recupererDonnees(url, "recherchePersonnes");
+}
+
+function afficherResultatsRecherche(films = [], personnes = []) {
     if (!DOM.resultatsRecherche) return;
 
     DOM.resultatsRecherche.style.display = "block";
-    DOM.resultatsRecherche.innerHTML = films
-        .slice(0, 8)
-        .map(film => `
-            <div class="search-result-item d-flex align-items-center p-2" data-id="${film.id}" style="cursor: pointer; border-bottom: 1px solid var(--border);">
-                <img src="${film.poster_path ? CONFIG.URL_IMAGE + film.poster_path : CONFIG.AFFICHE_PAR_DEFAUT}" 
-                     alt="${film.title}" 
-                     style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;"
-                     onerror="this.src='${CONFIG.AFFICHE_PAR_DEFAUT}'">
-                <div class="ms-3">
-                    <h6 class="mb-0 text-dark">${film.title}</h6>
-                    <small class="text-muted">${film.release_date ? film.release_date.split("-")[0] : "Date inconnue"}</small>
+    
+    // Combiner les résultats: films d'abord, puis les acteurs
+    let html = "";
+
+    // Afficher les films
+    if (films.length > 0) {
+        html += films
+            .slice(0, 5)
+            .map(film => `
+                <div class="search-result-item d-flex align-items-center p-2" data-id="${film.id}" data-type="movie" style="cursor: pointer; border-bottom: 1px solid var(--border);">
+                    <img src="${film.poster_path ? CONFIG.URL_IMAGE + film.poster_path : CONFIG.AFFICHE_PAR_DEFAUT}" 
+                         alt="${film.title}" 
+                         style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;"
+                         onerror="this.src='${CONFIG.AFFICHE_PAR_DEFAUT}'">
+                    <div class="ms-3 flex-grow-1">
+                        <h6 class="mb-0 text-dark">${film.title}</h6>
+                        <small class="text-muted">${film.release_date ? film.release_date.split("-")[0] : "Date inconnue"}</small>
+                    </div>
+                    <span class="badge bg-primary">Film</span>
                 </div>
-            </div>
-        `)
-        .join("");
+            `)
+            .join("");
+    }
+
+    // Afficher les acteurs
+    if (personnes.length > 0) {
+        html += personnes
+            .slice(0, 5)
+            .filter(person => person.profile_path) // Filtrer les personnes sans photo
+            .map(person => `
+                <div class="search-result-item d-flex align-items-center p-2" data-id="${person.id}" data-type="person" style="cursor: pointer; border-bottom: 1px solid var(--border);">
+                    <img src="${person.profile_path ? CONFIG.URL_IMAGE_ACTEUR + person.profile_path : CONFIG.AFFICHE_PAR_DEFAUT}" 
+                         alt="${person.name}" 
+                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;"
+                         onerror="this.src='${CONFIG.AFFICHE_PAR_DEFAUT}'">
+                    <div class="ms-3 flex-grow-1">
+                        <h6 class="mb-0 text-dark">${person.name}</h6>
+                        <small class="text-muted">${person.known_for_department || "Acteur"}</small>
+                    </div>
+                    <span class="badge bg-success">Acteur</span>
+                </div>
+            `)
+            .join("");
+    }
+
+    DOM.resultatsRecherche.innerHTML = html;
 
     // Ajouter les écouteurs d'événements
     DOM.resultatsRecherche.querySelectorAll(".search-result-item").forEach(item => {
         item.addEventListener("click", () => {
-            const idFilm = item.dataset.id;
-            afficherDetailsFilm(idFilm);
+            const id = item.dataset.id;
+            const type = item.dataset.type;
+            
+            if (type === "movie") {
+                afficherDetailsFilm(id);
+            } else if (type === "person") {
+                window.location.href = `PROJET_TM/Films/actor-details.html?id=${id}`;
+            }
         });
     });
 }
@@ -954,7 +1010,7 @@ function afficherDetailsFilm(idFilm) {
     if (estDansDossierFilms) {
         window.location.href = `movie-details.html?id=${idFilm}`;
     } else {
-        window.location.href = `PROJET_TM_GRoupe/Films/movie-details.html?id=${idFilm}`;
+        window.location.href = `PROJET_TM/Films/movie-details.html?id=${idFilm}`;
     }
 }
 

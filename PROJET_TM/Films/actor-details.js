@@ -50,15 +50,28 @@ function isActorFavorite(id) {
 /**
  * Ajouter/Retirer un acteur des favoris
  */
-function toggleActorFavorite(id, name) {
+async function toggleActorFavorite(id, name) {
   try {
     let favorites = getActorFavorites()
     const index = favorites.findIndex(fav => fav.id === id)
+
+    // Récupérer les infos de l'utilisateur
+    const auth = sessionStorage.getItem('auth')
+    const userId = auth ? JSON.parse(auth).userId : null
 
     if (index > -1) {
       // Retirer des favoris
       favorites.splice(index, 1)
       afficherNotification(`${name} retiré(e) des favoris`, "info")
+
+      // Synchroniser avec la BD si l'utilisateur est connecté
+      if (userId) {
+        try {
+          await supprimerActeurFavorisBD(userId, id)
+        } catch (error) {
+          console.warn('Erreur lors de la suppression dans la BD:', error)
+        }
+      }
     } else {
       // Ajouter aux favoris avec date
       favorites.push({ 
@@ -67,6 +80,15 @@ function toggleActorFavorite(id, name) {
         date_ajout: new Date().toISOString()
       })
       afficherNotification(`${name} ajouté(e) aux favoris`, "success")
+
+      // Synchroniser avec la BD si l'utilisateur est connecté
+      if (userId) {
+        try {
+          await ajouterActeurFavorisBD(userId, id, name)
+        } catch (error) {
+          console.warn('Erreur lors de l\'ajout dans la BD:', error)
+        }
+      }
     }
 
     localStorage.setItem('actor_favorites', JSON.stringify(favorites))
@@ -76,6 +98,69 @@ function toggleActorFavorite(id, name) {
   } catch (error) {
     console.error('Erreur lors de la gestion des favoris:', error)
     afficherNotification('Erreur lors de la sauvegarde des favoris', 'danger')
+  }
+}
+
+/**
+ * Ajouter un acteur aux favoris dans la BD
+ */
+async function ajouterActeurFavorisBD(userId, actorTmdbId, actorName) {
+  try {
+    const response = await fetch('favorite-actors.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        actor_id: actorTmdbId,
+        actor_name: actorName
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`)
+    }
+
+    const data = await response.json()
+    if (!data.success) {
+      console.warn('Erreur BD:', data.message)
+    } else {
+      console.log('✅ Acteur ajouté à la BD')
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout à la BD:', error)
+  }
+}
+
+/**
+ * Supprimer un acteur des favoris dans la BD
+ */
+async function supprimerActeurFavorisBD(userId, actorId) {
+  try {
+    const response = await fetch('favorite-actors.php', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        actor_id: actorId
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`)
+    }
+
+    const data = await response.json()
+    if (!data.success) {
+      console.warn('Erreur BD:', data.message)
+    } else {
+      console.log('✅ Acteur supprimé de la BD')
+    }
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la BD:', error)
   }
 }
 

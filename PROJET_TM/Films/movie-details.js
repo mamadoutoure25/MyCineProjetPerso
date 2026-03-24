@@ -572,18 +572,18 @@ if (!window.location.pathname.includes('movie-details.html')) {
         container.innerHTML = `
             <div class="production-companies-grid">
                 ${productionCompanies
-                    .map(company => `
+            .map(company => `
                         <div class="production-company-card">
                             <div class="production-logo-container">
-                                ${company.logo_path 
-                                    ? `<img src="${MOVIE_DETAILS_CONFIG.URL_IMAGE}${company.logo_path}" 
+                                ${company.logo_path
+                ? `<img src="${MOVIE_DETAILS_CONFIG.URL_IMAGE}${company.logo_path}" 
                                          class="production-logo" 
                                          alt="${company.name}"
                                          onerror="this.src='https://via.placeholder.com/300x200?text=${encodeURIComponent(company.name)}'">`
-                                    : `<img src="https://via.placeholder.com/300x200?text=${encodeURIComponent(company.name)}" 
+                : `<img src="https://via.placeholder.com/300x200?text=${encodeURIComponent(company.name)}" 
                                          class="production-logo" 
                                          alt="${company.name}">`
-                                }
+            }
                             </div>
                             <div class="production-info">
                                 <div class="production-name">${company.name}</div>
@@ -600,7 +600,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
                             </div>
                         </div>
                     `)
-                    .join('')}
+            .join('')}
             </div>
         `;
     }
@@ -1539,4 +1539,3 @@ if (!window.location.pathname.includes('movie-details.html')) {
         }
     });
 }
-

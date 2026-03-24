@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Dates de sortie et certifications (Nouveau Design)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="movie-details.css">
+    <style>
+        body {
+            padding-top: 120px;
+        }
+        .test-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .info-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .demo-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top" style="background: var(--bg-secondary); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../../index.html">
+                <span style="color: var(--primary); font-weight: 700; font-size: 1.5rem;">MyCiné</span>
+            </a>
+            <span class="navbar-text" style="color: var(--text-muted);">Test - Nouveau Design Dates de Sortie</span>
+        </div>
+    </nav>
+
+    <div class="test-container">
+        <div class="info-box">
+            <h2 style="color: var(--primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="ph ph-sparkle" style="font-size: 1.5rem;"></i>
+                Nouveau Design - Dates de sortie et certifications
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 1rem;">
+                Voici le nouveau design amélioré de la section "Dates de sortie et certifications" avec une présentation moderne et élégante.
+            </p>
+            <ul style="color: var(--text-muted); margin: 1rem 0 0 0; font-size: 0.95rem;">
+                <li>Design de cartes minimaliste et moderne</li>
+                <li>Badge de date avec dégradé attrayant</li>
+                <li>Animations fluides au survol</li>
+                <li>Responsive et adapté à tous les appareils</li>
+                <li>Support des thèmes clair et sombre</li>
+            </ul>
+        </div>
+
+        <div class="demo-section">
+            <h3 style="color: var(--primary); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-film-slate"></i> Aperçu du nouveau design
+            </h3>
+
+            <div class="release-dates-container">
+                <!-- Exemple 1 : France (Sortie ciné) -->
+                <div class="release-date-item">
+                    <div class="release-date-card" style="background-color: rgba(245, 158, 11, 0.15);">
+                        <div class="release-date-header">
+                            <div class="release-date-badge">
+                                <span class="release-date-day">10</span>
+                                <span class="release-date-month">NOV</span>
+                            </div>
+                            <div class="release-date-info">
+                                <h4 class="release-date-country">France</h4>
+                                <p class="release-date-type">
+                                    <i class="ph ph-popcorn"></i>
+                                    Sortie ciné
+                                </p>
+                            </div>
+                            <div class="release-date-cert">16</div>
+                        </div>
+                        <div class="release-date-footer">
+                            <small class="release-date-year">1999</small>
+                            <small class="release-date-extra">+8 sorties</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemple 2 : États-Unis (Première) -->
+                <div class="release-date-item">
+                    <div class="release-date-card" style="background-color: rgba(139, 92, 246, 0.15);">
+                        <div class="release-date-header">
+                            <div class="release-date-badge" style="background: linear-gradient(135deg, #8b5cf6, rgba(139, 92, 246, 0.7));">
+                                <span class="release-date-day">21</span>
+                                <span class="release-date-month">SEP</span>
+                            </div>
+                            <div class="release-date-info">
+                                <h4 class="release-date-country">États-Unis</h4>
+                                <p class="release-date-type">
+                                    <i class="ph ph-film-strip"></i>
+                                    Première
+                                </p>
+                            </div>
+                            <div class="release-date-cert" style="background: #8b5cf6;">R</div>
+                        </div>
+                        <div class="release-date-footer">
+                            <small class="release-date-year">1999</small>
+                            <small class="release-date-extra">+3 sorties</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemple 3 : Royaume-Uni (Sortie ciné) -->
+                <div class="release-date-item">
+                    <div class="release-date-card" style="background-color: rgba(99, 102, 241, 0.15);">
+                        <div class="release-date-badge-preview" class="release-date-badge" style="background: linear-gradient(135deg, #6366f1, rgba(99, 102, 241, 0.7));">
+                            <span class="release-date-day">12</span>
+                            <span class="release-date-month">NOV</span>
+                        </div>
+                        <div class="release-date-header">
+                            <div class="release-date-badge" style="background: linear-gradient(135deg, #6366f1, rgba(99, 102, 241, 0.7));">
+                                <span class="release-date-day">12</span>
+                                <span class="release-date-month">NOV</span>
+                            </div>
+                            <div class="release-date-info">
+                                <h4 class="release-date-country">Royaume-Uni</h4>
+                                <p class="release-date-type">
+                                    <i class="ph ph-popcorn"></i>
+                                    Sortie ciné
+                                </p>
+                            </div>
+                            <div class="release-date-cert" style="background: #6366f1;">18</div>
+                        </div>
+                        <div class="release-date-footer">
+                            <small class="release-date-year">1999</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemple 4 : Canada (Sortie ciné) -->
+                <div class="release-date-item">
+                    <div class="release-date-card" style="background-color: rgba(6, 182, 212, 0.15);">
+                        <div class="release-date-header">
+                            <div class="release-date-badge" style="background: linear-gradient(135deg, #06b6d4, rgba(6, 182, 212, 0.7));">
+                                <span class="release-date-day">15</span>
+                                <span class="release-date-month">OCT</span>
+                            </div>
+                            <div class="release-date-info">
+                                <h4 class="release-date-country">Canada</h4>
+                                <p class="release-date-type">
+                                    <i class="ph ph-popcorn"></i>
+                                    Sortie ciné
+                                </p>
+                            </div>
+                            <div class="release-date-cert" style="background: #06b6d4;">18A</div>
+                        </div>
+                        <div class="release-date-footer">
+                            <small class="release-date-year">1999</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemple 5 : Allemagne (VOD) -->
+                <div class="release-date-item">
+                    <div class="release-date-card" style="background-color: rgba(16, 185, 129, 0.15);">
+                        <div class="release-date-header">
+                            <div class="release-date-badge" style="background: linear-gradient(135deg, #10b981, rgba(16, 185, 129, 0.7));">
+                                <span class="release-date-day">11</span>
+                                <span class="release-date-month">NOV</span>
+                            </div>
+                            <div class="release-date-info">
+                                <h4 class="release-date-country">Allemagne</h4>
+                                <p class="release-date-type">
+                                    <i class="ph ph-monitor"></i>
+                                    VOD
+                                </p>
+                            </div>
+                            <div class="release-date-cert" style="background: #10b981;">18</div>
+                        </div>
+                        <div class="release-date-footer">
+                            <small class="release-date-year">1999</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemple 6 : Espagne (Support physique) -->
+                <div class="release-date-item">
+                    <div class="release-date-card" style="background-color: rgba(239, 68, 68, 0.15);">
+                        <div class="release-date-header">
+                            <div class="release-date-badge" style="background: linear-gradient(135deg, #ef4444, rgba(239, 68, 68, 0.7));">
+                                <span class="release-date-day">05</span>
+                                <span class="release-date-month">NOV</span>
+                            </div>
+                            <div class="release-date-info">
+                                <h4 class="release-date-country">Espagne</h4>
+                                <p class="release-date-type">
+                                    <i class="ph ph-disc"></i>
+                                    Support physique
+                                </p>
+                            </div>
+                        </div>
+                        <div class="release-date-footer">
+                            <small class="release-date-year">1999</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3 style="color: var(--primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-palette"></i> Caractéristiques du design
+            </h3>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;">
+                        <h5 style="color: var(--primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="ph ph-check-circle"></i> Améliorations
+                        </h5>
+                        <ul style="margin: 0; padding-left: 1.5rem; color: var(--text-secondary); font-size: 0.95rem;">
+                            <li>Badge de date avec dégradé attrayant</li>
+                            <li>Icones Phosphor pour types de sortie</li>
+                            <li>Animations fluides et légères</li>
+                            <li>Certificat badge prominent</li>
+                            <li>Footer avec informations contextuelles</li>
+                            <li>Effet de brillance au survol</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div style="background: var(--bg-primary); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;">
+                        <h5 style="color: var(--primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="ph ph-device-mobile"></i> Responsive
+                        </h5>
+                        <ul style="margin: 0; padding-left: 1.5rem; color: var(--text-secondary); font-size: 0.95rem;">
+                            <li>Desktop: 4-5 colonnes</li>
+                            <li>Tablette: 3 colonnes</li>
+                            <li>Mobile: 2 colonnes</li>
+                            <li>Petit écran: 2 colonnes stacked</li>
+                            <li>Adaptation fluide des tailles</li>
+                            <li>Touch-friendly sur mobile</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3 style="color: var(--primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ph ph-info"></i> À savoir
+            </h3>
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem;">
+                Le nouveau design est automatiquement appliqué à toutes les pages de détails de films.
+                <strong>Aucune action requise de votre part !</strong> Allez simplement sur <strong>movie-details.html?id=550</strong> (ou tout autre film)
+                pour voir les cartes de dates de sortie avec le nouveau design élégant.
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="sombre_clair.js"></script>
+</body>
+</html>
+
