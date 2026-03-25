@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu - Nouveau Design des Images</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --primary: #f59e0b;
+            --secondary: #06b6d4;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #ffffff;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--background) 0%, #1a202c 100%);
+            color: var(--text);
+            padding: 2rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-section {
+            margin-bottom: 4rem;
+        }
+
+        .demo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .demo-title i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        /* ========== MOVIE CARDS - NOUVEAU DESIGN ========== */
+        .movie-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .movie-card {
+            min-width: 200px;
+            height: 300px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(245, 158, 11, 0.25), 0 0 40px rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .movie-card:hover img {
+            transform: scale(1.1) rotate(1deg);
+        }
+
+        .movie-card-inner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.1) 0%,
+                rgba(0, 0, 0, 0.3) 50%,
+                rgba(0, 0, 0, 0.5) 100%
+            );
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            z-index: 2;
+        }
+
+        .movie-card:hover .movie-card-inner::after {
+            opacity: 0;
+        }
+
+        .movie-overlay {
+            background: linear-gradient(
+                135deg,
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.85) 40%,
+                rgba(245, 158, 11, 0.1) 100%
+            );
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+        }
+
+        .movie-card:hover .movie-overlay {
+            opacity: 1;
+        }
+
+        /* ========== GENRE CARDS - NOUVEAU DESIGN ========== */
+        .genre-carousel {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
+
+        .genre-item {
+            flex: 0 0 200px;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
+        }
+
+        .genre-item:hover {
+            transform: scale(1.08) translateY(-8px);
+            box-shadow: 0 15px 40px rgba(245, 158, 11, 0.2), 0 0 30px rgba(6, 182, 212, 0.15);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .genre-overlay {
+            border-radius: 12px;
+            background: linear-gradient(
+                135deg,
+                rgba(0, 0, 0, 0.4) 0%,
+                rgba(245, 158, 11, 0.15) 100%
+            );
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .genre-item:hover .genre-overlay {
+            background: linear-gradient(
+                135deg,
+                rgba(0, 0, 0, 0.6) 0%,
+                rgba(245, 158, 11, 0.25) 100%
+            );
+        }
+
+        .genre-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* ========== COMPARAISON ========== */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .comparison-item {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-item h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .comparison-item ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-item li {
+            padding: 0.5rem 0;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .comparison-item li::before {
+            content: '✓';
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .genre-carousel {
+                gap: 0.75rem;
+            }
+
+            .genre-item {
+                flex: 0 0 150px;
+            }
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--primary);
+        }
+
+        .feature-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .alert-info {
+            background: rgba(6, 182, 212, 0.1) !important;
+            border: 1px solid rgba(6, 182, 212, 0.3) !important;
+            color: #06b6d4 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-lg">
+        <h1>🎨 Aperçu - Nouveau Design des Images</h1>
+
+        <!-- DEMO CARTES DE FILMS -->
+        <div class="demo-section">
+            <div class="demo-title">
+                <i class="ph ph-film-strip"></i>
+                Cartes de Films - Nouveau Design
+            </div>
+            <p class="text-muted mb-3">Passez la souris sur les images pour voir les animations</p>
+            <div class="movie-cards-grid">
+                <div class="movie-card">
+                    <div class="movie-card-inner">
+                        <img src="https://image.tmdb.org/t/p/w300/qJ2tW6WMUDux911r6m7haGHVNspP.jpg" alt="Film 1">
+                        <div class="movie-overlay"></div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="movie-card-inner">
+                        <img src="https://image.tmdb.org/t/p/w300/pIkRyY2z7oO45PhjrCws0cV3bP4.jpg" alt="Film 2">
+                        <div class="movie-overlay"></div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="movie-card-inner">
+                        <img src="https://image.tmdb.org/t/p/w300/gMjI1s3C2qsVHzxkH5sMz0LS4lg.jpg" alt="Film 3">
+                        <div class="movie-overlay"></div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="movie-card-inner">
+                        <img src="https://image.tmdb.org/t/p/w300/b6NRanucesVv3ouJP9c4F5ThccQ.jpg" alt="Film 4">
+                        <div class="movie-overlay"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEMO GENRES -->
+        <div class="demo-section">
+            <div class="demo-title">
+                <i class="ph ph-tag"></i>
+                Cartes de Genres - Nouveau Design
+            </div>
+            <p class="text-muted mb-3">Passez la souris pour voir l'animation de transformation</p>
+            <div class="genre-carousel">
+                <div class="genre-item">
+                    <div class="genre-overlay">
+                        <span class="genre-name">Action</span>
+                    </div>
+                    <img src="https://image.tmdb.org/t/p/w300/tZLKxALWyT0q0e6sOxzIBwIj4vb.jpg" alt="Action" style="position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                </div>
+                <div class="genre-item">
+                    <div class="genre-overlay">
+                        <span class="genre-name">Comédie</span>
+                    </div>
+                    <img src="https://image.tmdb.org/t/p/w300/lJF16YNlyYy1l8YrDi1d1HXJMnK.jpg" alt="Comédie" style="position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                </div>
+                <div class="genre-item">
+                    <div class="genre-overlay">
+                        <span class="genre-name">Drame</span>
+                    </div>
+                    <img src="https://image.tmdb.org/t/p/w300/xvx4Cgg1geh8sqAw03g8R8gf9Yd.jpg" alt="Drame" style="position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                </div>
+                <div class="genre-item">
+                    <div class="genre-overlay">
+                        <span class="genre-name">Sci-Fi</span>
+                    </div>
+                    <img src="https://image.tmdb.org/t/p/w300/1Rr5SrvHxMlTriIQVCuxM2tMp19.jpg" alt="Sci-Fi" style="position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+                </div>
+            </div>
+        </div>
+
+        <!-- AMÉLIORATIONS VISUELLES -->
+        <div class="demo-section">
+            <div class="demo-title">
+                <i class="ph ph-sparkle"></i>
+                Améliorations Visuelles
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>🎬 Animations Cinématiques</h4>
+                    <p>Animations fluides avec easing moderne (cubic-bezier) pour une sensation plus naturelle et élégante.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✨ Glow Effect</h4>
+                    <p>Ombre chaude (jaune-orange) qui entoure les cartes au survol pour un effet de profondeur.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🌟 Élévation Accrue</h4>
+                    <p>De -5px à -12px pour une sensation de lévitation plus dramatique et immersive.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📸 Zoom + Rotation</h4>
+                    <p>Les images zooment à 110% avec une légère rotation pour un effet cinématique.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎨 Gradients Diagonaux</h4>
+                    <p>Remplacement des gradients simples par des gradients diagonaux modernes avec couleurs adaptées.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔄 Transitions Fluides</h4>
+                    <p>Durée augmentée de 0.3s à 0.4s pour des animations plus douces et élégantes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPARAISON AVANT/APRÈS -->
+        <div class="demo-section">
+            <div class="demo-title">
+                <i class="ph ph-compare"></i>
+                Comparaison Avant/Après
+            </div>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <h4>❌ Ancien Design</h4>
+                    <ul>
+                        <li>Élévation basique (-5px)</li>
+                        <li>Ombre standard</li>
+                        <li>Transitions courtes (0.3s)</li>
+                        <li>Overlays simples</li>
+                        <li>Zoom limité (1.05)</li>
+                        <li>Pas d'interactivité visuelle</li>
+                    </ul>
+                </div>
+                <div class="comparison-item">
+                    <h4>✅ Nouveau Design</h4>
+                    <ul>
+                        <li>Élévation dramatique (-12px)</li>
+                        <li>Ombre glow colorée</li>
+                        <li>Transitions fluides (0.4s)</li>
+                        <li>Gradients élégants</li>
+                        <li>Zoom cinématique (1.1)</li>
+                        <li>Interactions visuelles riches</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- INFORMATIONS -->
+        <div class="alert alert-info">
+            <i class="ph ph-info me-2"></i>
+            <strong>ℹ️ Informations</strong><br>
+            Ces changements de design ont été appliqués à <code>projet.css</code> et affectent automatiquement toutes les pages utilisant cette feuille de styles. Aucune modification HTML n'est nécessaire.
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

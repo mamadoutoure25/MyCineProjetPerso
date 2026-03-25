@@ -64,12 +64,21 @@ function displayFormErrors(errors) {
  */
 function storeAuthInfo(authData) {
 	try {
-		sessionStorage.setItem('auth', JSON.stringify({
+		const authObject = {
 			userId: authData.user.id,
 			token: authData.token,
 			pseudo: authData.user.pseudo,
 			role: authData.user.role
-		}));
+		};
+		
+		// Stocker dans sessionStorage
+		sessionStorage.setItem('auth', JSON.stringify(authObject));
+		console.log('Auth stockée dans sessionStorage:', authObject);
+		
+		// Aussi stocker dans localStorage comme backup
+		localStorage.setItem('lastAuth', JSON.stringify(authObject));
+		console.log('Auth stockée dans localStorage:', authObject);
+		
 		document.dispatchEvent(new Event('authChange'));
 	} catch (error) {
 		console.error('Erreur lors du stockage de l\'authentification:', error);

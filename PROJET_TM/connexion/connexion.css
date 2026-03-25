@@ -122,23 +122,41 @@ body {
 }
 
 .navbar-toggler {
-    border: none;
-    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white !important;
     font-size: 1.5rem;
     padding: 0.5rem;
     border-radius: 8px;
     transition: var(--transition);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .navbar-toggler:hover {
-    background: var(--glass-bg);
+    background: rgba(255, 107, 107, 0.15);
     transform: scale(1.05);
 }
 
 .navbar-toggler:focus {
-    box-shadow: none;
-    outline: 2px solid var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.5) !important;
+    outline: none;
+    border-color: #ff6b6b;
 }
+
+[data-theme="light"] .navbar-toggler {
+    border-color: #e5e7eb;
+    color: #1f2937 !important;
+    background: #f3f4f6;
+}
+
+[data-theme="light"] .navbar-toggler:hover {
+    background: rgba(220, 38, 38, 0.1);
+}
+
+[data-theme="light"] .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.15) !important;
+    border-color: #dc2626;
+}
+
 
 .nav-link {
     color: var(--text-secondary) !important;

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Formulaires et Dropdowns - MyCiné</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="movie-details.css">
+    <style>
+        body {
+            padding-top: 80px;
+        }
+        .test-section {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <div class="logo-container me-2">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="brand-text d-none d-sm-inline">MyCiné - Test Formulaires</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="ph ph-list me-1"></i> Menu
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème">
+                    <i class="ph ph-sun" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <section class="test-section">
+        <h1 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            Test des Formulaires et Dropdowns
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">
+            Cette page teste tous les éléments de formulaire pour vérifier que le texte s'affiche correctement en thème clair et sombre.
+            Cliquez sur le bouton de thème pour basculer entre les deux modes.
+        </p>
+    </section>
+
+    <!-- Section Inputs -->
+    <section class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            <i class="ph ph-text-t"></i> Champs de Saisie
+        </h2>
+        <div class="test-grid">
+            <div>
+                <label for="input-text" style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                    Input Text
+                </label>
+                <input type="text" id="input-text" class="form-control" placeholder="Entrez du texte">
+            </div>
+            <div>
+                <label for="input-email" style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                    Input Email
+                </label>
+                <input type="email" id="input-email" class="form-control" placeholder="email@example.com">
+            </div>
+            <div>
+                <label for="input-password" style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                    Input Password
+                </label>
+                <input type="password" id="input-password" class="form-control" placeholder="••••••••">
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Selects -->
+    <section class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            <i class="ph ph-list-bullets"></i> Listes Déroulantes
+        </h2>
+        <div class="test-grid">
+            <div>
+                <label for="select-standard" style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                    Select Standard
+                </label>
+                <select id="select-standard" class="form-select">
+                    <option>Sélectionnez une option</option>
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                </select>
+            </div>
+            <div>
+                <label for="select-multiple" style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                    Select Multiple
+                </label>
+                <select id="select-multiple" class="form-select" multiple>
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                    <option>Option 4</option>
+                </select>
+            </div>
+            <div>
+                <label for="select-genre" style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                    Genres de Film
+                </label>
+                <select id="select-genre" class="form-select">
+                    <option>Action</option>
+                    <option>Aventure</option>
+                    <option>Comédie</option>
+                    <option>Drame</option>
+                    <option>Horreur</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Textareas -->
+    <section class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            <i class="ph ph-note-blank"></i> Textareas
+        </h2>
+        <div>
+            <label for="textarea" style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                Description
+            </label>
+            <textarea id="textarea" class="form-control" rows="4" placeholder="Entrez votre description ici..."></textarea>
+        </div>
+    </section>
+
+    <!-- Section Dropdowns Navbar -->
+    <section class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            <i class="ph ph-arrow-down"></i> Dropdown Navbar
+        </h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Cliquez sur "Menu" dans la navigation en haut pour voir le dropdown navbar
+        </p>
+        <div style="display: flex; gap: 1rem;">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="ph ph-arrow-down me-1"></i> Dropdown Test 1
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownButton1">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="ph ph-arrow-down me-1"></i> Dropdown Test 2
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownButton2">
+                    <li><a class="dropdown-item" href="#">Garder</a></li>
+                    <li><a class="dropdown-item" href="#">Aimer</a></li>
+                    <li><a class="dropdown-item" href="#">Partager</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Checklist -->
+    <section class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            <i class="ph ph-check-circle"></i> Vérification des Thèmes
+        </h2>
+        <div style="display: grid; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px;">
+                <input type="checkbox" id="check-dropdown" checked>
+                <label for="check-dropdown" style="margin-left: 0.75rem; color: var(--text-secondary); margin-bottom: 0; cursor: pointer;">
+                    Texte des dropdowns visible et lisible
+                </label>
+            </div>
+            <div style="display: flex; align-items: center; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px;">
+                <input type="checkbox" id="check-input" checked>
+                <label for="check-input" style="margin-left: 0.75rem; color: var(--text-secondary); margin-bottom: 0; cursor: pointer;">
+                    Texte des inputs visible et lisible
+                </label>
+            </div>
+            <div style="display: flex; align-items: center; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px;">
+                <input type="checkbox" id="check-placeholder" checked>
+                <label for="check-placeholder" style="margin-left: 0.75rem; color: var(--text-secondary); margin-bottom: 0; cursor: pointer;">
+                    Placeholders visible dans les inputs
+                </label>
+            </div>
+            <div style="display: flex; align-items: center; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px;">
+                <input type="checkbox" id="check-label" checked>
+                <label for="check-label" style="margin-left: 0.75rem; color: var(--text-secondary); margin-bottom: 0; cursor: pointer;">
+                    Labels visibles et lisibles
+                </label>
+            </div>
+            <div style="display: flex; align-items: center; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px;">
+                <input type="checkbox" id="check-hover" checked>
+                <label for="check-hover" style="margin-left: 0.75rem; color: var(--text-secondary); margin-bottom: 0; cursor: pointer;">
+                    Hover effects cohérents (rouge)
+                </label>
+            </div>
+            <div style="display: flex; align-items: center; padding: 0.75rem; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px;">
+                <input type="checkbox" id="check-focus" checked>
+                <label for="check-focus" style="margin-left: 0.75rem; color: var(--text-secondary); margin-bottom: 0; cursor: pointer;">
+                    Focus rings visibles pour l'accessibilité
+                </label>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Instructions -->
+    <section class="test-section" style="margin-bottom: 3rem;">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">
+            <i class="ph ph-info"></i> Instructions
+        </h2>
+        <ol style="color: var(--text-secondary);">
+            <li>Cliquez sur le bouton de thème en haut à droite pour basculer entre clair et sombre</li>
+            <li>Vérifiez que le texte des inputs change de couleur (blanc en sombre, foncé en clair)</li>
+            <li>Vérifiez que le texte des dropdowns change aussi</li>
+            <li>Testez les placeholders - ils doivent rester visibles</li>
+            <li>Survolez les éléments - les hover effects doivent être rouges</li>
+            <li>Cliquez sur les inputs - les focus rings doivent être visibles</li>
+            <li>Testez le dropdown "Menu" dans la navbar</li>
+        </ol>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="sombre_clair.js"></script>
+</body>
+</html>
+

@@ -48,10 +48,10 @@ const POPULAR_COLLECTIONS = [
   121938, // Le Hobbit
   1575, // Rocky
   277, // Underworld
-
-
-
-
+  1539140,//-godzilla-x-kong
+  535313,//-godzilla
+  8864,//-final-destination
+  399, //predator
   420, // Le Monde de Narnia
   283579, // Divergente
   495527, // Jumanji
@@ -61,6 +61,7 @@ const POPULAR_COLLECTIONS = [
   553717, // Creed
   1733, // La Momie
   313086,  // The Conjuring Universe
+  17255, //-resident-evil
   925155, // Demon Slayer
   94032, // Roi Lion
   762512, // Le Roi Lion Remake

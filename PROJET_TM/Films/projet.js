@@ -17,27 +17,7 @@ const CONFIG = {
 };
 
 // Correspondance des icônes des plateformes
-const ICÔNES_PLATEFORMES = {
-    Netflix: "./images/netflix.png",
-    "Amazon Prime Video": "./images/amazon_prime_video.png",
-    "Amazon Video": "./images/amazon_video.png",
-    "Disney Plus": "./images/disney_plus.png",
-    "Apple TV Plus": "./images/apple_tv_plus.png",
-    "Apple TV": "./images/apple_tv.png",
-    "Canal+": "./images/canal_plus.png",
-    OCS: "./images/ocs.png",
-    "Google Play Movies": "./images/google_play_movies.png",
-    YouTube: "./images/youtube.png",
-    FilmoTV: "./images/filmotv.png",
-    "Microsoft Store": "./images/microsoft_store.png",
-    Skynet: "./images/skynet.png",
-    "Proximus Pickx": "./images/proximus_pickx.png",
-    "HBO Max": "./images/max.png",
-    Max: "./images/max.png",
-    "Rakuten TV": "./images/rakuten_tv.png",
-    Telenet: "./images/telenet.png",
-    LaCinetek: "./images/lacinetek.png",
-};
+
 
 // Éléments du DOM
 const DOM = {
@@ -374,14 +354,56 @@ function afficherSocietesDropdown() {
 async function afficherAnnees() {
     if (!DOM.conteneurAnnees) return;
 
-    const anneeActuelle = new Date().getFullYear();
-    const annees = Array.from({ length: 50 }, (_, i) => anneeActuelle - i);
+    const anneeActuelle = new Date().getFullYear(); // 2026
+    
+    // Années vraiment FUTURES (après 2026): 2027, 2028, 2029, 2030
+    const anneesFutures = Array.from({ length: 4 }, (_, i) => anneeActuelle + 1 + i);
+    
+    // Années RÉCENTES: l'année courante (2026) + 15 années passées = 2026 à 2011
+    const anneesRecentes = Array.from({ length: 16 }, (_, i) => anneeActuelle - i);
+    
+    // Années ANCIENNES: de 2010 jusqu'à 1930
+    const anneesAnciens = Array.from({ length: 80 }, (_, i) => anneeActuelle - 17 - i);
 
-    DOM.conteneurAnnees.innerHTML = annees
-        .map(annee => `
-            <li><a class="dropdown-item annee-link" href="#" data-annee="${annee}">${annee}</a></li>
-        `)
-        .join('');
+    // Créer le HTML avec groupement des années
+    let html = '';
+    
+    // Années futures (affichées d'abord)
+    anneesFutures.forEach(annee => {
+        html += `<li><a class="dropdown-item annee-link" href="#" data-annee="${annee}">${annee}</a></li>`;
+    });
+    
+    // Années récentes (incluant année courante)
+    anneesRecentes.forEach(annee => {
+        const classe = annee === anneeActuelle ? 'annee-courante' : '';
+        html += `<li><a class="dropdown-item annee-link ${classe}" href="#" data-annee="${annee}">${annee}</a></li>`;
+    });
+    
+    // Séparateur initial
+    html += '<li><hr class="dropdown-divider"></li>';
+    
+    // Années anciennes dans un groupe scrollable avec séparateurs tous les 10 ans
+    html += '<li class="years-group-container">';
+    html += '<div class="years-scroller">';
+    
+    let decadeActuelle = -1;
+    anneesAnciens.forEach((annee, index) => {
+        const decade = Math.floor(annee / 10) * 10;
+        
+        // Ajouter un séparateur tous les 10 ans
+        if (decade !== decadeActuelle && decadeActuelle !== -1) {
+            html += `<div class="decade-separator" data-decade="${decade}"></div>`;
+        }
+        decadeActuelle = decade;
+        
+        // Ajouter l'année
+        html += `<a class="dropdown-item annee-link annee-ancien" href="#" data-annee="${annee}">${annee}</a>`;
+    });
+    
+    html += '</div>';
+    html += '</li>';
+
+    DOM.conteneurAnnees.innerHTML = html;
 }
 
 // Configuration des écouteurs d'événements
@@ -680,35 +702,35 @@ async function chargerDonneesAccueil() {
         const urlLectureEnCours = `${CONFIG.URL_BASE}/movie/now_playing?api_key=${CONFIG.CLE_API}&language=fr-FR&region=FR`;
         const donneesLectureEnCours = await recupererDonnees(urlLectureEnCours, "now_playing");
         if (donneesLectureEnCours?.results) {
-            afficherFilms(DOM.carrouselLectureEnCours, donneesLectureEnCours.results.slice(0, 150));
+            afficherFilms(DOM.carrouselLectureEnCours, donneesLectureEnCours.results.slice(0, 250),true);
         }
 
         // Films tendances
         const urlTendances = `${CONFIG.URL_BASE}/trending/movie/day?api_key=${CONFIG.CLE_API}&language=fr-FR`;
         const donneesTendances = await recupererDonnees(urlTendances, "tendances");
         if (donneesTendances?.results) {
-            afficherFilms(DOM.carrouselTendances, donneesTendances.results.slice(0, 150), true);
+            afficherFilms(DOM.carrouselTendances, donneesTendances.results.slice(0, 250), true);
         }
 
         // Films populaires
         const urlPopulaires = `${CONFIG.URL_BASE}/movie/popular?api_key=${CONFIG.CLE_API}&language=fr-FR`;
         const donneesPopulaires = await recupererDonnees(urlPopulaires, "populaires");
         if (donneesPopulaires?.results) {
-            afficherFilms(DOM.filmsPopulaires, donneesPopulaires.results.slice(0, 150));
+            afficherFilms(DOM.filmsPopulaires, donneesPopulaires.results.slice(0, 250));
         }
 
         // Films mieux notés
         const urlMieuxNotes = `${CONFIG.URL_BASE}/movie/top_rated?api_key=${CONFIG.CLE_API}&language=fr-FR`;
         const donneesMieuxNotes = await recupererDonnees(urlMieuxNotes, "mieux_notes");
         if (donneesMieuxNotes?.results) {
-            afficherFilms(DOM.filmsMieuxNotes, donneesMieuxNotes.results.slice(0, 150));
+            afficherFilms(DOM.filmsMieuxNotes, donneesMieuxNotes.results.slice(0, 250));
         }
 
         // Films à venir
         const urlAVenir = `${CONFIG.URL_BASE}/movie/upcoming?api_key=${CONFIG.CLE_API}&language=fr-FR`;
         const donneesAVenir = await recupererDonnees(urlAVenir, "a_venir");
         if (donneesAVenir?.results) {
-            afficherFilms(DOM.filmsAVenir, donneesAVenir.results.slice(0, 150));
+            afficherFilms(DOM.filmsAVenir, donneesAVenir.results.slice(0, 250));
         }
 
     } catch (erreur) {

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Séparateurs Décennaux - MyCiné</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
+    <link rel="stylesheet" href="projet.css">
+    <style>
+        body {
+            padding-top: 100px;
+        }
+        .test-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .test-section {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .demo-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        code {
+            background: var(--bg-primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <div class="logo-container">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="brand-text ms-2">MyCiné - Séparateurs Décennaux</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="ph ph-calendar me-2"></i>Années
+                    </a>
+                    <ul class="dropdown-menu" id="years-container">
+                        <!-- Généré dynamiquement -->
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <button class="theme-toggle ms-3" id="theme-toggle" title="Changer de thème">
+                        <i class="ph ph-sun" id="theme-icon"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="test-container">
+    <div class="test-section">
+        <h1 style="color: var(--text-primary); margin-bottom: 1rem;">
+            <i class="ph ph-calendar"></i> Séparateurs Décennaux
+        </h1>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Le dropdown des années affiche maintenant des séparateurs visuels tous les 10 ans pour faciliter la navigation!
+        </p>
+    </div>
+
+    <div class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            🧪 Instructions de Test
+        </h2>
+        <ol style="color: var(--text-secondary); line-height: 2;">
+            <li>Cliquez sur le dropdown "Années" dans la navbar en haut</li>
+            <li>Vous verrez:
+                <ul>
+                    <li>✅ Les années futures et récentes (2028 à 2014)</li>
+                    <li>✅ Un séparateur principal (ligne épaisse)</li>
+                    <li>✅ Les années anciennes avec des séparateurs tous les 10 ans</li>
+                </ul>
+            </li>
+            <li>Scrollez dans le dropdown pour voir les séparateurs décennaux</li>
+            <li>Chaque séparateur marque une nouvelle décennie (2010s, 2000s, 1990s, etc.)</li>
+            <li>Testez le changement de thème (clair/sombre)</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            📊 Structure des Années
+        </h2>
+        <div class="demo-grid">
+            <div class="demo-box">
+                <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Années Futures</p>
+                <p style="color: var(--text-secondary); margin: 0;">2028, 2027, 2026, 2025</p>
+            </div>
+            <div class="demo-box">
+                <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Années Récentes</p>
+                <p style="color: var(--text-secondary); margin: 0;">2024 à 2014 (15 années)</p>
+            </div>
+            <div class="demo-box">
+                <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Séparateur Principal</p>
+                <p style="color: var(--text-secondary); margin: 0;"><code>───────────</code></p>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-primary); border-left: 4px solid #ff6b6b; border-radius: 4px;">
+            <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 1rem;">Années Anciennes (Scrollable)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;">Contiennent des séparateurs tous les 10 ans:</p>
+            <ul style="color: var(--text-secondary); margin-top: 0.75rem; margin-bottom: 0;">
+                <li>📍 Séparateur entre 2013-2010 et 2009-2000</li>
+                <li>📍 Séparateur entre 2009-2000 et 1999-1990</li>
+                <li>📍 Séparateur entre 1999-1990 et 1989-1980</li>
+                <li>📍 ... etc. jusqu'à 1775</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            🎨 Design des Séparateurs
+        </h2>
+        <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;"><strong>Thème Sombre:</strong></p>
+            <div style="height: 20px; display: flex; align-items: center; margin-bottom: 1.5rem;">
+                <div style="flex: 1; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(255, 107, 107, 0.3) 25%, rgba(255, 107, 107, 0.5) 50%, rgba(255, 107, 107, 0.3) 75%, transparent 100%);"></div>
+                <div style="width: 6px; height: 8px; background: rgba(255, 107, 107, 0.4); border-radius: 1px; position: relative; left: -3px;"></div>
+            </div>
+
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;"><strong>Thème Clair:</strong></p>
+            <div style="height: 20px; display: flex; align-items: center; background: white; padding: 0 1rem; border-radius: 4px;">
+                <div style="flex: 1; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(220, 38, 38, 0.3) 25%, rgba(220, 38, 38, 0.5) 50%, rgba(220, 38, 38, 0.3) 75%, transparent 100%);"></div>
+                <div style="width: 6px; height: 8px; background: rgba(220, 38, 38, 0.4); border-radius: 1px; position: relative; left: -3px;"></div>
+            </div>
+
+            <p style="color: var(--text-secondary); margin-top: 1rem; font-size: 0.9rem;">
+                Les séparateurs utilisent un gradient pour une meilleure visibilité et un design élégant
+            </p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            ✨ Améliorations Apportées
+        </h2>
+        <ul style="color: var(--text-secondary); line-height: 2;">
+            <li>✅ Séparateurs visuels tous les 10 ans</li>
+            <li>✅ Navigation facilitée dans les années anciennes</li>
+            <li>✅ Design gradient élégant</li>
+            <li>✅ Accessibilité améliorée</li>
+            <li>✅ Support des deux thèmes (clair/sombre)</li>
+            <li>✅ Performance optimale</li>
+            <li>✅ UX intuitive et claire</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1.5rem;">
+            📝 Exemple de Structure
+        </h2>
+        <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 0.9rem; color: var(--text-secondary); overflow-x: auto;">
+            <div style="color: #ff6b6b; margin-bottom: 0.5rem;">Dropdown des Années</div>
+            <div style="margin-left: 1rem;">
+                2028 ← Futur<br>
+                2027 ← Futur<br>
+                2026 ← Futur<br>
+                2025 ← Futur<br>
+                2024 à 2014 ← Récent<br>
+                ─────────────────── (séparateur principal)<br>
+                <span style="color: var(--text-secondary);">📍</span> (séparateur décennal 2010s)<br>
+                2013, 2012, ..., 2010<br>
+                <span style="color: var(--text-secondary);">📍</span> (séparateur décennal 2000s)<br>
+                2009, 2008, ..., 2000<br>
+                <span style="color: var(--text-secondary);">📍</span> (séparateur décennal 1990s)<br>
+                1999, 1998, ..., 1990<br>
+                <span style="color: var(--text-secondary);">...</span><br>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="sombre_clair.js"></script>
+<script>
+    // Fonction pour afficher les années avec séparateurs décennaux
+    function afficherAnnees() {
+        const DOM = {
+            conteneurAnnees: document.getElementById("years-container")
+        };
+
+        if (!DOM.conteneurAnnees) return;
+
+        const anneeActuelle = new Date().getFullYear();
+
+        // Années prioritaires: futures et récentes
+        const anneesFutures = Array.from({ length: 4 }, (_, i) => anneeActuelle + i);
+        const anneesRecentes = Array.from({ length: 15 }, (_, i) => anneeActuelle - 1 - i);
+        const anneesAnciens = Array.from({ length: 236 }, (_, i) => anneeActuelle - 16 - i);
+
+        let html = '';
+
+        // Années futures et récentes
+        anneesFutures.concat(anneesRecentes).forEach(annee => {
+            html += `<li><a class="dropdown-item annee-link" href="#" data-annee="${annee}">${annee}</a></li>`;
+        });
+
+        // Séparateur initial
+        html += '<li><hr class="dropdown-divider"></li>';
+
+        // Années anciennes avec séparateurs décennaux
+        html += '<li class="years-group-container">';
+        html += '<div class="years-scroller">';
+
+        let decadeActuelle = -1;
+        anneesAnciens.forEach((annee, index) => {
+            const decade = Math.floor(annee / 10) * 10;
+
+            if (decade !== decadeActuelle && decadeActuelle !== -1) {
+                html += `<div class="decade-separator" data-decade="${decade}"></div>`;
+            }
+            decadeActuelle = decade;
+
+            html += `<a class="dropdown-item annee-link annee-ancien" href="#" data-annee="${annee}">${annee}</a>`;
+        });
+
+        html += '</div>';
+        html += '</li>';
+
+        DOM.conteneurAnnees.innerHTML = html;
+
+        // Event listeners
+        document.querySelectorAll('.annee-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const annee = this.dataset.annee;
+                console.log('Année sélectionnée:', annee);
+                alert(`Vous avez sélectionné l'année: ${annee}`);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', afficherAnnees);
+</script>
+</body>
+</html>
+

@@ -16,7 +16,7 @@ const MOVIE_DETAILS_CONFIG = {
     IMAGE_SUBSTITUT: "https://via.placeholder.com/500x750?text=Image+indisponible",
     AFFICHE_PAR_DEFAUT: "https://via.placeholder.com/500x750?text=Aucune+affiche",
     IMAGE_ACTEUR_SUBSTITUT: "https://via.placeholder.com/300x450?text=Aucune+photo",
-    ICONE_PLATEFORME_SUBSTITUT: "images/streaming-icon1.png",
+    ICONE_PLATEFORME_SUBSTITUT: "/PROJET_TM/Films/images/streaming-icon1.png",
 
     // URLs de vos API PHP - mêmes dossier que movie-details.js
     API_BASE_URL: '.', // Même dossier que le fichier HTML
@@ -24,25 +24,25 @@ const MOVIE_DETAILS_CONFIG = {
 
 // Correspondance des icônes des plateformes
 const MOVIE_ICÔNES_PLATEFORMES = {
-    Netflix: "images/netflix.png",
-    "Amazon Prime Video": "images/amazon_prime_video.png",
-    "Amazon Video": "images/amazon_video.png",
-    "Disney Plus": "images/disney_plus.png",
-    "Apple TV Plus": "images/apple_tv_plus.png",
-    "Apple TV": "images/apple_tv.png",
-    "Canal+": "images/canal_plus.png",
-    OCS: "images/ocs.png",
-    "Google Play Movies": "images/google_play_movies.png",
-    YouTube: "images/youtube.png",
-    FilmoTV: "images/filmotv.png",
-    "Microsoft Store": "images/microsoft_store.png",
-    Skynet: "images/skynet.png",
-    "Proximus Pickx": "images/proximus_pickx.png",
-    "HBO Max": "images/max.png",
-    Max: "images/max.png",
-    "Rakuten TV": "images/rakuten_tv.png",
-    Telenet: "images/telenet.png",
-    LaCinetek: "images/lacinetek.png",
+    "Netflix": "/PROJET_TM/Films/images/netflix.png",
+    "Amazon Prime Video": "/PROJET_TM/Films/images/amazon_prime_video.png",
+    "Amazon Video": "/PROJET_TM/Films/images/amazon_video.png",
+    "Disney Plus": "/PROJET_TM/Films/images/disney_plus.png",
+    "Apple TV Plus": "/PROJET_TM/Films/images/apple_tv_plus.png",
+    "Apple TV": "/PROJET_TM/Films/images/apple_tv.png",
+    "Canal+": "/PROJET_TM/Films/images/canal_plus.png",
+    "OCS": "/PROJET_TM/Films/images/ocs.png",
+    "Google Play Movies": "/PROJET_TM/Films/images/google_play_movies.png",
+    "YouTube": "/PROJET_TM/Films/images/youtube.png",
+    "FilmoTV": "/PROJET_TM/Films/images/filmotv.png",
+    "Microsoft Store": "/PROJET_TM/Films/images/microsoft_store.png",
+    "Skynet": "/PROJET_TM/Films/images/skynet.png",
+    "Proximus Pickx": "/PROJET_TM/Films/images/proximus_pickx.png",
+    "HBO Max": "/PROJET_TM/Films/images/max.png",
+    "Max": "/PROJET_TM/Films/images/max.png",
+    "Rakuten TV": "/PROJET_TM/Films/images/rakuten_tv.png",
+    "Telenet": "/PROJET_TM/Films/images/telenet.png",
+    "LaCinetek": "/PROJET_TM/Films/images/lacinetek.png",
 }
 
 // Vérification que nous sommes sur la bonne page
@@ -109,6 +109,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
 
     // Attacher les fonctions au window object immédiatement
     window.voirActeur = voirActeur;
+    window.voirCollection = voirCollection;
 
     /**
      * Récupérer les acteurs favoris du localStorage
@@ -200,20 +201,44 @@ if (!window.location.pathname.includes('movie-details.html')) {
 
     // Vérification de l'authentification
     function verifierAuthentification() {
-        const donneesAuth = sessionStorage.getItem("auth");
+        // Essayer d'abord sessionStorage (prioritaire)
+        let donneesAuth = sessionStorage.getItem("auth");
+        console.log("Données auth dans sessionStorage:", donneesAuth);
+        
+        // Si pas dans sessionStorage, essayer localStorage (fallback)
+        if (!donneesAuth) {
+            donneesAuth = localStorage.getItem("lastAuth");
+            console.log("Données auth dans localStorage:", donneesAuth);
+            
+            // Si on les récupère depuis localStorage, les remettre dans sessionStorage
+            if (donneesAuth) {
+                sessionStorage.setItem("auth", donneesAuth);
+                console.log("Auth restaurée dans sessionStorage depuis localStorage");
+            }
+        }
+        
         if (donneesAuth) {
             try {
                 auth = JSON.parse(donneesAuth);
+                console.log("Auth parsée:", auth);
+                
                 // Accepte les anciens et nouveaux formats de session auth.
                 userId = auth.userId || auth.id || auth.utilisateurId || auth?.user?.id || auth?.user?.userId;
+                
+                console.log("userId trouvé:", userId);
                 console.log("Utilisateur connecté:", userId);
+                
+                if (!userId) {
+                    console.warn("Auth existe mais userId est vide");
+                    return false;
+                }
                 return true;
             } catch (error) {
                 console.error("Erreur lors du parsing des données d'authentification:", error);
                 return false;
             }
         }
-        console.log("Aucun utilisateur connecté");
+        console.log("Aucun utilisateur connecté - sessionStorage et localStorage vides");
         return false;
     }
 
@@ -515,12 +540,22 @@ if (!window.location.pathname.includes('movie-details.html')) {
     async function recupererDetailsFilm(id) {
         try {
             const url = `${MOVIE_DETAILS_CONFIG.URL_BASE}/movie/${id}?api_key=${MOVIE_DETAILS_CONFIG.CLE_API}&language=fr-FR&append_to_response=credits,release_dates,watch/providers,videos,images,external_ids`;
+            console.log("URL API TMDB:", url);
             const response = await fetch(url);
-            if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
-            return await response.json();
+            if (!response.ok) {
+                const errorData = await response.text();
+                console.error(`Erreur HTTP ${response.status}:`, errorData);
+                throw new Error(`Erreur HTTP ${response.status}: ${errorData}`);
+            }
+            const data = await response.json();
+            if (!data || !data.id) {
+                throw new Error("Réponse API invalide: données manquantes");
+            }
+            return data;
         } catch (error) {
             console.error("Erreur lors de la récupération des détails du film:", error);
-            afficherNotification("Impossible de charger les détails du film", "danger");
+            const messageErreur = error.message || "Impossible de charger les détails du film";
+            afficherNotification(messageErreur, "danger");
             return null;
         }
     }
@@ -549,8 +584,6 @@ if (!window.location.pathname.includes('movie-details.html')) {
             setTimeout(() => toast.remove(), 3000);
         }
     }
-
-    // ...existing code...
 
     // Afficher les sociétés de production
     function afficherSocietesProduction(productionCompanies) {
@@ -964,7 +997,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
     }
 
     // Récupérer les plateformes et distributeurs
-    async function recupererPlateformesEtDistributeurs(filmId) {
+    async function recupererPlateformesEtDistributeurs(filmId, filmData = null) {
         try {
             const url = `${MOVIE_DETAILS_CONFIG.URL_BASE}/movie/${filmId}/watch/providers?api_key=${MOVIE_DETAILS_CONFIG.CLE_API}`;
             const response = await fetch(url);
@@ -973,8 +1006,8 @@ if (!window.location.pathname.includes('movie-details.html')) {
             const resultatsBE = data.results?.BE || {};
             const plateformes = resultatsBE.flatrate || [];
             const distributeurs = [...(resultatsBE.buy || []), ...(resultatsBE.rent || [])];
-            const filmDetails = await recupererDetailsFilm(filmId);
-            const titreFilm = filmDetails?.title || "";
+            // Utiliser les données passées en paramètre ou récupérer le titre du film
+            const titreFilm = filmData?.title || (await recupererDetailsFilm(filmId))?.title || "";
             return { plateformes, distributeurs, titreFilm };
         } catch (error) {
             console.error("Erreur lors de la récupération des plateformes:", error);
@@ -1009,7 +1042,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
                     (plateforme) => `
                   <a href="${obtenirUrlPlateforme(plateforme.provider_name, titreFilm, filmId, "flatrate")}"
                      target="_blank" rel="noopener" class="vod-provider-card text-decoration-none">
-                    <img src="${MOVIE_ICÔNES_PLATEFORMES[plateforme.provider_name] || MOVIE_DETAILS_CONFIG.ICONE_PLATEFORME_SUBSTITUT}"
+                    <img src="${MOVIE_DETAILS_CONFIG.URL_IMAGE}${plateforme.logo_path || ''}"
                          alt="${plateforme.provider_name}" 
                          class="vod-provider-logo"
                          onerror="this.src='${MOVIE_DETAILS_CONFIG.ICONE_PLATEFORME_SUBSTITUT}'">
@@ -1027,14 +1060,14 @@ if (!window.location.pathname.includes('movie-details.html')) {
         const htmlDistributeurs = distributeurs.length
             ? `
           <div class="provider-section">
-            <h3 class="mb-3"><i class="ph ph-shopping-cart"></i> Achat & Location</h3>
+            <h3 class="mb-3"><i class="ph ph-tag"></i> Achat & Location</h3>
             <div class="vod-providers-grid">
               ${distributeurs
                 .map(
                     (distributeur) => `
                   <a href="${obtenirUrlPlateforme(distributeur.provider_name, titreFilm, filmId, "buy")}"
                      target="_blank" rel="noopener" class="vod-provider-card text-decoration-none">
-                    <img src="${MOVIE_ICÔNES_PLATEFORMES[distributeur.provider_name] || MOVIE_DETAILS_CONFIG.ICONE_PLATEFORME_SUBSTITUT}"
+                    <img src="${MOVIE_DETAILS_CONFIG.URL_IMAGE}${distributeur.logo_path || ''}"
                          alt="${distributeur.provider_name}" 
                          class="vod-provider-logo"
                          onerror="this.src='${MOVIE_DETAILS_CONFIG.ICONE_PLATEFORME_SUBSTITUT}'">
@@ -1075,6 +1108,107 @@ if (!window.location.pathname.includes('movie-details.html')) {
         if (revenueElement) {
             revenueElement.textContent = formaterDevise(film.revenue);
         }
+    }
+
+    // Afficher les dates de sortie
+    function afficherDatesDepurtie(releaseDatesData) {
+        const container = document.getElementById("movie-release-dates");
+        const section = document.getElementById("release-dates-section");
+
+        if (!container || !section) {
+            console.warn("Conteneur #movie-release-dates ou #release-dates-section introuvable");
+            return;
+        }
+
+        // Les données de release_dates contiennent un objet avec les pays comme clés
+        const results = releaseDatesData?.results || [];
+
+        if (!results || results.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        // Filtrer pour garder uniquement Belgique, France et USA
+        const paysAutorises = ['BE', 'FR', 'US'];
+
+        // Créer un tableau avec les pays et leurs dates
+        const releaseTable = results.map(item => ({
+            country: item.iso_3166_1,
+            releases: item.release_dates || []
+        }))
+        .filter(item => paysAutorises.includes(item.country) && item.releases.length > 0)
+        .sort((a, b) => {
+            // Trier pour mettre la Belgique, France et USA en premier
+            const order = { 'BE': 0, 'FR': 1, 'US': 2 };
+            return (order[a.country] ?? 999) - (order[b.country] ?? 999);
+        });
+
+        if (releaseTable.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        // Mapper les codes de pays vers les noms
+        const countryNames = {
+            'US': 'États-Unis',
+            'FR': 'France',
+            'BE': 'Belgique'
+        };
+
+        // Mapper les types de release vers les libellés
+        const releaseTypeNames = {
+            1: 'Première',
+            2: 'Sortie cinéma limitée',
+            3: 'Sortie cinéma',
+            4: 'Sortie numérique',
+            5: 'Sortie vidéo physique',
+            6: 'Sortie TV'
+        };
+
+        const html = `
+            <div class="release-dates-table-wrapper">
+                <table class="release-dates-table">
+                    <thead>
+                        <tr>
+                            <th>Pays</th>
+                            <th>Date</th>
+                            <th>Type de sortie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${releaseTable.map(item => {
+                            const countryName = countryNames[item.country] || item.country;
+                            return item.releases.map((release, index) => {
+                                const releaseDate = new Date(release.release_date);
+                                const formattedDate = new Intl.DateTimeFormat('fr-FR', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                }).format(releaseDate);
+
+                                const releaseType = releaseTypeNames[release.type] || `Type ${release.type}`;
+                                const certification = release.certification ? ` (${release.certification})` : '';
+
+                                return `
+                                    <tr class="release-row ${item.country === 'BE' || item.country === 'FR' ? 'highlight' : ''}">
+                                        <td class="country-cell">
+                                            <span class="country-flag">${item.country}</span>
+                                            <span class="country-name">${countryName}</span>
+                                        </td>
+                                        <td class="date-cell">${formattedDate}</td>
+                                        <td class="type-cell">
+                                            <span class="release-type-badge">${releaseType}${certification}</span>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        container.innerHTML = html;
     }
 
     // Afficher les fonds d'écran en haute qualité
@@ -1399,6 +1533,41 @@ if (!window.location.pathname.includes('movie-details.html')) {
         }
     }
 
+    // Attacher les fonctions modales au window object pour les rendre accessibles depuis les attributs onclick
+    window.afficherImageModal = afficherImageModal;
+    window.ouvrirVideoModal = ouvrirVideoModal;
+
+    // ==================== Diagnostic d'authentification ====================
+    window.debugAuth = function() {
+        console.log("=== DIAGNOSTIC D'AUTHENTIFICATION ===");
+        console.log("sessionStorage.auth:", sessionStorage.getItem("auth"));
+        console.log("localStorage.lastAuth:", localStorage.getItem("lastAuth"));
+        console.log("Variable auth globale:", window.auth);
+        console.log("Variable userId globale:", window.userId);
+        
+        // Tenter de parser et afficher les détails
+        const auth = sessionStorage.getItem("auth");
+        if (auth) {
+            try {
+                const parsed = JSON.parse(auth);
+                console.log("Auth parsée:", parsed);
+                console.log("userId extrait:", parsed.userId || parsed.id);
+            } catch(e) {
+                console.error("Erreur parsing auth:", e);
+            }
+        }
+    };
+    
+    // Appeler le diagnostic au chargement
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Appel du diagnostic d'auth après DOMContentLoaded");
+            setTimeout(() => window.debugAuth(), 100);
+        });
+    } else {
+        setTimeout(() => window.debugAuth(), 100);
+    }
+
     // Initialisation
     document.addEventListener("DOMContentLoaded", async () => {
         console.log("Initialisation de movie-details.js");
@@ -1408,8 +1577,13 @@ if (!window.location.pathname.includes('movie-details.html')) {
         console.log("MOVIE_DOM étoiles:", MOVIE_DOM.stars.length);
 
         // Vérifier l'authentification
-        if (!verifierAuthentification()) {
+        const isAuthenticated = verifierAuthentification();
+        console.log("Authentification vérifiée:", isAuthenticated, "UserId:", userId);
+        
+        if (!isAuthenticated) {
             afficherNotification("Veuillez vous connecter pour gérer vos listes", "warning");
+        } else {
+            console.log("Utilisateur authentifié avec userId:", userId);
         }
 
         // Récupérer l'ID du film
@@ -1432,7 +1606,16 @@ if (!window.location.pathname.includes('movie-details.html')) {
             // Charger les détails du film
             const film = await recupererDetailsFilm(filmId);
             if (!film) {
-                throw new Error("Impossible de charger les détails du film");
+                console.error("Film null pour ID:", filmId);
+                afficherNotification("Veuillez vérifier l'ID du film ou réessayer plus tard", "danger");
+                setTimeout(() => {
+                    try {
+                        window.location.href = '../../index.html';
+                    } catch (error) {
+                        console.error("Erreur lors de la redirection:", error);
+                    }
+                }, 3000);
+                return;
             }
 
             // Mettre à jour les éléments de la page avec les détails du film
@@ -1469,6 +1652,11 @@ if (!window.location.pathname.includes('movie-details.html')) {
 
             // Afficher les différentes sections
             afficherInformationsFinancieres(film);
+
+            // Afficher les dates de sortie
+            if (film.release_dates) {
+                afficherDatesDepurtie(film.release_dates);
+            }
 
             if (film.images) {
                 afficherFondsEcran(film.images);

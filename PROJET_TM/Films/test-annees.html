@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dropdown Années - MyCiné</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
+    <link rel="stylesheet" href="projet.css">
+    <style>
+        body {
+            padding-top: 100px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .test-section {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+        .dropdown-test {
+            display: inline-block;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <div class="logo-container">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="brand-text ms-2">MyCiné - Test Années</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="ph ph-calendar me-2"></i>Années
+                    </a>
+                    <ul class="dropdown-menu" id="years-container">
+                        <!-- Généré dynamiquement -->
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <button class="theme-toggle ms-3" id="theme-toggle" title="Changer de thème">
+                        <i class="ph ph-sun" id="theme-icon"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="test-container">
+    <div class="test-section">
+        <h1 style="color: var(--text-primary); margin-bottom: 1rem;">
+            Test du Dropdown des Années
+        </h1>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Ce test vérifie que le dropdown des années affiche correctement:
+        </p>
+        <ul style="color: var(--text-secondary);">
+            <li>✓ Les années futures (2026, 2027, 2028)</li>
+            <li>✓ Les années récentes (15 dernières années)</li>
+            <li>✓ Un séparateur visuel</li>
+            <li>✓ Les années anciennes dans un conteneur scrollable</li>
+            <li>✓ Design compact et performant</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">
+            Instructions de Test
+        </h2>
+        <ol style="color: var(--text-secondary);">
+            <li>Cliquez sur le dropdown "Années" dans la navbar en haut</li>
+            <li>Vérifiez que 2025, 2026, 2027, 2028 sont visibles en haut</li>
+            <li>Vérifiez qu'il y a un séparateur (ligne)</li>
+            <li>Scrollez dans le dropdown pour voir les années anciennes</li>
+            <li>Testez le changement de thème (clair/sombre)</li>
+            <li>Vérifiez que le scrollbar est visible et fonctionne</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">
+            Information Technique
+        </h2>
+        <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Années affichées:</strong></p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;">• 4 années futures (2025-2028)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;">• 15 années récentes</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;">• ~236 années anciennes (scrollable)</p>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0;"><strong>Total: 255 années</strong></p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">
+            Améliorations Apportées
+        </h2>
+        <ul style="color: var(--text-secondary);">
+            <li>✅ Ajout des années 2027 et 2028</li>
+            <li>✅ Années futures et récentes toujours visibles</li>
+            <li>✅ Conteneur scrollable pour les anciennes années</li>
+            <li>✅ Scrollbar personnalisée (thème clair/sombre)</li>
+            <li>✅ Pas de scintillement ou de lag</li>
+            <li>✅ Design responsive et accessible</li>
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="sombre_clair.js"></script>
+<script>
+    // Fonction pour afficher les années
+    function afficherAnnees() {
+        const DOM = {
+            conteneurAnnees: document.getElementById("years-container")
+        };
+
+        if (!DOM.conteneurAnnees) return;
+
+        const anneeActuelle = new Date().getFullYear();
+
+        // Années prioritaires: futures et récentes (2025-2028 et 15 dernières années)
+        const anneesFutures = Array.from({ length: 4 }, (_, i) => anneeActuelle + i);
+        const anneesRecentes = Array.from({ length: 15 }, (_, i) => anneeActuelle - 1 - i);
+        const anneesAnciens = Array.from({ length: 236 }, (_, i) => anneeActuelle - 16 - i);
+
+        // Créer le HTML avec groupement des années
+        let html = '';
+
+        // Années futures et récentes (affichées d'abord, sans groupe)
+        anneesFutures.concat(anneesRecentes).forEach(annee => {
+            html += `<li><a class="dropdown-item annee-link" href="#" data-annee="${annee}">${annee}</a></li>`;
+        });
+
+        // Séparateur
+        html += '<li><hr class="dropdown-divider"></li>';
+
+        // Années anciennes dans un groupe scrollable
+        html += '<li class="years-group-container">';
+        html += '<div class="years-scroller">';
+        anneesAnciens.forEach(annee => {
+            html += `<a class="dropdown-item annee-link annee-ancien" href="#" data-annee="${annee}">${annee}</a>`;
+        });
+        html += '</div>';
+        html += '</li>';
+
+        DOM.conteneurAnnees.innerHTML = html;
+
+        // Ajouter les event listeners
+        document.querySelectorAll('.annee-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const annee = this.dataset.annee;
+                console.log('Année sélectionnée:', annee);
+                alert(`Vous avez sélectionné l'année: ${annee}`);
+            });
+        });
+    }
+
+    // Initialiser au chargement
+    document.addEventListener('DOMContentLoaded', afficherAnnees);
+</script>
+</body>
+</html>
+

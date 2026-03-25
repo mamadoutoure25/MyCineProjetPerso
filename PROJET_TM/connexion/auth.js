@@ -75,6 +75,7 @@ async function handleLogout() {
         console.error('auth.js: Erreur lors de la déconnexion:', error);
     }
     sessionStorage.removeItem('auth');
+    localStorage.removeItem('lastAuth');
     document.dispatchEvent(new Event('authChange'));
     window.location.href = './connexion.html';
 }

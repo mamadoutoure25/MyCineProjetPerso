@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Éléments Interactifs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 2rem;
+        }
+        .test-section {
+            margin: 3rem 0;
+        }
+        .status-ok {
+            color: #10b981;
+        }
+        .status-error {
+            color: #ef4444;
+        }
+        code {
+            background: #1e293b;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: #f59e0b;
+        }
+        .function-list {
+            background: #1e293b;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        .function-item {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: #0f172a;
+            border-left: 3px solid #06b6d4;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .check-mark {
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Test - Éléments Interactifs Cliquables</h1>
+
+        <div class="test-section">
+            <h2>📋 Résumé des Modifications</h2>
+            <p>Les éléments suivants ont été rendus cliquables et interactifs:</p>
+
+            <div class="function-list">
+                <div class="function-item">
+                    <span class="check-mark">✓</span>
+                    <div>
+                        <strong>Backdrops</strong><br>
+                        <code>window.afficherImageModal()</code> attachée au window object
+                    </div>
+                </div>
+
+                <div class="function-item">
+                    <span class="check-mark">✓</span>
+                    <div>
+                        <strong>Posters</strong><br>
+                        <code>window.afficherImageModal()</code> attachée au window object
+                    </div>
+                </div>
+
+                <div class="function-item">
+                    <span class="check-mark">✓</span>
+                    <div>
+                        <strong>Logos</strong><br>
+                        <code>window.afficherImageModal()</code> attachée au window object
+                    </div>
+                </div>
+
+                <div class="function-item">
+                    <span class="check-mark">✓</span>
+                    <div>
+                        <strong>Trailers</strong><br>
+                        <code>window.ouvrirVideoModal()</code> attachée au window object
+                    </div>
+                </div>
+
+                <div class="function-item">
+                    <span class="check-mark">✓</span>
+                    <div>
+                        <strong>Vidéos</strong><br>
+                        <code>window.ouvrirVideoModal()</code> attachée au window object
+                    </div>
+                </div>
+
+                <div class="function-item">
+                    <span class="check-mark">✓</span>
+                    <div>
+                        <strong>Collections</strong><br>
+                        <code>window.voirCollection()</code> attachée au window object
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 Styles CSS Ajoutés</h2>
+            <p>Les styles suivants ont été ajoutés pour rendre les vidéos cliquables et interactives:</p>
+            <ul>
+                <li><code>.videos-type-section</code> - Section conteneur des vidéos par type</li>
+                <li><code>.videos-type-title</code> - Titre de la section</li>
+                <li><code>.videos-type-grid</code> - Grille des vidéos</li>
+                <li><code>.video-card</code> - Carte individuelle de vidéo</li>
+                <li><code>.video-card-thumbnail</code> - Miniature de la vidéo</li>
+                <li><code>.video-card-overlay</code> - Overlay au survol</li>
+                <li><code>.play-button</code> - Bouton de lecture</li>
+                <li><code>.badge-official</code> - Badge officiel</li>
+                <li><code>.video-card-info</code> - Informations de la vidéo</li>
+                <li><code>.video-card-title</code> - Titre de la vidéo</li>
+                <li><code>.video-card-meta</code> - Métadonnées (résolution, date)</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Styles Responsifs</h2>
+            <p>Les styles responsifs suivants ont été ajoutés:</p>
+            <ul>
+                <li><strong>Desktop (> 768px):</strong> Grille multi-colonnes pour les vidéos</li>
+                <li><strong>Tablette (≤ 768px):</strong> Grille 2-3 colonnes</li>
+                <li><strong>Mobile (≤ 576px):</strong> Affichage en une seule colonne</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Fichiers Modifiés</h2>
+            <ol>
+                <li><strong>movie-details.js</strong>
+                    <ul>
+                        <li>✓ Ajout: <code>window.voirCollection = voirCollection;</code> (ligne 112)</li>
+                        <li>✓ Ajout: <code>window.afficherImageModal = afficherImageModal;</code> (ligne 1406)</li>
+                        <li>✓ Ajout: <code>window.ouvrirVideoModal = ouvrirVideoModal;</code> (ligne 1407)</li>
+                    </ul>
+                </li>
+                <li><strong>movie-details.css</strong>
+                    <ul>
+                        <li>✓ Ajout: Styles pour vidéos (110+ lignes)</li>
+                        <li>✓ Ajout: Styles responsifs pour vidéos</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>✨ Fonctionnalités Activées</h2>
+            <p>Les utilisateurs peuvent maintenant:</p>
+            <ul>
+                <li>🖱️ Cliquer sur les <strong>backdrops</strong> pour les voir en grand format</li>
+                <li>🖱️ Cliquer sur les <strong>posters</strong> pour les voir en grand format</li>
+                <li>🖱️ Cliquer sur les <strong>logos</strong> pour les voir en grand format</li>
+                <li>▶️ Cliquer sur les <strong>trailers</strong> pour les regarder en modal</li>
+                <li>▶️ Cliquer sur les <strong>vidéos</strong> (teasers, clips, etc.) pour les regarder en modal</li>
+                <li>🎬 Cliquer sur les <strong>collections</strong> pour voir tous les films de la collection</li>
+            </ul>
+        </div>
+
+        <div class="alert alert-success mt-4" role="alert">
+            <i class="ph ph-check-circle me-2"></i>
+            <strong>✅ Implémentation Complétée!</strong><br>
+            Tous les éléments visuels (backdrops, logos, posters, trailers, vidéos) sont maintenant cliquables et interactifs.
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

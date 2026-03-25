@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic - Chargement des Films</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+        }
+        .diagnostic-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .test-card {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-result {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .test-result.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid #22c55e;
+        }
+        .test-result.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+        .test-result.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+        }
+        .test-result.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+        h1 { margin-bottom: 30px; }
+        h2 { margin-top: 30px; margin-bottom: 20px; font-size: 1.3rem; }
+        code {
+            background: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ff6b6b;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+<div class="diagnostic-container">
+    <h1>🔧 Diagnostic - Chargement des Films</h1>
+
+    <div class="test-card">
+        <h2>Configuration API</h2>
+        <div id="api-config"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Tests TMDB API</h2>
+        <div id="tmdb-tests"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Tests API Locales (PHP)</h2>
+        <div id="php-tests"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Test de Film Spécifique</h2>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="film-id-input" placeholder="Entrez un ID de film (ex: 550)">
+            <button class="btn btn-primary" onclick="testerFilm()">Tester</button>
+        </div>
+        <div id="film-test-result"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Logs Console</h2>
+        <div id="console-logs" style="background: #1a1a1a; padding: 10px; border-radius: 4px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+    </div>
+</div>
+
+<script>
+    const API_CONFIG = {
+        CLE_API: "04c35731a5ee918f014970082a0088b1",
+        URL_BASE: "https://api.themoviedb.org/3",
+        URL_IMAGE: "https://image.tmdb.org/t/p/w500",
+    };
+
+    const consoleLogs = [];
+    const maxLogs = 50;
+
+    // Capturer les logs
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+
+    console.log = function(...args) {
+        ajouterLog('log', args.join(' '));
+        originalLog.apply(console, args);
+    };
+
+    console.error = function(...args) {
+        ajouterLog('error', args.join(' '));
+        originalError.apply(console, args);
+    };
+
+    console.warn = function(...args) {
+        ajouterLog('warn', args.join(' '));
+        originalWarn.apply(console, args);
+    };
+
+    function ajouterLog(type, message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+        consoleLogs.push({ type, message: logEntry });
+        if (consoleLogs.length > maxLogs) consoleLogs.shift();
+        afficherLogs();
+    }
+
+    function afficherLogs() {
+        const logsDiv = document.getElementById('console-logs');
+        logsDiv.innerHTML = consoleLogs
+            .map(log => {
+                const color = log.type === 'error' ? '#ef4444' : log.type === 'warn' ? '#f59e0b' : '#a0aec0';
+                return `<div style="color: ${color};">${log.message}</div>`;
+            })
+            .join('');
+        logsDiv.scrollTop = logsDiv.scrollHeight;
+    }
+
+    async function afficherConfig() {
+        const configDiv = document.getElementById('api-config');
+        const masqueCle = API_CONFIG.CLE_API.substring(0, 10) + '...';
+        configDiv.innerHTML = `
+            <div class="test-result info">
+                <strong>URL Base:</strong> ${API_CONFIG.URL_BASE}
+            </div>
+            <div class="test-result info">
+                <strong>Clé API:</strong> ${masqueCle}
+            </div>
+            <div class="test-result info">
+                <strong>URL Images:</strong> ${API_CONFIG.URL_IMAGE}
+            </div>
+        `;
+    }
+
+    async function testerAPITMDB() {
+        const testsDiv = document.getElementById('tmdb-tests');
+        testsDiv.innerHTML = '<div class="test-result info"><span class="spinner"></span> Tests en cours...</div>';
+
+        try {
+            // Test 1: Vérifier la connexion
+            console.log("Test 1: Vérification de la connexion à l'API TMDB");
+            const testUrl = `${API_CONFIG.URL_BASE}/configuration?api_key=${API_CONFIG.CLE_API}`;
+            console.log("URL de test:", testUrl);
+
+            const response = await fetch(testUrl);
+            console.log("Status:", response.status);
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Réponse reçue:", data);
+                testsDiv.innerHTML = '<div class="test-result success">✓ Connexion TMDB OK</div>';
+            } else {
+                const errorData = await response.text();
+                console.error("Erreur HTTP:", response.status, errorData);
+                testsDiv.innerHTML = `<div class="test-result error">✗ Erreur HTTP ${response.status}</div>
+                    <div class="test-result error">Réponse: ${errorData}</div>`;
+            }
+
+            // Test 2: Film populaire
+            console.log("Test 2: Chargement d'un film populaire");
+            const popularUrl = `${API_CONFIG.URL_BASE}/movie/550?api_key=${API_CONFIG.CLE_API}&language=fr-FR`;
+            const popularResponse = await fetch(popularUrl);
+
+            if (popularResponse.ok) {
+                const filmData = await popularResponse.json();
+                console.log("Film Fight Club chargé:", filmData);
+                testsDiv.innerHTML += `<div class="test-result success">✓ Film populaire chargeable (Fight Club - ID: 550)</div>
+                    <div class="test-result info">Titre: ${filmData.title}</div>`;
+            } else {
+                console.error("Erreur lors du chargement du film");
+                testsDiv.innerHTML += `<div class="test-result error">✗ Erreur lors du chargement d'un film populaire</div>`;
+            }
+
+        } catch (error) {
+            console.error("Erreur test TMDB:", error);
+            testsDiv.innerHTML = `<div class="test-result error">✗ Erreur: ${error.message}</div>`;
+        }
+    }
+
+    async function testerAPIPHP() {
+        const testsDiv = document.getElementById('php-tests');
+        const endpoints = [
+            { name: 'notes.php', url: 'notes.php?user_id=1&film_id=550', method: 'GET' },
+            { name: 'favorites.php', url: 'favorites.php?user_id=1', method: 'GET' },
+            { name: 'watchlist.php', url: 'watchlist.php?user_id=1', method: 'GET' },
+            { name: 'watched.php', url: 'watched.php?user_id=1', method: 'GET' },
+        ];
+
+        let html = '';
+
+        for (const endpoint of endpoints) {
+            try {
+                console.log(`Test API PHP: ${endpoint.name}`);
+                const response = await fetch(endpoint.url);
+                console.log(`${endpoint.name} - Status: ${response.status}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`${endpoint.name} - Réponse:`, data);
+                    html += `<div class="test-result success">✓ ${endpoint.name} - OK</div>`;
+                } else {
+                    const errorData = await response.text();
+                    console.error(`${endpoint.name} - Erreur ${response.status}:`, errorData);
+                    html += `<div class="test-result error">✗ ${endpoint.name} - Erreur ${response.status}</div>`;
+                }
+            } catch (error) {
+                console.error(`${endpoint.name} - Exception:`, error);
+                html += `<div class="test-result error">✗ ${endpoint.name} - ${error.message}</div>`;
+            }
+        }
+
+        testsDiv.innerHTML = html;
+    }
+
+    async function testerFilm() {
+        const filmId = document.getElementById('film-id-input').value;
+        if (!filmId) {
+            alert('Veuillez entrer un ID de film');
+            return;
+        }
+
+        const resultDiv = document.getElementById('film-test-result');
+        resultDiv.innerHTML = '<div class="test-result info"><span class="spinner"></span> Chargement du film...</div>';
+
+        try {
+            console.log(`Test film ID: ${filmId}`);
+            const url = `${API_CONFIG.URL_BASE}/movie/${filmId}?api_key=${API_CONFIG.CLE_API}&language=fr-FR&append_to_response=credits,videos,images`;
+            console.log("URL complète:", url);
+
+            const response = await fetch(url);
+            console.log("Status:", response.status);
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                console.error("Erreur HTTP:", errorData);
+                resultDiv.innerHTML = `<div class="test-result error">✗ Erreur ${response.status}</div>
+                    <div class="test-result error">Réponse: ${errorData}</div>`;
+                return;
+            }
+
+            const filmData = await response.json();
+            console.log("Données du film:", filmData);
+
+            if (!filmData.id) {
+                resultDiv.innerHTML = '<div class="test-result warning">⚠ Film non trouvé</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                <div class="test-result success">✓ Film chargé avec succès</div>
+                <div class="test-result info"><strong>Titre:</strong> ${filmData.title}</div>
+                <div class="test-result info"><strong>ID:</strong> ${filmData.id}</div>
+                <div class="test-result info"><strong>Date:</strong> ${filmData.release_date}</div>
+                <div class="test-result info"><strong>Note:</strong> ${filmData.vote_average}/10</div>
+                <div class="test-result info"><strong>Acteurs:</strong> ${filmData.credits?.cast?.length || 0} acteurs</div>
+                <div class="test-result info"><strong>Vidéos:</strong> ${filmData.videos?.results?.length || 0} vidéos</div>
+            `;
+        } catch (error) {
+            console.error("Exception:", error);
+            resultDiv.innerHTML = `<div class="test-result error">✗ Erreur: ${error.message}</div>`;
+        }
+    }
+
+    // Initialisation
+    window.addEventListener('DOMContentLoaded', () => {
+        afficherConfig();
+        testerAPITMDB();
+        testerAPIPHP();
+    });
+</script>
+</body>
+</html>
+
