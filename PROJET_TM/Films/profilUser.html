@@ -160,6 +160,22 @@
                             <p class="mt-3">Chargement de vos favoris...</p>
                         </div>
                     </div>
+                    
+                    <!-- Séries Favorites -->
+                    <div class="section-header mb-4 mt-5">
+                        <h2 class="section-title">
+                            <span class="title-icon"><i class="ph ph-television"></i></span>
+                            Mes séries favorites
+                        </h2>
+                    </div>
+                    <div class="movies-grid" id="favorites-series">
+                        <div class="loading-container">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Chargement...</span>
+                            </div>
+                            <p class="mt-3">Chargement de vos séries favorites...</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Watchlist -->
@@ -167,7 +183,7 @@
                     <div class="section-header mb-4">
                         <h2 class="section-title">
                             <span class="title-icon"><i class="ph ph-clock"></i></span>
-                            À regarder plus tard
+                            À regarder plus tard (Films)
                         </h2>
                         <div class="section-actions">
                             <button class="btn btn-outline-primary" id="sort-watchlist">
@@ -184,6 +200,22 @@
                                 <span class="visually-hidden">Chargement...</span>
                             </div>
                             <p class="mt-3">Chargement de votre watchlist...</p>
+                        </div>
+                    </div>
+
+                    <!-- Séries Watchlist -->
+                    <div class="section-header mb-4 mt-5">
+                        <h2 class="section-title">
+                            <span class="title-icon"><i class="ph ph-television"></i></span>
+                            Séries à regarder plus tard
+                        </h2>
+                    </div>
+                    <div class="movies-grid" id="watchlist-series">
+                        <div class="loading-container">
+                            <div class="spinner-border text-warning" role="status">
+                                <span class="visually-hidden">Chargement...</span>
+                            </div>
+                            <p class="mt-3">Chargement de vos séries à voir...</p>
                         </div>
                     </div>
                 </div>
@@ -212,6 +244,22 @@
                             <p class="mt-3">Chargement de vos films vus...</p>
                         </div>
                     </div>
+
+                    <!-- Séries Vues -->
+                    <div class="section-header mb-4 mt-5">
+                        <h2 class="section-title">
+                            <span class="title-icon"><i class="ph ph-check-square-offset"></i></span>
+                            Séries déjà regardées
+                        </h2>
+                    </div>
+                    <div class="movies-grid" id="watched-series">
+                        <div class="loading-container">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Chargement...</span>
+                            </div>
+                            <p class="mt-3">Chargement de vos séries vues...</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Acteurs Favoris -->
@@ -234,6 +282,9 @@
                             </button>
                             <button class="btn btn-outline-primary" id="sort-actors-age-desc" title="Trier par âge (ancien)">
                                 <i class="ph ph-sort-descending me-2"></i>Âge (ancien)
+                            </button>
+                            <button class="btn btn-outline-info" id="view-actor-stats" onclick="window.location.href='actor-stats.html'">
+                                <i class="ph ph-chart-pie me-2"></i>Voir les statistiques
                             </button>
                             <button class="btn btn-outline-danger" id="clear-actors">
                                 <i class="ph ph-trash me-2"></i>Tout supprimer

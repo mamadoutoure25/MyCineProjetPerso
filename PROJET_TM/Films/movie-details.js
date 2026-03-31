@@ -478,7 +478,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
     async function verifierPresenceDansListe(liste) {
         if (!userId) return false;
         try {
-            const result = await appelAPI(`${liste}.php?user_id=${userId}&film_id=${filmId}`);
+            const result = await appelAPI(`${liste}.php?user_id=${userId}&film_id=${filmId}&media_type=movie`);
             // Gérer les différentes propriétés de réponse
             if (result.is_favorite !== undefined) return result.is_favorite;
             if (result.is_in_watchlist !== undefined) return result.is_in_watchlist;
@@ -500,7 +500,8 @@ if (!window.location.pathname.includes('movie-details.html')) {
         try {
             const result = await appelAPI(`${liste}.php`, 'POST', {
                 user_id: userId,
-                film_id: parseInt(filmId)
+                film_id: parseInt(filmId),
+                media_type: 'movie'
             });
             afficherNotification(result.message, "success");
             return true;
@@ -517,7 +518,8 @@ if (!window.location.pathname.includes('movie-details.html')) {
         try {
             const result = await appelAPI(`${liste}.php`, 'DELETE', {
                 user_id: userId,
-                film_id: parseInt(filmId)
+                film_id: parseInt(filmId),
+                media_type: 'movie'
             });
             afficherNotification(result.message, "success");
             return true;
@@ -645,62 +647,46 @@ if (!window.location.pathname.includes('movie-details.html')) {
             return;
         }
         if (!acteurs || acteurs.length === 0) {
-            MOVIE_DOM.movieCast.innerHTML = '<p class="text-muted">Aucune information sur la distribution.</p>';
+            MOVIE_DOM.movieCast.innerHTML = '<p class="text-muted text-center w-100">Aucune information sur la distribution.</p>';
             return;
         }
 
         MOVIE_DOM.movieCast.innerHTML = `
-        <div class="row g-4">
+        <div class="cast-carousel">
           ${acteurs
             .slice(0, 18) // Afficher 18 acteurs
             .map(
                 (acteur) => `
-                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                  <div class="movie-card position-relative rounded overflow-hidden" 
-                       style="cursor: pointer; height: 300px;"
-                       onclick="if(!event.target.closest('.btn-actor-favorite')) { voirActeur(${acteur.id}); }">
-                    <div class="movie-card-inner position-relative h-100">
+                <div class="movie-card" onclick="if(!event.target.closest('.btn-actor-favorite')) { voirActeur(${acteur.id}); }">
+                    <div class="movie-card-inner">
                       <img src="${acteur.profile_path ? MOVIE_DETAILS_CONFIG.URL_IMAGE_ACTEUR + acteur.profile_path : MOVIE_DETAILS_CONFIG.IMAGE_ACTEUR_SUBSTITUT}"
-                           class="movie-card-img img-fluid w-100 h-100 object-fit-cover"
+                           class="movie-card-img"
                            alt="${acteur.name}"
                            loading="lazy"
                            onerror="this.src='${MOVIE_DETAILS_CONFIG.IMAGE_ACTEUR_SUBSTITUT}'">
                       
-                      <div class="movie-card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-3">
+                      <div class="movie-card-overlay">
                         <div class="text-white w-100">
-                          <h6 class="mb-1 fw-bold movie-title" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">${acteur.name}</h6>
-                          <small class="d-block" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; color: rgba(255, 255, 255, 0.8);">${acteur.character || "Rôle inconnu"}</small>
+                          <h6 class="mb-1 fw-bold movie-title" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; font-size: 1rem; -webkit-text-fill-color: white;">${acteur.name}</h6>
+                          <small class="d-block" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; color: rgba(255, 255, 255, 0.8); font-size: 0.8rem;">${acteur.character || "Rôle inconnu"}</small>
                         </div>
                       </div>
 
                       <button class="btn-actor-favorite position-absolute top-2 end-2" 
                               data-actor-id="${acteur.id}"
-                              data-actor-name="${acteur.name}"
+                              data-actor-name="${acteur.name.replace(/'/g, "\\'")}"
                               onclick="event.stopPropagation(); toggleActorFavorite(${acteur.id}, '${acteur.name.replace(/'/g, "\\'")}');"
                               title="Ajouter aux favoris"
-                              style="background: rgba(0, 0, 0, 0.6); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;">
-                        <i class="ph ph-heart" style="font-size: 1.2rem;"></i>
+                              style="background: rgba(0, 0, 0, 0.6); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; z-index: 10;">
+                        <i class="ph ph-heart" style="font-size: 1.1rem;"></i>
                       </button>
                     </div>
-                  </div>
                 </div>
               `,
             )
             .join("")}
         </div>
       `;
-
-        // Configurer les écouteurs pour les animations
-        document.querySelectorAll("#movie-cast .movie-card").forEach((carte) => {
-            carte.addEventListener("mouseenter", () => {
-                carte.style.transform = "translateY(-8px)";
-                carte.style.boxShadow = "0 15px 40px rgba(0, 0, 0, 0.3)";
-            });
-            carte.addEventListener("mouseleave", () => {
-                carte.style.transform = "translateY(0)";
-                carte.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.15)";
-            });
-        });
 
         // Mettre à jour l'état des boutons favoris
         updateActorFavoritesUI();
@@ -1039,17 +1025,23 @@ if (!window.location.pathname.includes('movie-details.html')) {
             <div class="vod-providers-grid">
               ${plateformes
                 .map(
-                    (plateforme) => `
+                    (plateforme) => {
+                        const logoUrl = plateforme.logo_path 
+                            ? `${MOVIE_DETAILS_CONFIG.URL_IMAGE}${plateforme.logo_path}`
+                            : (MOVIE_ICÔNES_PLATEFORMES[plateforme.provider_name] || MOVIE_DETAILS_CONFIG.ICONE_PLATEFORME_SUBSTITUT);
+                        
+                        return `
                   <a href="${obtenirUrlPlateforme(plateforme.provider_name, titreFilm, filmId, "flatrate")}"
                      target="_blank" rel="noopener" class="vod-provider-card text-decoration-none">
-                    <img src="${MOVIE_DETAILS_CONFIG.URL_IMAGE}${plateforme.logo_path || ''}"
+                    <img src="${logoUrl}"
                          alt="${plateforme.provider_name}" 
                          class="vod-provider-logo"
                          onerror="this.src='${MOVIE_DETAILS_CONFIG.ICONE_PLATEFORME_SUBSTITUT}'">
                     <div class="vod-provider-name">${plateforme.provider_name}</div>
                     <div class="vod-provider-type">Streaming</div>
                   </a>
-                `,
+                `;
+                    }
                 )
                 .join("")}
             </div>
@@ -1064,17 +1056,23 @@ if (!window.location.pathname.includes('movie-details.html')) {
             <div class="vod-providers-grid">
               ${distributeurs
                 .map(
-                    (distributeur) => `
+                    (distributeur) => {
+                        const logoUrl = distributeur.logo_path 
+                            ? `${MOVIE_DETAILS_CONFIG.URL_IMAGE}${distributeur.logo_path}`
+                            : (MOVIE_ICÔNES_PLATEFORMES[distributeur.provider_name] || MOVIE_DETAILS_CONFIG.ICONE_PLATEFORME_SUBSTITUT);
+
+                        return `
                   <a href="${obtenirUrlPlateforme(distributeur.provider_name, titreFilm, filmId, "buy")}"
                      target="_blank" rel="noopener" class="vod-provider-card text-decoration-none">
-                    <img src="${MOVIE_DETAILS_CONFIG.URL_IMAGE}${distributeur.logo_path || ''}"
+                    <img src="${logoUrl}"
                          alt="${distributeur.provider_name}" 
                          class="vod-provider-logo"
                          onerror="this.src='${MOVIE_DETAILS_CONFIG.ICONE_PLATEFORME_SUBSTITUT}'">
                     <div class="vod-provider-name">${distributeur.provider_name}</div>
                     <div class="vod-provider-type">Achat/Location</div>
                   </a>
-                `,
+                `;
+                    }
                 )
                 .join("")}
             </div>

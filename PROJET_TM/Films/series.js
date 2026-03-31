@@ -56,9 +56,8 @@ const ICÔNES_PLATEFORMES = {
   "FilmoTV": "../images/filmotv.png",
   "Microsoft Store": "../images/microsoft_store.png",
   "Skynet": "../images/skynet.png",
-  "HBO Max": "../images/hbo_max.png",
- "HBO": "../images/hbo.png",
-  "Max": "../images/hbo_max.png",
+  "HBO Max": "../images/max.png",
+  "Max": "../images/max.png",
   "Hulu": "../images/hulu.png",
   "Paramount+": "../images/paramount_plus.png",
   "YouTube Premium": "../images/youtube_premium.png",
@@ -742,7 +741,7 @@ function afficherErreurUtilisateur() {
 
 function afficherDetailsSerie(id) {
   console.log("[v0] Navigation vers les détails de la série avec ID:", id)
-  window.location.href = `PROJET_TM_GRoupe/Films/serie-details.html?id=${id}`
+  window.location.href = `PROJET_TM/Films/serie-details.html?id=${id}`
 }
 
 function afficherDistribution(serie) {
@@ -790,13 +789,18 @@ function afficherPlateformes(plateformes) {
           <div class="d-flex flex-wrap gap-2">
             ${listeP
           .map(
-              (plateforme) => `
+              (plateforme) => {
+                  const logoUrl = plateforme.logo_path 
+                    ? `https://image.tmdb.org/t/p/original${plateforme.logo_path}`
+                    : (ICÔNES_PLATEFORMES[plateforme.provider_name] || CONFIG.ICÔNE_PLATEFORME_SUBSTITUT);
+                    
+                  return `
               <a href="#" 
                  class="vod-provider-card" 
                  target="_blank" 
                  rel="noopener noreferrer"
                  title="${plateforme.provider_name} (${type})">
-                <img src="${ICÔNES_PLATEFORMES[plateforme.provider_name] || CONFIG.ICÔNE_PLATEFORME_SUBSTITUT}" 
+                <img src="${logoUrl}" 
                      class="vod-provider-logo" 
                      alt="${plateforme.provider_name}"
                      style="width: 40px; height: 40px; border-radius: 8px;"
@@ -804,7 +808,8 @@ function afficherPlateformes(plateformes) {
                 <div class="vod-provider-name">${plateforme.provider_name}</div>
                 <span class="vod-provider-type">${type}</span>
               </a>
-            `,
+            `;
+              },
           )
           .join("")}
           </div>
