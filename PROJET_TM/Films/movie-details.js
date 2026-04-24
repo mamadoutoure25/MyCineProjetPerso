@@ -1628,7 +1628,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
         if (!filmId) {
             afficherNotification("Aucun film spécifié", "danger");
             try {
-                window.location.href = '../../index.html';
+                window.location.href = 'projetBD.html';
             } catch (error) {
                 console.error("Erreur lors de la redirection:", error);
             }
@@ -1647,7 +1647,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
                 afficherNotification("Veuillez vérifier l'ID du film ou réessayer plus tard", "danger");
                 setTimeout(() => {
                     try {
-                        window.location.href = '../../index.html';
+                        window.location.href = 'projetBD.html';
                     } catch (error) {
                         console.error("Erreur lors de la redirection:", error);
                     }
