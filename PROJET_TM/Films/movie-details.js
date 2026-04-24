@@ -199,6 +199,46 @@ if (!window.location.pathname.includes('movie-details.html')) {
 
     window.voirFilm = voirFilm;
 
+    // Éléments du DOM pour l'authentification
+    const AUTH_DOM = {
+        lienConnexion: document.getElementById("login-link"),
+        lienDeconnexion: document.getElementById("logout-link"),
+        lienProfil: document.getElementById("profile-link"),
+    }
+
+    function mettreAJourInterfaceAuthentification() {
+        const estConnecte = verifierAuthentification();
+        const roleUtilisateur = auth?.role || "";
+
+        if (AUTH_DOM.lienConnexion) AUTH_DOM.lienConnexion.classList.toggle("d-none", estConnecte);
+        if (AUTH_DOM.lienProfil) AUTH_DOM.lienProfil.classList.toggle("d-none", !estConnecte);
+        if (AUTH_DOM.lienDeconnexion) AUTH_DOM.lienDeconnexion.classList.toggle("d-none", !estConnecte);
+
+        const lienProfilAncre = AUTH_DOM.lienProfil
+            ? (AUTH_DOM.lienProfil.tagName === "A" ? AUTH_DOM.lienProfil : AUTH_DOM.lienProfil.querySelector("a"))
+            : null;
+
+        if (lienProfilAncre) {
+            lienProfilAncre.setAttribute("href", "profilUser.html");
+            if (estConnecte && auth?.pseudo) {
+                lienProfilAncre.innerHTML = `<i class="ph ph-user me-2"></i> ${auth.pseudo}`;
+            }
+        }
+
+        if (AUTH_DOM.lienDeconnexion) {
+            // Supprimer les anciens écouteurs pour éviter les doublons
+            const newDeconnexion = AUTH_DOM.lienDeconnexion.cloneNode(true);
+            AUTH_DOM.lienDeconnexion.parentNode.replaceChild(newDeconnexion, AUTH_DOM.lienDeconnexion);
+            
+            newDeconnexion.addEventListener("click", (e) => {
+                e.preventDefault();
+                sessionStorage.removeItem("auth");
+                localStorage.removeItem("lastAuth");
+                window.location.reload();
+            });
+        }
+    }
+
     // Vérification de l'authentification
     function verifierAuthentification() {
         // Essayer d'abord sessionStorage (prioritaire)
@@ -651,9 +691,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
             return;
         }
 
-        MOVIE_DOM.movieCast.innerHTML = `
-        <div class="cast-carousel">
-          ${acteurs
+        MOVIE_DOM.movieCast.innerHTML = acteurs
             .slice(0, 18) // Afficher 18 acteurs
             .map(
                 (acteur) => `
@@ -664,7 +702,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
                            alt="${acteur.name}"
                            loading="lazy"
                            onerror="this.src='${MOVIE_DETAILS_CONFIG.IMAGE_ACTEUR_SUBSTITUT}'">
-                      
+
                       <div class="movie-card-overlay">
                         <div class="text-white w-100">
                           <h6 class="mb-1 fw-bold movie-title" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; font-size: 1rem; -webkit-text-fill-color: white;">${acteur.name}</h6>
@@ -684,9 +722,8 @@ if (!window.location.pathname.includes('movie-details.html')) {
                 </div>
               `,
             )
-            .join("")}
-        </div>
-      `;
+            .join("")
+;
 
         // Mettre à jour l'état des boutons favoris
         updateActorFavoritesUI();
@@ -973,8 +1010,8 @@ if (!window.location.pathname.includes('movie-details.html')) {
             "Microsoft Store": `https://www.microsoft.com/fr-be/store/movies-and-tv?query=${encodeURIComponent(titreFilm)}`,
             Skynet: `https://www.skynet.be/fr/recherche?term=${encodeURIComponent(titreFilm)}`,
             "Proximus Pickx": `https://www.proximus.be/fr/id_s_search?term=${encodeURIComponent(titreFilm)}`,
-            "HBO Max": `https://www.hbomax.com/search?query=${encodeURIComponent(titreFilm)}`,
-            Max: `https://www.max.com/search?query=${encodeURIComponent(titreFilm)}`,
+            "HBO Max": `https://play.hbomax.com/search/result?q=${encodeURIComponent(titreFilm).replace(/%20/g, "+")}`,
+            Max: `https://play.hbomax.com/search/result?q=${encodeURIComponent(titreFilm).replace(/%20/g, "+")}`,
             "Rakuten TV": `https://www.rakuten.tv/fr/search?q=${encodeURIComponent(titreFilm)}`,
             Telenet: `https://www.telenet.be/fr/recherche?term=${encodeURIComponent(titreFilm)}`,
             LaCinetek: `https://www.lacinetek.com/fr/rechercher?term=${encodeURIComponent(titreFilm)}`,
@@ -1574,8 +1611,10 @@ if (!window.location.pathname.includes('movie-details.html')) {
         MOVIE_DOM = getMOVIE_DOM();
         console.log("MOVIE_DOM étoiles:", MOVIE_DOM.stars.length);
 
-        // Vérifier l'authentification
+        // Vérifier l'authentification et mettre à jour l'interface
         const isAuthenticated = verifierAuthentification();
+        mettreAJourInterfaceAuthentification();
+        
         console.log("Authentification vérifiée:", isAuthenticated, "UserId:", userId);
         
         if (!isAuthenticated) {

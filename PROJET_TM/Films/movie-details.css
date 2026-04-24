@@ -876,6 +876,40 @@ body {
     scrollbar-color: var(--primary) transparent;
 }
 
+/* Grille pour la distribution (5 par ligne) */
+.cast-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    padding: 1rem 0;
+    width: 100%;
+}
+
+@media (max-width: 1200px) {
+    .cast-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .cast-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .cast-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .cast-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
 /* Style de la barre de défilement pour Chrome/Safari */
 .cast-carousel::-webkit-scrollbar, 
 .seasons-grid::-webkit-scrollbar {

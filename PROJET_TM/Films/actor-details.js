@@ -321,43 +321,41 @@ function afficherFilmographie(films) {
     return dateB - dateA
   })
 
-  DOM.actorMovies.className = "row g-4"
+  DOM.actorMovies.className = "cast-grid"
   DOM.actorMovies.innerHTML = filmsTriés
       .slice(0, 200)
       .map(
           (film) => `
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-            <a href="movie-details.html?id=${film.id}" class="text-decoration-none">
-                <div class="movie-card position-relative rounded overflow-hidden" data-id="${film.id}">
-                    <div class="movie-card-inner position-relative" style="height: 300px; cursor: pointer;">
-                        <img src="${film.poster_path ? CONFIG.URL_IMAGE + film.poster_path : CONFIG.AFFICHE_PAR_DEFAUT}" 
-                             alt="${film.title}" 
-                             class="movie-card-img img-fluid w-100 h-100 object-fit-cover"
-                             onerror="this.src='${CONFIG.AFFICHE_PAR_DEFAUT}'"
-                             loading="lazy">
-                        
-                        <!-- Note au survol -->
-                        <div class="movie-rating position-absolute top-0 end-0 m-2 bg-dark bg-opacity-75 text-white rounded-pill px-2 py-1 d-flex align-items-center"
-                             style="opacity: 0; transform: translateY(10px); transition: all 0.3s ease;">
-                            <i class="ph ph-star-fill text-warning me-1 small"></i>
-                            <small class="fw-bold">${film.vote_average ? film.vote_average.toFixed(1) : 'N/A'}</small>
-                        </div>
-                        
-                        <div class="movie-card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-3">
-                            <div class="text-white w-100">
-                                <h6 class="mb-1 fw-bold movie-title" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${film.title}</h6>
-                                <small class="d-flex align-items-center justify-content-between w-100">
-                                    <span class="d-flex align-items-center">
-                                        <span class="badge bg-warning text-dark">${film.character || "Rôle"}</span>
-                                    </span>
-                                    ${film.release_date ? `<span>${film.release_date.split("-")[0]}</span>` : ''}
-                                </small>
-                            </div>
+        <a href="movie-details.html?id=${film.id}" class="text-decoration-none">
+            <div class="movie-card position-relative rounded overflow-hidden" data-id="${film.id}">
+                <div class="movie-card-inner position-relative" style="height: 300px; cursor: pointer;">
+                    <img src="${film.poster_path ? CONFIG.URL_IMAGE + film.poster_path : CONFIG.AFFICHE_PAR_DEFAUT}" 
+                         alt="${film.title}" 
+                         class="movie-card-img img-fluid w-100 h-100 object-fit-cover"
+                         onerror="this.src='${CONFIG.AFFICHE_PAR_DEFAUT}'"
+                         loading="lazy">
+                    
+                    <!-- Note au survol -->
+                    <div class="movie-rating position-absolute top-0 end-0 m-2 bg-dark bg-opacity-75 text-white rounded-pill px-2 py-1 d-flex align-items-center"
+                         style="opacity: 0; transform: translateY(10px); transition: all 0.3s ease;">
+                        <i class="ph ph-star-fill text-warning me-1 small"></i>
+                        <small class="fw-bold">${film.vote_average ? film.vote_average.toFixed(1) : 'N/A'}</small>
+                    </div>
+                    
+                    <div class="movie-card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-3">
+                        <div class="text-white w-100">
+                            <h6 class="mb-1 fw-bold movie-title" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${film.title}</h6>
+                            <small class="d-flex align-items-center justify-content-between w-100">
+                                <span class="d-flex align-items-center">
+                                    <span class="badge bg-warning text-dark">${film.character || "Rôle"}</span>
+                                </span>
+                                ${film.release_date ? `<span>${film.release_date.split("-")[0]}</span>` : ''}
+                            </small>
                         </div>
                     </div>
                 </div>
-            </a>
-        </div>
+            </div>
+        </a>
     `,
       )
       .join("")
@@ -398,43 +396,41 @@ function afficherFilmographieTV(series) {
     return dateB - dateA
   })
 
-  DOM.actorTV.className = "row g-4"
+  DOM.actorTV.className = "cast-grid"
   DOM.actorTV.innerHTML = seriesTriées
       .slice(0, 100)
       .map(
           (serie) => `
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-            <a href="serie-details.html?id=${serie.id}" class="text-decoration-none">
-                <div class="movie-card position-relative rounded overflow-hidden" data-id="${serie.id}">
-                    <div class="movie-card-inner position-relative" style="height: 300px; cursor: pointer;">
-                        <img src="${serie.poster_path ? CONFIG.URL_IMAGE + serie.poster_path : CONFIG.AFFICHE_PAR_DEFAUT}" 
-                             alt="${serie.name}" 
-                             class="movie-card-img img-fluid w-100 h-100 object-fit-cover"
-                             onerror="this.src='${CONFIG.AFFICHE_PAR_DEFAUT}'"
-                             loading="lazy">
-                        
-                        <!-- Note au survol -->
-                        <div class="movie-rating position-absolute top-0 end-0 m-2 bg-dark bg-opacity-75 text-white rounded-pill px-2 py-1 d-flex align-items-center"
-                             style="opacity: 0; transform: translateY(10px); transition: all 0.3s ease;">
-                            <i class="ph ph-star-fill text-warning me-1 small"></i>
-                            <small class="fw-bold">${serie.vote_average ? serie.vote_average.toFixed(1) + '/10' : 'N/A'}</small>
-                        </div>
-                        
-                        <div class="movie-card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-3">
-                            <div class="text-white w-100">
-                                <h6 class="mb-1 fw-bold movie-title" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${serie.name}</h6>
-                                <small class="d-flex align-items-center justify-content-between w-100">
-                                    <span class="d-flex align-items-center">
-                                        <span class="badge bg-warning text-dark">${serie.character || "Rôle"}</span>
-                                    </span>
-                                    ${serie.first_air_date ? `<span>${serie.first_air_date.split("-")[0]}</span>` : ''}
-                                </small>
-                            </div>
+        <a href="serie-details.html?id=${serie.id}" class="text-decoration-none">
+            <div class="movie-card position-relative rounded overflow-hidden" data-id="${serie.id}">
+                <div class="movie-card-inner position-relative" style="height: 300px; cursor: pointer;">
+                    <img src="${serie.poster_path ? CONFIG.URL_IMAGE + serie.poster_path : CONFIG.AFFICHE_PAR_DEFAUT}" 
+                         alt="${serie.name}" 
+                         class="movie-card-img img-fluid w-100 h-100 object-fit-cover"
+                         onerror="this.src='${CONFIG.AFFICHE_PAR_DEFAUT}'"
+                         loading="lazy">
+                    
+                    <!-- Note au survol -->
+                    <div class="movie-rating position-absolute top-0 end-0 m-2 bg-dark bg-opacity-75 text-white rounded-pill px-2 py-1 d-flex align-items-center"
+                         style="opacity: 0; transform: translateY(10px); transition: all 0.3s ease;">
+                        <i class="ph ph-star-fill text-warning me-1 small"></i>
+                        <small class="fw-bold">${serie.vote_average ? serie.vote_average.toFixed(1) + '/10' : 'N/A'}</small>
+                    </div>
+                    
+                    <div class="movie-card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-3">
+                        <div class="text-white w-100">
+                            <h6 class="mb-1 fw-bold movie-title" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${serie.name}</h6>
+                            <small class="d-flex align-items-center justify-content-between w-100">
+                                <span class="d-flex align-items-center">
+                                    <span class="badge bg-warning text-dark">${serie.character || "Rôle"}</span>
+                                </span>
+                                ${serie.first_air_date ? `<span>${serie.first_air_date.split("-")[0]}</span>` : ''}
+                            </small>
                         </div>
                     </div>
                 </div>
-            </a>
-        </div>
+            </div>
+        </a>
     `,
       )
       .join("")

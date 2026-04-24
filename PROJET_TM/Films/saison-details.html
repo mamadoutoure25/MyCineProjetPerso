@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCiné - Détails de la Saison</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../Films/movie-details.css">
+    <script src="../Films/sombre_clair.js"></script>
+    <style>
+        .episode-card {
+            background: var(--card-bg, #1e293b);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .episode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .episode-image {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+        .episode-content {
+            padding: 1.25rem;
+        }
+        .episode-number {
+            color: var(--bs-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .episode-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #fff;
+        }
+        .episode-overview {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+        .episode-director {
+            font-size: 0.85rem;
+            color: var(--bs-primary);
+            margin-bottom: 0.5rem;
+        }
+        .episode-rating-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ffc107;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        .episode-air-date {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .episode-guests {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 0.75rem;
+        }
+        .season-breadcrumb {
+            margin-bottom: 2rem;
+        }
+        .season-breadcrumb a {
+            color: var(--bs-primary);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .season-breadcrumb a:hover {
+            opacity: 0.8;
+        }
+        .season-breadcrumb span {
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="../../index.html">
+            <div class="logo-container me-2">
+                <span class="logo-text">M</span>
+            </div>
+            <span class="brand-text d-none d-sm-inline">MyCiné</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <i class="ph ph-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="../../index.html" id="nav-home">
+                        <i class="ph ph-house me-1"></i> Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../series.html">
+                        <i class="ph ph-television me-1"></i> Séries
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème">
+                    <i class="ph ph-sun" id="theme-icon"></i>
+                </button>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" id="login-link" href="../connexion/connexion.html"><i class="ph ph-sign-in me-1"></i> Connexion</a></li>
+                    <li class="nav-item d-none" id="profile-link"><a class="nav-link" href="profilUser.html"><i class="ph ph-user me-1"></i> Profil</a></li>
+                    <li class="nav-item d-none" id="logout-link"><a class="nav-link" href="#"><i class="ph ph-sign-out me-1"></i> Déconnexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container-fluid mt-10 pt-4">
+    <section class="movie-hero-section mb-10 position-relative" id="season-hero-section">
+        <div class="movie-hero-overlay"></div>
+        <div class="movie-hero-content container position-relative">
+            <div class="season-breadcrumb">
+                <a href="../../series.html">Séries</a>
+                <span>/</span>
+                <a href="#" id="breadcrumb-serie-name">Série</a>
+                <span>/</span>
+                <span id="breadcrumb-season-name">Saison</span>
+            </div>
+            <div class="row align-items-end">
+                <div class="col-lg-8">
+                    <div class="hero-content-wrapper">
+                        <h1 class="movie-title" id="season-title"></h1>
+                        <div class="movie-meta mb-3" id="season-tags"></div>
+                        <p class="movie-overview" id="season-overview"></p>
+                    </div>
+                </div>
+                <div class="col-lg-4 d-none d-lg-block">
+                    <div class="poster-container">
+                        <img id="season-poster" class="movie-poster" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E%3Crect fill='%23334155' width='300' height='450'/%3E%3C/svg%3E" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Distribution -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-users"></i></span>
+                Distribution de la saison
+            </h2>
+            <div class="cast-grid" id="season-cast"></div>
+        </div>
+    </section>
+
+    <!-- Galerie -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-images"></i></span>
+                Galerie de posters
+            </h2>
+            <div class="cast-grid" id="season-posters"></div>
+        </div>
+    </section>
+
+    <!-- Vidéos -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-play-circle"></i></span>
+                Vidéos et Bandes-annonces
+            </h2>
+            <div class="videos-grid" id="season-videos"></div>
+        </div>
+    </section>
+
+    <!-- Épisodes -->
+    <section class="content-section mb-5">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-icon"><i class="ph ph-list-numbers"></i></span>
+                Épisodes
+            </h2>
+            <div class="row g-4" id="episodes-container">
+                <!-- Les épisodes seront injectés ici -->
+            </div>
+        </div>
+    </section>
+</main>
+
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="saison-details.js"></script>
+</body>
+</html>

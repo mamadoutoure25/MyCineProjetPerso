@@ -85,6 +85,65 @@ const ETAT_APPLICATION = {
   requetesActives: new Set(),
 }
 
+// Gestion de l'authentification
+function verifierAuthentification() {
+  const donneesAuth = sessionStorage.getItem("auth")
+  if (donneesAuth) {
+    ETAT_APPLICATION.authentification = JSON.parse(donneesAuth)
+    return true
+  }
+  return false
+}
+
+function mettreAJourInterfaceAuthentification() {
+  const estConnecte = verifierAuthentification()
+  const roleUtilisateur = ETAT_APPLICATION.authentification?.role || ""
+
+  // Gestion de l'affichage des liens
+  if (DOM.lienConnexion) DOM.lienConnexion.classList.toggle("d-none", estConnecte)
+  if (DOM.lienProfil) DOM.lienProfil.classList.toggle("d-none", !estConnecte)
+  if (DOM.lienDeconnexion) DOM.lienDeconnexion.classList.toggle("d-none", !estConnecte)
+  if (DOM.lienAdmin) DOM.lienAdmin.classList.toggle("d-none", !estConnecte || roleUtilisateur !== "admin")
+  
+  // Affichage du nom d'utilisateur (si l'élément existe)
+  if (DOM.affichageNomUtilisateur) {
+      if (estConnecte && ETAT_APPLICATION.authentification?.pseudo) {
+          DOM.affichageNomUtilisateur.textContent = ETAT_APPLICATION.authentification.pseudo
+          DOM.affichageNomUtilisateur.parentElement.classList.remove("d-none")
+      } else {
+          DOM.affichageNomUtilisateur.parentElement.classList.add("d-none")
+      }
+  }
+
+  // Cible le vrai lien <a>, même si l'id est posé sur <li>
+  const lienProfilAncre = DOM.lienProfil
+    ? (DOM.lienProfil.tagName === "A" ? DOM.lienProfil : DOM.lienProfil.querySelector("a"))
+    : null
+
+  if (lienProfilAncre) {
+    lienProfilAncre.setAttribute("href", "PROJET_TM/Films/profilUser.html")
+    if (estConnecte && ETAT_APPLICATION.authentification?.pseudo) {
+        lienProfilAncre.innerHTML = `<i class="ph ph-user me-2"></i> ${ETAT_APPLICATION.authentification.pseudo}`
+    }
+  }
+  
+  // Gérer la déconnexion
+  if (DOM.lienDeconnexion) {
+    DOM.lienDeconnexion.addEventListener("click", (e) => {
+        e.preventDefault()
+        gererDeconnexion()
+    })
+  }
+}
+
+function gererDeconnexion() {
+  sessionStorage.removeItem("auth")
+  ETAT_APPLICATION.authentification = null
+  mettreAJourInterfaceAuthentification()
+  afficherNotification("Déconnexion réussie", "success")
+  window.location.href = "index.html"
+}
+
 /**
  * Utilitaires de requête API
  */
@@ -418,7 +477,7 @@ function mettreAJourSectionHero(serie) {
   const description = DOM.sectionHero.querySelector(".hero-description")
   if (description) {
     description.textContent =
-        serie.overview?.substring(0, 150) + (serie.overview?.length > 150 ? "..." : "") || "Découvrez cette série"
+        serie.overview?.substring(0, 250) + (serie.overview?.length > 250 ? "..." : "") || "Découvrez cette série"
   }
 
   const boutonDecouvrir = DOM.sectionHero.querySelector("#discover-btn")
@@ -449,17 +508,125 @@ async function gererSelectionSociete(idSociete) {
   fermerMenuMobile()
 }
 
-async function gererRecherche(requete) {
+async function gererRecherche(requete, estSoumission = false) {
+  if (!requete) {
+    if (DOM.resultatsRecherche) DOM.resultatsRecherche.style.display = "none"
+    return
+  }
+
   try {
     const donnees = await rechercherSeries(requete)
     if (donnees?.results?.length) {
-      afficherResultatsRecherche(donnees.results)
-    } else {
-      afficherNotification("Aucun résultat", "warning")
+      if (estSoumission) {
+        afficherGrilleRecherche(donnees.results, requete)
+      } else {
+        afficherResultatsRecherche(donnees.results)
+      }
+    } else if (estSoumission) {
+      afficherNotification("Aucun résultat pour '" + requete + "'", "warning")
     }
   } catch (erreur) {
     console.error("Erreur lors de la recherche:", erreur)
-    afficherNotification("Erreur lors de la recherche", "danger")
+    if (estSoumission) afficherNotification("Erreur lors de la recherche", "danger")
+  }
+}
+
+function afficherGrilleRecherche(series, requete) {
+  if (!DOM.sectionGenre) return
+  
+  DOM.sectionGenre.style.display = "block"
+  DOM.sectionGenre.scrollIntoView({ behavior: "smooth" })
+  DOM.sectionGenre.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="section-title">Résultats pour "${requete}"</h2>
+      <button class="btn btn-sm btn-outline-primary" onclick="location.reload()">
+        <i class="ph ph-arrow-left me-1"></i>Retour à l'accueil
+      </button>
+    </div>
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-4" id="filtered-series"></div>
+  `
+  
+  const conteneur = document.getElementById("filtered-series")
+  conteneur.innerHTML = series.map(serie => creerCarteSerie(serie)).join("")
+  configurerEcouteursCartesSeries()
+  
+  if (DOM.resultatsRecherche) DOM.resultatsRecherche.style.display = "none"
+}
+
+function afficherResultatsRecherche(series) {
+  if (!DOM.resultatsRecherche) return
+  
+  if (!series || series.length === 0) {
+    DOM.resultatsRecherche.style.display = "none"
+    return
+  }
+
+  DOM.resultatsRecherche.innerHTML = `
+    <div class="list-group shadow-lg overflow-hidden" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+      ${series
+      .slice(0, 6)
+      .map((serie) => {
+        const imageUrl = serie.poster_path
+            ? `${CONFIG.URL_IMAGE.replace("w500", "w92")}${serie.poster_path}`
+            : CONFIG.IMAGE_SUBSTITUT
+        const note = serie.vote_average?.toFixed(1) || "0.0"
+        return `
+          <a href="#" class="list-group-item list-group-item-action d-flex align-items-center p-2 border-0 border-bottom" 
+             data-id="${serie.id}" 
+             style="background: #1e293b; color: white; border-color: rgba(255,255,255,0.05) !important;">
+            <img src="${imageUrl}" 
+                 width="45" 
+                 height="68" 
+                 class="rounded"
+                 style="object-fit: cover; margin-right: 12px;"
+                 onerror="this.src='${CONFIG.IMAGE_SUBSTITUT}'">
+            <div class="overflow-hidden">
+              <h6 class="mb-0 text-truncate" style="font-size: 0.9rem;">${serie.name}</h6>
+              <div class="d-flex align-items-center gap-2">
+                <small class="text-muted" style="font-size: 0.75rem;">${serie.first_air_date?.substring(0, 4) || "N/A"}</small>
+                <span class="badge ${obtenirClasseNote(serie.vote_average)}" style="font-size: 0.65rem; padding: 2px 6px;">
+                  <i class="ph ph-star-fill me-1"></i>${note}
+                </span>
+              </div>
+            </div>
+          </a>
+        `
+      })
+      .join("")}
+      ${series.length > 6 ? `
+        <a href="#" class="list-group-item list-group-item-action text-center py-2 fw-bold" id="show-all-search" style="background: #334155; color: #3b82f6; border: none; font-size: 0.85rem;">
+          Voir tous les résultats (${series.length})
+        </a>
+      ` : ''}
+    </div>
+  `
+  
+  DOM.resultatsRecherche.style.display = "block"
+  
+  DOM.resultatsRecherche.querySelectorAll(".list-group-item[data-id]").forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault()
+      afficherDetailsSerie(item.dataset.id)
+    })
+  })
+
+  document.getElementById("show-all-search")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    const requete = DOM.champRecherche.value.trim()
+    afficherGrilleRecherche(series, requete)
+  })
+}
+
+// Utilitaire anti-rebond (debounce)
+function debounce(func, wait) {
+  let timeout
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout)
+      func(...args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
   }
 }
 
@@ -874,12 +1041,18 @@ function configurerEcouteurs() {
       const requete = DOM.champRecherche.value.trim()
       if (requete) {
         console.log("Recherche soumise:", requete)
-        await gererRecherche(requete)
+        await gererRecherche(requete, true) // Passer true pour indiquer que c'est une soumission
       }
     })
   }
 
   if (DOM.champRecherche) {
+    // Ajouter recherche en temps réel avec debounce
+    DOM.champRecherche.addEventListener("input", debounce(async (e) => {
+      const requete = e.target.value.trim()
+      await gererRecherche(requete, false) // false pour suggestions uniquement
+    }, 300))
+
     DOM.champRecherche.addEventListener("focus", () => {
       console.log("Focus sur le champ de recherche")
       if (DOM.champRecherche.value && DOM.resultatsRecherche?.children.length) {
@@ -914,6 +1087,11 @@ function configurerEcouteurs() {
 async function initialiser() {
   try {
     console.log("Initialisation de l'application séries...")
+    
+    // Authentification
+    verifierAuthentification()
+    mettreAJourInterfaceAuthentification()
+    
     await recupererGenres()
     await recupererSocietes()
     afficherAnnees()

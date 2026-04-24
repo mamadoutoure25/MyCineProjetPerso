@@ -95,8 +95,8 @@ function obtenirUrlPlateforme(nomPlateforme, titreSerie, idSerie, typePlateforme
         "Microsoft Store": `https://www.microsoft.com/fr-be/store/search/movies?q=${encodeURIComponent(titreSerie)}`,
         "Skynet": `https://www.skynet.be/fr/recherche?query=${encodeURIComponent(titreSerie)}`,
         "Proximus Pickx": `https://pickx.be/fr/recherche?search=${encodeURIComponent(titreSerie)}`,
-        "HBO Max": `https://play.max.com/`,
-        "Max": `https://play.max.com/`,
+        "HBO Max": `https://play.hbomax.com/search/result?q=${encodeURIComponent(titreSerie).replace(/%20/g, "+")}`,
+        "Max": `https://play.hbomax.com/search/result?q=${encodeURIComponent(titreSerie).replace(/%20/g, "+")}`,
         "Rakuten TV": `https://rakuten.tv/be/search?query=${encodeURIComponent(titreSerie)}`,
         "Telenet": `https://www.telenet.be/fr/recherche?query=${encodeURIComponent(titreSerie)}`,
         "LaCinetek": `https://www.lacinetek.com/fr/rechercher?query=${encodeURIComponent(titreSerie)}`,
@@ -127,9 +127,7 @@ function afficherActeurs(acteurs) {
         return
     }
 
-    DOM.serieCast.innerHTML = `
-    <div class="cast-carousel">
-      ${acteurs
+    DOM.serieCast.innerHTML = acteurs
         .slice(0, 18)
         .map(
             (acteur) => `
@@ -160,9 +158,7 @@ function afficherActeurs(acteurs) {
         </div>
       `,
         )
-        .join("")}
-    </div>
-  `
+        .join("")
 
     // Mettre à jour l'UI des favoris si la fonction existe
     if (typeof updateActorFavoritesUI === "function") {
@@ -197,7 +193,7 @@ function afficherSaisons(saisons) {
       ${saisonsValides
         .map(
             (saison) => `
-        <div class="season-card" onclick="afficherMessageSaison(${saison.season_number})">
+        <div class="season-card" onclick="voirSaison(${serieId}, ${saison.season_number})">
           <div class="season-card-image">
             <img src="${saison.poster_path ? CONFIG.URL_IMAGE + saison.poster_path : CONFIG.AFFICHE_PAR_DEFAUT}"
                  alt="Saison ${saison.season_number}"
@@ -224,17 +220,11 @@ function afficherSaisons(saisons) {
   `
 }
 
-function configurerEcouteursSaisons() {
-    document.querySelectorAll(".season-card").forEach(carte => {
-        carte.addEventListener("click", () => {
-            const numeroSaison = carte.dataset.season
-            afficherMessageSaison(numeroSaison)
-        })
-    })
-}
-
-function afficherMessageSaison(numeroSaison) {
-    afficherNotification(`Saison ${numeroSaison} sélectionnée - Détails des épisodes à venir`, "info")
+// Redirection vers les détails de la saison
+function voirSaison(serieId, seasonNumber) {
+    if (serieId && seasonNumber !== undefined) {
+        window.location.href = `saison-details.html?serieId=${serieId}&season=${seasonNumber}`
+    }
 }
 
 function afficherSocietesProduction(productionCompanies) {
@@ -247,30 +237,41 @@ function afficherSocietesProduction(productionCompanies) {
 
     DOM.productionSection.style.display = "block"
     DOM.serieProductionCompanies.innerHTML = `
-        ${productionCompanies
-            .map(
-                (company) => `
-            <div class="production-company-card">
-                <div class="production-logo-container">
-                    ${
-                        company.logo_path
-                            ? `<img src="${CONFIG.URL_IMAGE}${company.logo_path}" 
-                                 class="production-logo" 
-                                 alt="${company.name}"
-                                 onerror="this.src='https://via.placeholder.com/300x200?text=${encodeURIComponent(company.name)}'">`
-                            : `<img src="https://via.placeholder.com/300x200?text=${encodeURIComponent(company.name)}" 
-                                 class="production-logo" 
-                                 alt="${company.name}">`
-                    }
+        <div class="production-companies-grid">
+            ${productionCompanies
+                .map(
+                    (company) => `
+                <div class="production-company-card">
+                    <div class="production-logo-container">
+                        ${
+                            company.logo_path
+                                ? `<img src="${CONFIG.URL_IMAGE}${company.logo_path}" 
+                                     class="production-logo" 
+                                     alt="${company.name}"
+                                     onerror="this.src='https://via.placeholder.com/300x200?text=${encodeURIComponent(company.name)}'">`
+                                : `<img src="https://via.placeholder.com/300x200?text=${encodeURIComponent(company.name)}" 
+                                     class="production-logo" 
+                                     alt="${company.name}">`
+                        }
+                    </div>
+                    <div class="production-info">
+                        <div class="production-name">${company.name}</div>
+                        ${company.origin_country ? `
+                            <div class="production-country">
+                                <i class="ph ph-globe"></i>
+                                <span>${company.origin_country}</span>
+                            </div>
+                        ` : ''}
+                        <a href="company-details.html?id=${company.id}" class="production-link-btn">
+                            <i class="ph ph-arrow-up-right"></i>
+                            <span>Voir détails</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="production-info">
-                    <div class="production-name">${company.name}</div>
-                    ${company.origin_country ? `<div class="production-country"><i class="ph ph-map-pin"></i> ${company.origin_country}</div>` : ""}
-                </div>
-            </div>
-        `,
-            )
-            .join("")}
+            `,
+                )
+                .join("")}
+        </div>
     `
 }
 
@@ -531,7 +532,56 @@ function afficherNotification(message, type = "info") {
     toast.addEventListener("hidden.bs.toast", () => toast.remove())
 }
 
+// Éléments du DOM pour l'authentification
+const AUTH_DOM = {
+    lienConnexion: document.getElementById("login-link"),
+    lienDeconnexion: document.getElementById("logout-link"),
+    lienProfil: document.getElementById("profile-link"),
+    lienAdmin: document.getElementById("admin-link"),
+}
+
+// Gestion de l'authentification
+function verifierAuthentification() {
+    const donneesAuth = sessionStorage.getItem("auth")
+    if (donneesAuth) {
+        return JSON.parse(donneesAuth)
+    }
+    return null
+}
+
+function mettreAJourInterfaceAuthentification() {
+    const auth = verifierAuthentification()
+    const estConnecte = !!auth
+    const roleUtilisateur = auth?.role || ""
+
+    if (AUTH_DOM.lienConnexion) AUTH_DOM.lienConnexion.classList.toggle("d-none", estConnecte)
+    if (AUTH_DOM.lienProfil) AUTH_DOM.lienProfil.classList.toggle("d-none", !estConnecte)
+    if (AUTH_DOM.lienDeconnexion) AUTH_DOM.lienDeconnexion.classList.toggle("d-none", !estConnecte)
+    if (AUTH_DOM.lienAdmin) AUTH_DOM.lienAdmin.classList.toggle("d-none", !estConnecte || roleUtilisateur !== "admin")
+
+    const lienProfilAncre = AUTH_DOM.lienProfil
+        ? (AUTH_DOM.lienProfil.tagName === "A" ? AUTH_DOM.lienProfil : AUTH_DOM.lienProfil.querySelector("a"))
+        : null
+
+    if (lienProfilAncre) {
+        lienProfilAncre.setAttribute("href", "profilUser.html")
+        if (estConnecte && auth.pseudo) {
+            lienProfilAncre.innerHTML = `<i class="ph ph-user me-2"></i> ${auth.pseudo}`
+        }
+    }
+
+    if (AUTH_DOM.lienDeconnexion) {
+        AUTH_DOM.lienDeconnexion.addEventListener("click", (e) => {
+            e.preventDefault()
+            sessionStorage.removeItem("auth")
+            window.location.reload()
+        })
+    }
+}
+
 async function chargerDetailsSerie() {
+    // ... existant ...
+    mettreAJourInterfaceAuthentification()
     serieId = new URLSearchParams(window.location.search).get("id")
     if (!serieId) {
         window.location.href = "../../series.html"

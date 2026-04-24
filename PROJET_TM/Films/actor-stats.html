@@ -3,140 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistiques des Acteurs - MyCiné</title>
+    <title>Statistiques Globales - MyCiné</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="projet.css">
     <link rel="stylesheet" href="profilUser.css">
     <style>
-        .stats-container {
-            padding: 2rem 0;
-        }
+        .stats-container { padding: 2rem 0; }
         .chart-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
+            background: var(--bg-card, #1e293b);
+            border: 1px solid var(--border, rgba(255,255,255,0.1));
+            border-radius: 16px;
+            padding: 1.5rem;
             height: 100%;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
-        }
-        .chart-card:hover {
-            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         .chart-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            color: var(--text);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary, #ffffff);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         .stat-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
         .summary-item {
-            background: var(--profile-gradient);
-            padding: 1.5rem;
-            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary, #ff0000), var(--secondary, #800080));
+            padding: 1.2rem;
+            border-radius: 12px;
             color: white;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
         }
-        .summary-value {
-            display: block;
-            font-size: 2.5rem;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: 0.5rem;
+        .summary-value { display: block; font-size: 2rem; font-weight: 800; }
+        .summary-label { font-size: 0.85rem; opacity: 0.9; }
+        .nav-pills-custom {
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem;
+            border-radius: 12px;
+            display: inline-flex;
+            margin-bottom: 2rem;
         }
-        .summary-label {
-            font-size: 1rem;
-            opacity: 0.9;
-            font-weight: 500;
+        .nav-pills-custom .nav-link {
+            color: white;
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            transition: all 0.3s ease;
         }
-        canvas {
-            max-height: 350px;
+        .nav-pills-custom .nav-link.active {
+            background: var(--primary, #ff0000);
+            box-shadow: 0 4px 12px rgba(255,0,0,0.3);
+        }
+        canvas { max-height: 300px; width: 100% !important; }
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-body, #0f172a);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease;
         }
     </style>
 </head>
 <body>
+
+<div id="loading-screen" class="loading-overlay">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+    <p class="mt-3 text-muted">Analyse de votre collection...</p>
+</div>
+
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="../../index.html">
-            <div class="logo-container me-2">
-                <span class="logo-text">M</span>
-            </div>
-            <span class="brand-text d-none d-sm-inline">MyCiné</span>
+            <div class="logo-container me-2"><span class="logo-text">M</span></div>
+            <span class="brand-text">MyCiné Stats</span>
         </a>
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="profilUser.html">
-                        <i class="ph ph-arrow-left me-1"></i> Retour au Profil
-                    </a>
-                </li>
-            </ul>
+        <div class="ms-auto">
+            <a class="btn btn-outline-light btn-sm" href="profilUser.html">
+                <i class="ph ph-arrow-left me-1"></i> Retour au Profil
+            </a>
         </div>
     </div>
 </nav>
 
 <main class="container stats-container mt-5 pt-5">
-    <header class="section-header mb-5">
-        <h1 class="section-title">
-            <span class="title-icon"><i class="ph ph-chart-pie"></i></span>
-            Statistiques de vos Acteurs Favoris
-        </h1>
-    </header>
-
-    <div id="no-data-message" class="text-center py-5 d-none">
-        <i class="ph ph-user-circle opacity-50 mb-3" style="font-size: 5rem;"></i>
-        <h2>Pas assez de données</h2>
-        <p class="text-muted">Ajoutez au moins quelques acteurs à vos favoris pour voir les statistiques.</p>
-        <a href="profilUser.html" class="btn btn-primary mt-3">Retour au profil</a>
+    <div class="text-center">
+        <div class="nav nav-pills nav-pills-custom" id="stats-tabs" role="tablist">
+            <button class="nav-link active" id="movies-tab" data-bs-toggle="pill" data-bs-target="#movies-stats" type="button">Films</button>
+            <button class="nav-link" id="series-tab" data-bs-toggle="pill" data-bs-target="#series-stats" type="button">Séries</button>
+            <button class="nav-link" id="actors-tab" data-bs-toggle="pill" data-bs-target="#actors-stats" type="button">Acteurs</button>
+        </div>
     </div>
 
-    <div id="stats-content">
-        <!-- Résumé rapide -->
-        <div class="stat-summary">
-            <div class="summary-item">
-                <span class="summary-value" id="total-actors">0</span>
-                <span class="summary-label">Acteurs Favoris</span>
+    <div class="tab-content">
+        <!-- STATS FILMS -->
+        <div class="tab-pane fade show active" id="movies-stats">
+            <div class="stat-summary" id="movie-summary">
+                <div class="summary-item"><span class="summary-value" id="movie-count">0</span><span class="summary-label">Films Favoris</span></div>
+                <div class="summary-item" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"><span class="summary-value" id="movie-avg-rating">0</span><span class="summary-label">Note Moyenne</span></div>
+                <div class="summary-item" style="background: linear-gradient(135deg, #10b981, #059669);"><span class="summary-value" id="movie-total-runtime">0</span><span class="summary-label">Heures de visionnage</span></div>
             </div>
-            <div class="summary-item" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">
-                <span class="summary-value" id="avg-age">0</span>
-                <span class="summary-label">Âge Moyen</span>
-            </div>
-            <div class="summary-item" style="background: linear-gradient(135deg, #3b82f6, #2dd4bf);">
-                <span class="summary-value" id="most-common-gender">-</span>
-                <span class="summary-label">Majorité</span>
+            <div class="row g-4">
+                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-mask-happy"></i> Genres Préférés</h3><canvas id="movieGenreChart"></canvas></div></div>
+                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-calendar"></i> Par Décennie</h3><canvas id="movieYearChart"></canvas></div></div>
             </div>
         </div>
 
-        <div class="row g-4">
-            <!-- Graphique Genre -->
-            <div class="col-md-6">
-                <div class="chart-card">
-                    <h3 class="chart-title">Répartition par Genre</h3>
-                    <canvas id="genderChart"></canvas>
-                </div>
+        <!-- STATS SERIES -->
+        <div class="tab-pane fade" id="series-stats">
+            <div class="stat-summary" id="series-summary">
+                <div class="summary-item"><span class="summary-value" id="tv-count">0</span><span class="summary-label">Séries Favorites</span></div>
+                <div class="summary-item" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"><span class="summary-value" id="tv-avg-episodes">0</span><span class="summary-label">Épisodes en moyenne</span></div>
+                <div class="summary-item" style="background: linear-gradient(135deg, #f43f5e, #be123c);"><span class="summary-value" id="tv-most-genre">-</span><span class="summary-label">Genre Dominant</span></div>
             </div>
-            <!-- Graphique Âge -->
-            <div class="col-md-6">
-                <div class="chart-card">
-                    <h3 class="chart-title">Tranches d'Âge</h3>
-                    <canvas id="ageChart"></canvas>
-                </div>
+            <div class="row g-4">
+                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-television"></i> Répartition des Genres</h3><canvas id="tvGenreChart"></canvas></div></div>
+                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-broadcast"></i> Statut des séries</h3><canvas id="tvStatusChart"></canvas></div></div>
+            </div>
+        </div>
+
+        <!-- STATS ACTEURS -->
+        <div class="tab-pane fade" id="actors-stats">
+            <div class="stat-summary" id="actor-summary">
+                <div class="summary-item"><span class="summary-value" id="actor-count">0</span><span class="summary-label">Acteurs Favoris</span></div>
+                <div class="summary-item" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><span class="summary-value" id="actor-avg-age">0</span><span class="summary-label">Âge Moyen</span></div>
+                <div class="summary-item" style="background: linear-gradient(135deg, #ec4899, #db2777);"><span class="summary-value" id="actor-gender-ratio">-</span><span class="summary-label">Répartition</span></div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-gender-intersex"></i> Par Genre</h3><canvas id="actorGenderChart"></canvas></div></div>
+                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-cake"></i> Tranches d'Âge</h3><canvas id="actorAgeChart"></canvas></div></div>
             </div>
         </div>
     </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="sombre_clair.js"></script>
-<script src="actor-stats.js"></script>
+<script src="actor-stats.js"></script> <!-- Je vais réutiliser ce nom ou le renommer plus tard -->
 </body>
 </html>
