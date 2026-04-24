@@ -16,7 +16,7 @@ const MOVIE_DETAILS_CONFIG = {
     IMAGE_SUBSTITUT: "https://via.placeholder.com/500x750?text=Image+indisponible",
     AFFICHE_PAR_DEFAUT: "https://via.placeholder.com/500x750?text=Aucune+affiche",
     IMAGE_ACTEUR_SUBSTITUT: "https://via.placeholder.com/300x450?text=Aucune+photo",
-    ICONE_PLATEFORME_SUBSTITUT: "/PROJET_TM/Films/images/streaming-icon1.png",
+    ICONE_PLATEFORME_SUBSTITUT: "images/streaming-icon1.png",
 
     // URLs de vos API PHP - mêmes dossier que movie-details.js
     API_BASE_URL: '.', // Même dossier que le fichier HTML
@@ -24,25 +24,25 @@ const MOVIE_DETAILS_CONFIG = {
 
 // Correspondance des icônes des plateformes
 const MOVIE_ICÔNES_PLATEFORMES = {
-    "Netflix": "/PROJET_TM/Films/images/netflix.png",
-    "Amazon Prime Video": "/PROJET_TM/Films/images/amazon_prime_video.png",
-    "Amazon Video": "/PROJET_TM/Films/images/amazon_video.png",
-    "Disney Plus": "/PROJET_TM/Films/images/disney_plus.png",
-    "Apple TV Plus": "/PROJET_TM/Films/images/apple_tv_plus.png",
-    "Apple TV": "/PROJET_TM/Films/images/apple_tv.png",
-    "Canal+": "/PROJET_TM/Films/images/canal_plus.png",
-    "OCS": "/PROJET_TM/Films/images/ocs.png",
-    "Google Play Movies": "/PROJET_TM/Films/images/google_play_movies.png",
-    "YouTube": "/PROJET_TM/Films/images/youtube.png",
-    "FilmoTV": "/PROJET_TM/Films/images/filmotv.png",
-    "Microsoft Store": "/PROJET_TM/Films/images/microsoft_store.png",
-    "Skynet": "/PROJET_TM/Films/images/skynet.png",
-    "Proximus Pickx": "/PROJET_TM/Films/images/proximus_pickx.png",
-    "HBO Max": "/PROJET_TM/Films/images/max.png",
-    "Max": "/PROJET_TM/Films/images/max.png",
-    "Rakuten TV": "/PROJET_TM/Films/images/rakuten_tv.png",
-    "Telenet": "/PROJET_TM/Films/images/telenet.png",
-    "LaCinetek": "/PROJET_TM/Films/images/lacinetek.png",
+    "Netflix": "images/netflix.png",
+    "Amazon Prime Video": "images/amazon_prime_video.png",
+    "Amazon Video": "images/amazon_video.png",
+    "Disney Plus": "images/disney_plus.png",
+    "Apple TV Plus": "images/apple_tv_plus.png",
+    "Apple TV": "images/apple_tv.png",
+    "Canal+": "images/canal_plus.png",
+    "OCS": "images/ocs.png",
+    "Google Play Movies": "images/google_play_movies.png",
+    "YouTube": "images/youtube.png",
+    "FilmoTV": "images/filmotv.png",
+    "Microsoft Store": "images/microsoft_store.png",
+    "Skynet": "images/skynet.png",
+    "Proximus Pickx": "images/proximus_pickx.png",
+    "HBO Max": "images/max.png",
+    "Max": "images/max.png",
+    "Rakuten TV": "images/rakuten_tv.png",
+    "Telenet": "images/telenet.png",
+    "LaCinetek": "images/lacinetek.png",
 }
 
 // Vérification que nous sommes sur la bonne page
@@ -1146,7 +1146,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
     }
 
     // Afficher les dates de sortie
-    function afficherDatesDepurtie(releaseDatesData) {
+    function afficherDatesDeSortie(releaseDatesData) {
         const container = document.getElementById("movie-release-dates");
         const section = document.getElementById("release-dates-section");
 
@@ -1692,7 +1692,7 @@ if (!window.location.pathname.includes('movie-details.html')) {
 
             // Afficher les dates de sortie
             if (film.release_dates) {
-                afficherDatesDepurtie(film.release_dates);
+                afficherDatesDeSortie(film.release_dates);
             }
 
             if (film.images) {

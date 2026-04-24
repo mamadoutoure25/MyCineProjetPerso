@@ -123,6 +123,9 @@ body {
     opacity: 1;
 }
 
+.mt-10 { margin-top: 5rem !important; }
+.mb-10 { margin-bottom: 5rem !important; }
+
 /* Navigation */
 .navbar {
     background: var(--bg-glass) !important;
