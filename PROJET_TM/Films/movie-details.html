@@ -3,261 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCiné - Détails du Film</title>
+    <title>MyCiné - Cinematic Experience</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="movie-details.css">
-    <script src="sombre_clair.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Unification via premium-home.css -->
+    <link rel="stylesheet" href="premium-home.css">
+    <style>
+        /* Ajustements spécifiques pour la page détails tout en restant fidèle à index.html */
+        .hero-slider { height: 90vh; }
+        .hero-info { bottom: 10%; max-width: 800px; }
+        .hero-desc { font-size: 1.1rem; line-height: 1.6; opacity: 0.8; margin-bottom: 30px; }
+        
+        /* Floating Side Panel (Premium Addition) */
+        .side-panel {
+            position: absolute;
+            right: 5%;
+            bottom: 10%;
+            width: 320px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            z-index: 20;
+        }
+
+        .side-item { margin-bottom: 20px; }
+        .side-item:last-child { margin-bottom: 0; }
+        .side-label { font-size: 0.7rem; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        .side-value { font-size: 1.1rem; font-weight: 700; color: #fff; }
+
+        /* Action Buttons */
+        .btn-circle {
+            width: 55px; height: 55px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: 0.3s;
+        }
+        .btn-circle:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+        .btn-circle.active { background: var(--accent); color: #000; }
+
+        /* Scroller fixes */
+        .movie-scroller { padding: 20px 0; }
+        
+        /* Footer Specific */
+        .tech-footer {
+            padding: 60px 5%;
+            background: #000;
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 50px;
+        }
+        .tech-col-title { font-size: 0.75rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
+
+        /* Distribution Verticale & Petites Cartes */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+        @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (max-width: 1100px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 800px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .small-actor-card {
+            position: relative;
+            aspect-ratio: 2/3;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .small-actor-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .actor-hover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 15px;
+            opacity: 0;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .small-actor-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        }
+
+        .small-actor-card:hover img { transform: scale(1.1); }
+        .small-actor-card:hover .actor-hover-overlay { opacity: 1; }
+
+        .actor-name { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 4px; line-height: 1.2; }
+        .actor-role { font-size: 0.75rem; color: var(--accent); font-weight: 600; opacity: 0.9; }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg fixed-top">
+
+<nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="projetBD.html">
-            <div class="logo-container me-2">
-                <span class="logo-text">M</span>
-            </div>
-            <span class="brand-text d-none d-sm-inline">MyCiné</span>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: #fff;">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <i class="ph ph-list"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="projetBD.html" id="nav-home">
-                        <i class="ph ph-house me-1"></i> Accueil
-                    </a>
-                </li>
+        <div class="collapse navbar-collapse justify-content-center">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold text-white" href="films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../series.html">SÉRIES</a></li>
             </ul>
-            <div class="d-flex align-items-center">
-                <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème">
-                    <i class="ph ph-sun" id="theme-icon"></i>
-                </button>
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" id="login-link" href="../connexion/connexion.html"><i class="ph ph-sign-in me-1"></i> Connexion</a></li>
-                    <li class="nav-item d-none" id="profile-link"><a class="nav-link" href="profilUser.html"><i class="ph ph-user me-1"></i> Profil</a></li>
-                    <li class="nav-item d-none" id="logout-link"><a class="nav-link" href="#"><i class="ph ph-sign-out me-1"></i> Déconnexion</a></li>
-                </ul>
-            </div>
         </div>
+        <div id="auth-section"></div>
     </div>
 </nav>
 
-<main class="container-fluid mt-10 pt-4">
-    <section class="movie-hero-section mb-10 position-relative" id="movie-hero-section">
-        <div class="movie-hero-overlay"></div>
-        <div class="movie-hero-content container position-relative">
-            <div class="row align-items-end">
-                <div class="col-lg-8">
-                    <div class="hero-content-wrapper">
-                        <h1 class="movie-title" id="movie-title"></h1>
-                        <div class="movie-meta mb-3" id="movie-tags"></div>
-                        <p class="movie-overview" id="movie-overview"></p>
-
-                        <div class="action-buttons mb-4">
-                            <button class="btn btn-primary btn-action" id="add-to-favorites" title="Favoris">
-                                <i class="ph ph-heart"></i> <span class="btn-text">Ajouter aux favoris</span>
-                            </button>
-                            <button class="btn btn-warning btn-action" id="add-to-watchlist">
-                                <i class="ph ph-clock"></i> À regarder plus tard
-                            </button>
-                            <button class="btn btn-success btn-action" id="mark-as-watched">
-                                <i class="ph ph-check-circle"></i> Déjà vu
-                            </button>
-                            <a href="#" class="btn btn-outline-light btn-action" id="watch-trailer" style="display: none;">
-                                <i class="ph ph-play-circle"></i> Voir la bande-annonce
-                            </a>
-                        </div>
-
-                        <div class="rating-section">
-                            <div class="rating-header">
-                                <h3 class="rating-title">
-                                    <i class="ph ph-star"></i>
-                                    Votre notation
-                                </h3>
-                                <button type="button" class="btn-clear-rating" id="btn-clear-rating" title="Annuler la note" style="display: none;">
-                                    <i class="ph ph-trash"></i>
-                                    <span>Annuler</span>
-                                </button>
-                            </div>
-                            <div class="star-rating" id="star-rating" aria-live="polite">
-                                <button type="button" class="star" data-value="1" title="1 etoile" aria-label="1 etoile">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="2" title="2 etoiles" aria-label="2 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="3" title="3 etoiles" aria-label="3 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="4" title="4 etoiles" aria-label="4 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="5" title="5 etoiles" aria-label="5 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="6" title="6 etoiles" aria-label="6 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="7" title="7 etoiles" aria-label="7 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="8" title="8 etoiles" aria-label="8 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="9" title="9 etoiles" aria-label="9 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                                <button type="button" class="star" data-value="10" title="10 etoiles" aria-label="10 etoiles">
-                                    <i class="ph ph-star"></i>
-                                </button>
-                            </div>
-                            <p id="rating-feedback" class="rating-feedback mb-0"></p>
-                        </div>
-                    </div>
+<main>
+    <!-- Cinematic Hero -->
+    <section class="hero-slider">
+        <div class="hero-slide active">
+            <img id="hero-backdrop" src="" class="hero-backdrop">
+            <div class="hero-overlay-top"></div>
+            <div class="hero-overlay-bottom"></div>
+            
+            <div class="hero-info">
+                <nav aria-label="breadcrumb" class="mb-4 opacity-50">
+                    <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800;">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white text-decoration-none">MYCINÉ</a></li>
+                        <li class="breadcrumb-item active text-white" id="breadcrumb-title">CHARGEMENT...</li>
+                    </ol>
+                </nav>
+                <div id="studio-tag" class="d-flex align-items-center gap-2 mb-3" style="font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; opacity: 0.8;"></div>
+                <h1 id="movie-title" class="hero-title">...</h1>
+                <div id="movie-tags" class="d-flex gap-3 fw-bold opacity-75 mb-4"></div>
+                <p id="movie-overview" class="hero-desc"></p>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <a id="watch-trailer" href="#" class="btn btn-light rounded-pill px-5 py-3 fw-black"><i class="ph-fill ph-play me-2"></i> BANDE-ANNONCE</a>
+                    <button id="add-to-favorites" class="btn-circle"><i class="ph ph-heart"></i></button>
+                    <button id="add-to-watchlist" class="btn-circle"><i class="ph ph-plus"></i></button>
+                    <button id="mark-as-watched" class="btn-circle"><i class="ph ph-eye"></i></button>
                 </div>
-                <div class="col-lg-4 d-none d-lg-block">
-                    <div class="poster-container">
-                        <img id="movie-poster" class="movie-poster" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E%3Crect fill='%23334155' width='300' height='450'/%3E%3C/svg%3E" alt="">
-                    </div>
+            </div>
+
+            <!-- Detail Side Panel -->
+            <div class="side-panel">
+                <div class="side-item">
+                    <div class="side-label">Note Global</div>
+                    <div id="star-rating" class="d-flex gap-1 text-warning mb-1"></div>
+                    <div id="rating-feedback" class="x-small opacity-50 fw-bold"></div>
+                    <button id="btn-clear-rating" class="btn btn-link text-danger p-0 x-small d-none" style="text-decoration:none">EFFACER</button>
+                </div>
+                <div class="side-item">
+                    <div class="side-label">Où regarder</div>
+                    <div id="movie-providers" class="d-flex gap-2 flex-wrap mt-2"></div>
+                    <div id="noProviders" class="x-small opacity-50 d-none">Indisponible en ligne.</div>
+                </div>
+                <div class="side-item">
+                    <div class="side-label">Maturité</div>
+                    <div id="maturity-rating" class="side-value">N/A</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Distribution -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-users"></i></span>
-                Distribution
-            </h2>
-            <div class="cast-grid" id="movie-cast"></div>
+    <!-- Content Sections -->
+    <section class="content-lane">
+        <div class="lane-title">DISTRIBUTION PRINCIPALE</div>
+        <div id="movie-cast" class="movie-grid"></div>
+    </section>
+
+    <section id="collection-wrapper" class="content-lane pt-0" style="display: none;">
+        <div class="lane-title" id="collection-name">SAGA & COLLECTION</div>
+        <div id="movie-collection" class="movie-scroller"></div>
+    </section>
+
+    <section class="content-lane pt-0">
+        <div class="lane-title">MÉDIAS & GALERIE</div>
+        <ul class="nav nav-pills mb-4 gap-2" style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50px; width: fit-content;">
+            <li class="nav-item"><button class="nav-link active rounded-pill text-white fw-bold" data-bs-toggle="tab" data-bs-target="#tab-vid">VIDÉOS</button></li>
+            <li class="nav-item"><button class="nav-link rounded-pill text-white fw-bold" data-bs-toggle="tab" data-bs-target="#tab-back">IMAGES</button></li>
+            <li class="nav-item"><button class="nav-link rounded-pill text-white fw-bold" data-bs-toggle="tab" data-bs-target="#tab-post">AFFICHES</button></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab-vid"><div id="movie-videos" class="movie-scroller"></div></div>
+            <div class="tab-pane fade" id="tab-back"><div id="grid-backdrops" class="movie-scroller"></div></div>
+            <div class="tab-pane fade" id="tab-post"><div id="grid-posters" class="movie-scroller"></div></div>
         </div>
     </section>
 
-    <!-- Production Companies -->
-    <section class="content-section mb-5" id="production-section" style="display: none;">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-buildings"></i></span>
-                Production
-            </h2>
-            <div class="production-companies-grid" id="movie-production-companies"></div>
+    <!-- Tech Specs Footer -->
+    <footer class="tech-footer">
+        <div class="tech-col">
+            <div class="tech-col-title">Finances</div>
+            <div class="mb-3"><div class="x-small opacity-50">Budget</div><div id="movie-budget" class="fw-bold fs-5">...</div></div>
+            <div><div class="x-small opacity-50">Recettes</div><div id="movie-revenue" class="fw-bold fs-5 text-accent">...</div></div>
         </div>
-    </section>
-
-    <!-- Informations financières -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-currency-dollar"></i></span>
-                Informations financières
-            </h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <h5>Budget</h5>
-                        <p id="movie-budget" class="info-value">Non divulgué</p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <h5>Recettes</h5>
-                        <p id="movie-revenue" class="info-value">Non divulgué</p>
-                    </div>
-                </div>
-            </div>
+        <div class="tech-col">
+            <div class="tech-col-title">Production</div>
+            <div id="movie-production-companies" class="d-flex flex-column gap-3"></div>
         </div>
-    </section>
-
-    <!-- Galerie -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-images"></i></span>
-                Galerie
-            </h2>
-            <div id="movie-backdrops"></div>
+        <div class="tech-col">
+            <div class="tech-col-title">Sorties</div>
+            <div id="movie-release-dates" class="d-flex flex-column gap-2"></div>
         </div>
-    </section>
-
-    <!-- Collection -->
-    <section class="content-section mb-5" id="collection-section">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-film-slate"></i></span>
-                Collection
-            </h2>
-            <div id="movie-collection"></div>
+        <div class="tech-col ms-auto text-end">
+            <div class="tech-col-title">Réseaux</div>
+            <div id="external-links" class="d-flex gap-4 justify-content-end mb-4"></div>
+            <p class="x-small opacity-25">© 2026 MYCINÉ PREMIUM EXPERIENCE</p>
         </div>
-    </section>
-
-
-    <!-- Dates de sortie -->
-    <section class="content-section mb-5" id="release-dates-section">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-calendar-blank"></i></span>
-                Dates de sortie
-            </h2>
-            <div id="movie-release-dates"></div>
-        </div>
-    </section>
-
-    <!-- Plateformes de streaming -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-television"></i></span>
-                Où regarder ?
-            </h2>
-            <div class="providers-container" id="movie-providers"></div>
-            <div class="alert alert-info mt-3 d-none" id="noProviders">
-                <i class="ph ph-info me-2"></i> Ce film n'est actuellement disponible sur aucune plateforme en Belgique.
-            </div>
-        </div>
-    </section>
-
-    <!-- Bande-annonce -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-play"></i></span>
-                Bande-annonce
-            </h2>
-            <div class="trailer-container" id="movie-trailer"></div>
-        </div>
-    </section>
-
-    <!-- Vidéos -->
-    <section class="content-section mb-5" id="videos-section">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-film-strip"></i></span>
-                Vidéos
-            </h2>
-            <div class="videos-grid" id="movie-videos"></div>
-        </div>
-    </section>
-
-    <!-- Identifiants externes -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-share-network"></i></span>
-                Retrouvez ce film en ligne
-            </h2>
-            <div id="external-ids"></div>
-        </div>
-    </section>
+    </footer>
 </main>
 
-<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
+
+<div class="modal fade" id="mediaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content" style="background: #000; border-radius: 30px; overflow: hidden; border: 1px solid var(--border);">
+            <div class="modal-header border-0 px-4 pt-4"><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4 text-center"><div id="mediaModalContent"></div></div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script src="movie-details.js"></script>
+<script>
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+</script>
 </body>
 </html>

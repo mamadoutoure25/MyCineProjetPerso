@@ -3,342 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Utilisateur - MyCiné</title>
+    <title>Mon Profil - MyCiné Experience</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="projet.css">
-    <link rel="stylesheet" href="profilUser.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Unification via premium-home.css -->
+    <link rel="stylesheet" href="premium-home.css">
+    <style>
+        .profile-hero {
+            padding: 140px 5% 60px;
+            background: linear-gradient(to bottom, #101010 0%, #050505 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--accent), #f472b6);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            box-shadow: 0 15px 35px var(--accent-glow);
+        }
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            padding: 20px 30px;
+            border-radius: 20px;
+            text-align: center;
+            min-width: 150px;
+            transition: 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .stat-val { font-size: 1.8rem; font-weight: 900; color: #fff; }
+        .stat-lbl { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; }
+        
+        /* Tabs Premium styling */
+        .nav-pills-premium {
+            display: flex;
+            gap: 10px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 50px;
+            width: fit-content;
+            margin: 40px auto;
+        }
+        .nav-pills-premium .nav-link {
+            border-radius: 50px;
+            color: #fff;
+            font-weight: 700;
+            padding: 10px 25px;
+            border: none;
+            transition: 0.3s;
+            font-size: 0.85rem;
+        }
+        .nav-pills-premium .nav-link.active {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .section-header-premium {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-right: 20px;
+        }
+        
+        /* Grille 6 colonnes standard */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+        @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (max-width: 1100px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 800px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        /* Acteurs Portrait Grid */
+        .actor-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+        }
+        .actor-portrait {
+            aspect-ratio: 2/3;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .actor-portrait:hover { transform: translateY(-10px) scale(1.03); border-color: var(--accent); }
+        .actor-portrait img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .remove-btn-premium {
+            position: absolute;
+            top: 12px; right: 12px;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 60, 60, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ff3b30;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10; transition: 0.3s;
+        }
+        .remove-btn-premium:hover { background: #ff3b30; color: #fff; transform: rotate(90deg); }
+
+        .btn-outline-premium {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-outline-premium:hover { border-color: var(--accent); color: var(--accent); }
+        
+        .section-wrapper { padding: 0 5% 80px; }
+        .lane-title-small { font-size: 0.8rem; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; opacity: 0.7; }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg fixed-top">
+
+<nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="../../index.html">
-            <div class="logo-container me-2">
-                <span class="logo-text">M</span>
-            </div>
-            <span class="brand-text d-none d-sm-inline">MyCiné</span>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: #fff;">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <i class="ph ph-list"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="../../index.html">
-                        <i class="ph ph-house me-1"></i> Accueil
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="profilUser.html">
-                        <i class="ph ph-user me-1"></i> Mon Profil
-                    </a>
-                </li>
+        <div class="collapse navbar-collapse justify-content-center">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../series.html">SÉRIES</a></li>
             </ul>
-            <div class="d-flex align-items-center">
-                <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème">
-                    <i class="ph ph-sun" id="theme-icon"></i>
-                </button>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle user-menu-toggle" href="#" id="navbarDropdownUser" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="ph ph-user me-1"></i> <span id="username-display"></span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="profilUser.html"><i class="ph ph-user me-2"></i> Mon profil</a></li>
-                            <li><a class="dropdown-item d-none" href="../GestionFilmsBD/ajouterFilms.html" id="admin-link"><i class="ph ph-gear me-2"></i> Gérer les films</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="logout-link"><i class="ph ph-sign-out me-2"></i> Déconnexion</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
         </div>
+        <div id="auth-section"></div>
     </div>
 </nav>
 
-<main class="container-fluid mt-5 pt-4">
-    <!-- En-tête du profil -->
-    <section class="profile-header mb-5">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <div class="profile-info">
-                        <div class="profile-avatar">
-                            <i class="ph ph-user-circle"></i>
+<main>
+    <!-- Header Premium -->
+    <header class="profile-hero">
+        <div class="container-fluid">
+            <div class="d-flex flex-column flex-md-row align-items-center gap-5">
+                <div id="user-avatar" class="profile-avatar-large">?</div>
+                <div class="flex-grow-1 text-center text-md-start">
+                    <h1 class="hero-title mb-1" id="user-pseudo" style="font-size: 3.5rem;">UTILISATEUR</h1>
+                    <p class="opacity-50 fs-5">Membre MyCiné Premium • Collectionneur Passionné</p>
+                    <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 mt-4">
+                        <div class="stat-card">
+                            <div class="stat-val" id="favorites-count">0</div>
+                            <div class="stat-lbl">Favoris</div>
                         </div>
-                        <div class="profile-details">
-                            <h1 class="profile-title">
-                                Profil de <span id="user-pseudo" class="text-primary"></span>
-                            </h1>
-                            <p class="profile-subtitle">Gérez vos films favoris, votre watchlist et vos films vus</p>
+                        <div class="stat-card">
+                            <div class="stat-val" id="watchlist-count">0</div>
+                            <div class="stat-lbl">À voir</div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <div class="profile-stats">
-                        <div class="stat-item">
-                            <span class="stat-number" id="favorites-count">0</span>
-                            <span class="stat-label">Favoris</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="watchlist-count">0</span>
-                            <span class="stat-label">À voir</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="watched-count">0</span>
-                            <span class="stat-label">Vus</span>
+                        <div class="stat-card">
+                            <div class="stat-val" id="watched-count">0</div>
+                            <div class="stat-lbl">Vus</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
-    <!-- Navigation des sections -->
-    <section class="profile-navigation mb-4">
-        <div class="container">
-            <ul class="nav nav-pills profile-tabs" id="profile-tabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="favorites-tab" data-bs-toggle="pill" data-bs-target="#favorites-content" type="button" role="tab">
-                        <i class="ph ph-heart me-2"></i>
-                        Mes favoris
-                        <span class="badge bg-primary ms-2" id="favorites-badge">0</span>
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="watchlist-tab" data-bs-toggle="pill" data-bs-target="#watchlist-content" type="button" role="tab">
-                        <i class="ph ph-clock me-2"></i>
-                        À regarder plus tard
-                        <span class="badge bg-warning ms-2" id="watchlist-badge">0</span>
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="watched-tab" data-bs-toggle="pill" data-bs-target="#watched-content" type="button" role="tab">
-                        <i class="ph ph-check-circle me-2"></i>
-                        Déjà regardés
-                        <span class="badge bg-success ms-2" id="watched-badge">0</span>
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="actors-tab" data-bs-toggle="pill" data-bs-target="#actors-content" type="button" role="tab">
-                        <i class="ph ph-user me-2"></i>
-                        Acteurs favoris
-                        <span class="badge bg-info ms-2" id="actors-badge">0</span>
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </section>
+    <div class="section-wrapper">
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-pills nav-pills-premium" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-fav">FAVORIS</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-watch">WATCHLIST</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-done">DÉJÀ VUS</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-actors">ACTEURS</button></li>
+        </ul>
 
-    <!-- Contenu des onglets -->
-    <section class="profile-content">
-        <div class="container">
-            <div class="tab-content" id="profile-tab-content">
-                <!-- Favoris -->
-                <div class="tab-pane fade show active" id="favorites-content" role="tabpanel">
-                    <div class="section-header mb-4">
-                        <h2 class="section-title">
-                            <span class="title-icon"><i class="ph ph-heart"></i></span>
-                            Mes films favoris
-                        </h2>
-                        <div class="section-actions">
-                            <button class="btn btn-outline-primary" id="sort-favorites">
-                                <i class="ph ph-sort-ascending me-2"></i>Trier
-                            </button>
-                            <button class="btn btn-outline-danger" id="clear-favorites">
-                                <i class="ph ph-trash me-2"></i>Tout supprimer
-                            </button>
-                        </div>
-                    </div>
-                    <div class="movies-grid" id="favorites-movies">
-                        <div class="loading-container">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Chargement...</span>
-                            </div>
-                            <p class="mt-3">Chargement de vos favoris...</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Séries Favorites -->
-                    <div class="section-header mb-4 mt-5">
-                        <h2 class="section-title">
-                            <span class="title-icon"><i class="ph ph-television"></i></span>
-                            Mes séries favorites
-                        </h2>
-                    </div>
-                    <div class="movies-grid" id="favorites-series">
-                        <div class="loading-container">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Chargement...</span>
-                            </div>
-                            <p class="mt-3">Chargement de vos séries favorites...</p>
-                        </div>
-                    </div>
+        <!-- Tab Content -->
+        <div class="tab-content" id="pills-tabContent">
+            <!-- Favoris -->
+            <div class="tab-pane fade show active" id="pills-fav">
+                <div class="section-header-premium">
+                    <div class="lane-title mb-0">MES COUPS DE CŒUR</div>
+                    <button class="btn-outline-premium" id="clear-favorites"><i class="ph ph-trash me-2"></i>VIDER TOUT</button>
                 </div>
+                <div class="lane-title-small">FILMS</div>
+                <div id="favorites-movies" class="movie-grid"></div>
+                <div class="lane-title-small">SÉRIES</div>
+                <div id="favorites-series" class="movie-grid"></div>
+            </div>
 
-                <!-- Watchlist -->
-                <div class="tab-pane fade" id="watchlist-content" role="tabpanel">
-                    <div class="section-header mb-4">
-                        <h2 class="section-title">
-                            <span class="title-icon"><i class="ph ph-clock"></i></span>
-                            À regarder plus tard (Films)
-                        </h2>
-                        <div class="section-actions">
-                            <button class="btn btn-outline-primary" id="sort-watchlist">
-                                <i class="ph ph-sort-ascending me-2"></i>Trier
-                            </button>
-                            <button class="btn btn-outline-danger" id="clear-watchlist">
-                                <i class="ph ph-trash me-2"></i>Tout supprimer
-                            </button>
-                        </div>
-                    </div>
-                    <div class="movies-grid" id="watchlist-movies">
-                        <div class="loading-container">
-                            <div class="spinner-border text-warning" role="status">
-                                <span class="visually-hidden">Chargement...</span>
-                            </div>
-                            <p class="mt-3">Chargement de votre watchlist...</p>
-                        </div>
-                    </div>
+            <!-- Watchlist -->
+            <div class="tab-pane fade" id="pills-watch">
+                <div class="section-header-premium"><div class="lane-title mb-0">À REGARDER PLUS TARD</div></div>
+                <div class="lane-title-small">FILMS</div>
+                <div id="watchlist-movies" class="movie-grid"></div>
+                <div class="lane-title-small">SÉRIES</div>
+                <div id="watchlist-series" class="movie-grid"></div>
+            </div>
 
-                    <!-- Séries Watchlist -->
-                    <div class="section-header mb-4 mt-5">
-                        <h2 class="section-title">
-                            <span class="title-icon"><i class="ph ph-television"></i></span>
-                            Séries à regarder plus tard
-                        </h2>
-                    </div>
-                    <div class="movies-grid" id="watchlist-series">
-                        <div class="loading-container">
-                            <div class="spinner-border text-warning" role="status">
-                                <span class="visually-hidden">Chargement...</span>
-                            </div>
-                            <p class="mt-3">Chargement de vos séries à voir...</p>
-                        </div>
-                    </div>
+            <!-- Vus -->
+            <div class="tab-pane fade" id="pills-done">
+                <div class="section-header-premium"><div class="lane-title mb-0">HISTORIQUE DE VISIONNAGE</div></div>
+                <div class="lane-title-small">FILMS</div>
+                <div id="watched-movies" class="movie-grid"></div>
+                <div class="lane-title-small">SÉRIES</div>
+                <div id="watched-series" class="movie-grid"></div>
+            </div>
+
+            <!-- Acteurs -->
+            <div class="tab-pane fade" id="pills-actors">
+                <div class="section-header-premium">
+                    <div class="lane-title mb-0">STARS PRÉFÉRÉES</div>
+                    <a href="actor-stats.html" class="btn-outline-premium"><i class="ph ph-chart-pie me-2"></i>STATISTIQUES</a>
                 </div>
-
-                <!-- Films vus -->
-                <div class="tab-pane fade" id="watched-content" role="tabpanel">
-                    <div class="section-header mb-4">
-                        <h2 class="section-title">
-                            <span class="title-icon"><i class="ph ph-check-circle"></i></span>
-                            Films déjà regardés
-                        </h2>
-                        <div class="section-actions">
-                            <button class="btn btn-outline-primary" id="sort-watched">
-                                <i class="ph ph-sort-ascending me-2"></i>Trier
-                            </button>
-                            <button class="btn btn-outline-danger" id="clear-watched">
-                                <i class="ph ph-trash me-2"></i>Tout supprimer
-                            </button>
-                        </div>
-                    </div>
-                    <div class="movies-grid" id="watched-movies">
-                        <div class="loading-container">
-                            <div class="spinner-border text-success" role="status">
-                                <span class="visually-hidden">Chargement...</span>
-                            </div>
-                            <p class="mt-3">Chargement de vos films vus...</p>
-                        </div>
-                    </div>
-
-                    <!-- Séries Vues -->
-                    <div class="section-header mb-4 mt-5">
-                        <h2 class="section-title">
-                            <span class="title-icon"><i class="ph ph-check-square-offset"></i></span>
-                            Séries déjà regardées
-                        </h2>
-                    </div>
-                    <div class="movies-grid" id="watched-series">
-                        <div class="loading-container">
-                            <div class="spinner-border text-success" role="status">
-                                <span class="visually-hidden">Chargement...</span>
-                            </div>
-                            <p class="mt-3">Chargement de vos séries vues...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Acteurs Favoris -->
-                <div class="tab-pane fade" id="actors-content" role="tabpanel">
-                    <div class="section-header mb-4">
-                        <h2 class="section-title">
-                            <span class="title-icon"><i class="ph ph-user"></i></span>
-                            Mes acteurs favoris
-                        </h2>
-                        <div class="section-actions">
-
-                            <button class="btn btn-outline-primary" id="sort-actors-name-asc" title="Trier par nom A-Z">
-                                <i class="ph ph-sort-ascending me-2"></i>Nom A-Z
-                            </button>
-                            <button class="btn btn-outline-primary" id="sort-actors-name-desc" title="Trier par nom Z-A">
-                                <i class="ph ph-sort-descending me-2"></i>Nom Z-A
-                            </button>
-                            <button class="btn btn-outline-primary" id="sort-actors-age-asc" title="Trier par âge (jeune)">
-                                <i class="ph ph-sort-ascending me-2"></i>Âge (jeune)
-                            </button>
-                            <button class="btn btn-outline-primary" id="sort-actors-age-desc" title="Trier par âge (ancien)">
-                                <i class="ph ph-sort-descending me-2"></i>Âge (ancien)
-                            </button>
-                            <button class="btn btn-outline-info" id="view-actor-stats" onclick="window.location.href='actor-stats.html'">
-                                <i class="ph ph-chart-pie me-2"></i>Voir les statistiques
-                            </button>
-                            <button class="btn btn-outline-danger" id="clear-actors">
-                                <i class="ph ph-trash me-2"></i>Tout supprimer
-                            </button>
-                        </div>
-                    </div>
-                    <div id="actors-favorites" class="movies-grid">
-                        <div class="loading-container">
-                            <div class="spinner-border text-info" role="status">
-                                <span class="visually-hidden">Chargement...</span>
-                            </div>
-                            <p class="mt-3">Chargement de vos acteurs favoris...</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="actors-favorites" class="actor-grid"></div>
             </div>
         </div>
-    </section>
+    </div>
 </main>
 
-<!-- Modal de confirmation -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <div class="modal-body" id="confirmModalBody">
-                Êtes-vous sûr de vouloir effectuer cette action ?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-danger" id="confirmAction">Confirmer</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Conteneur pour les notifications -->
-<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <div class="footer-bottom">
-            <p class="mb-0">© 2025 MyCiné. Tous droits réservés.</p>
-        </div>
-    </div>
-</footer>
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="sombre_clair.js"></script>
 <script src="profilUser.js"></script>
-<script src="projet.js"></script>
+<script>
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+</script>
 </body>
 </html>

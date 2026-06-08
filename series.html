@@ -3,182 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCiné - Séries TV</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
-    <link rel="stylesheet" href="PROJET_TM/Films/theme-variables.css">
-    <link rel="stylesheet" href="PROJET_TM/Films/projet.css">
-    <link rel="stylesheet" href="series.css">
-    <script src="PROJET_TM/Films/sombre_clair.js"></script>
+    <title>MyCiné - Séries TV Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="PROJET_TM/Films/premium-home.css">
+    <style>
+        /* Grille Verticale 6 colonnes */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+        @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (max-width: 1200px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 992px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 576px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
+
+        .movie-grid .premium-card {
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+        }
+        .text-accent { color: #a78bfa !important; }
+        .cat-tag {
+            padding: 10px 25px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .cat-tag.active, .cat-tag:hover {
+            background: #a78bfa;
+            color: #000;
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg fixed-top">
+
+<nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="index.html">
-            <div class="logo-container me-2">
-                <span class="logo-text">M</span>
-            </div>
-            <span class="brand-text d-none d-sm-inline">MyCiné</span>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="index.html" style="font-weight: 900; color: #fff;">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <i class="ph ph-list"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
-                <li class="nav-item"><a class="nav-link active" href="series.html">Séries</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Explorer</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="PROJET_TM/Films/projetBD.html">Base de Données</a></li>
-                        <li><a class="dropdown-item" href="PROJET_TM/Cine_map/cine_map.html">CineMap</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Sociétés</a>
-                    <ul class="dropdown-menu" id="companies-container"></ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Années</a>
-                    <ul class="dropdown-menu" id="years-container"></ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Genres</a>
-                    <ul class="dropdown-menu" id="genres-container"></ul>
-                </li>
+        <div class="collapse navbar-collapse justify-content-center">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold text-white" href="series.html">SÉRIES</a></li>
             </ul>
-
-            <form class="d-flex search-container" id="search-form">
-                <div class="search-input-wrapper">
-                    <input class="form-control search-input" id="search-input" type="search" placeholder="Rechercher une série..." aria-label="Search">
-                    <button class="btn search-btn" type="submit"><i class="ph ph-magnifying-glass"></i></button>
-                </div>
-                <div class="search-results" id="search-results" style="display: none;"></div>
-            </form>
-
-            <div class="d-flex align-items-center">
-                <button class="theme-toggle ms-3" id="theme-toggle" title="Changer de thème">
-                    <i class="ph ph-sun" id="theme-icon"></i>
-                </button>
-            </div>
-
-            <ul class="navbar-nav ms-3">
-                <li class="nav-item d-none"><a class="nav-link" href="#"><span id="username-display"></span></a></li>
-                <li class="nav-item"><a class="nav-link" id="login-link" href="PROJET_TM/connexion/connexion.html"><i class="ph ph-sign-in me-2"></i> Se connecter</a></li>
-                <li class="nav-item d-none" id="profile-link"><a class="nav-link" href="PROJET_TM/Films/profilUser.html"><i class="ph ph-user me-2"></i> Profil</a></li>
-                <li class="nav-item d-none" id="favorites-link"><a class="nav-link" href="PROJET_TM/Films/profilUser.html"><i class="ph ph-heart me-2"></i> Favoris</a></li>
-                <li class="nav-item d-none" id="admin-link"><a class="nav-link" href="#"><i class="ph ph-gear me-2"></i> Admin</a></li>
-                <li class="nav-item d-none" id="logout-link"><a class="nav-link" href="#"><i class="ph ph-sign-out me-2"></i> Déconnexion</a></li>
-            </ul>
+        </div>
+        <div class="d-flex align-items-center gap-3" id="auth-section">
+            <a href="PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
         </div>
     </div>
 </nav>
 
-<section id="hero-section" class="hero-section">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <h1 class="hero-title">Bienvenue sur MyCine Series</h1>
-        <p class="hero-description">Decouvrez les meilleures series et ou les regarder</p>
-        <button class="btn btn-hero" id="discover-btn">Explorer maintenant</button>
-    </div>
-</section>
-
-<section class="content-section" id="trending-section">
-    <div class="section-header">
-        <h2 class="section-title">Tendances du jour</h2>
-        <a href="#" id="view-trending-tv" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="row g-4" id="trending-tv-carousel"></div>
-</section>
-
-<section class="content-section mb-4" id="genre-section" style="display: none;">
-    <div class="filter-tags mb-3" id="filter-tags"></div>
-</section>
-
-<section class="content-section" id="popular-section">
-    <div class="section-header">
-        <h2 class="section-title">Populaires</h2>
-        <a href="#" id="view-popular-tv" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="row g-4" id="popular-tv"></div>
-</section>
-
-<section class="content-section" id="top-rated-section">
-    <div class="section-header">
-        <h2 class="section-title">Mieux notées</h2>
-        <a href="#" id="view-top-rated-tv" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="row g-4" id="top-rated-tv"></div>
-</section>
-
-<section class="content-section" id="airing-section">
-    <div class="section-header">
-        <h2 class="section-title">En cours de diffusion</h2>
-        <a href="#" id="view-airing-today" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="row g-4" id="airing-today"></div>
-</section>
-
-<section class="content-section" id="upcoming-section">
-    <div class="section-header">
-        <h2 class="section-title">A venir</h2>
-        <a href="#" id="view-upcoming" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="row g-4" id="upcoming-movies"></div>
-</section>
-
-<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
-
-<footer class="footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="footer-brand">
-                    <div class="logo-container">
-                        <span class="logo-text">M</span>
-                    </div>
-                    <span class="brand-text ms-2">MyCine</span>
-                </div>
-                <p class="footer-description">Votre destination pour decouvrir les meilleures series et ou les regarder.</p>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h5 class="footer-title">Explorer</h5>
-                <ul class="footer-links">
-                    <li><a href="index.html">Films</a></li>
-                    <li><a href="series.html">Series</a></li>
-                    <li><a href="PROJET_TM/Films/projetBD.html">Base de donnees</a></li>
-                </ul>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h5 class="footer-title">Liens utiles</h5>
-                <ul class="footer-links">
-                    <li><a href="#">A propos</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href="#">Conditions d'utilisation</a></li>
-                    <li><a href="#">Politique de confidentialite</a></li>
-                </ul>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h5 class="footer-title">Mon compte</h5>
-                <ul class="footer-links">
-                    <li><a href="PROJET_TM/connexion/connexion.html">Se connecter</a></li>
-                    <li><a href="PROJET_TM/Films/profilUser.html">Mes favoris</a></li>
-                    <li><a href="#">Series vues</a></li>
-                </ul>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h5 class="footer-title">Suivez-nous</h5>
-                <div class="social-links">
-                    <a href="#" class="social-link"><i class="ph ph-facebook-logo"></i></a>
-                    <a href="#" class="social-link"><i class="ph ph-twitter-logo"></i></a>
-                    <a href="#" class="social-link"><i class="ph ph-instagram-logo"></i></a>
-                </div>
+<main>
+    <!-- Cinematic Header for Series -->
+    <header class="hero-slider" style="height: 60vh;">
+        <div class="hero-slide active">
+            <img src="https://image.tmdb.org/t/p/original/969UmUNbWpS5S6uO0pPA6p8AZ9H.jpg" class="hero-backdrop" id="series-hero-img">
+            <div class="hero-overlay-bottom"></div>
+            <div class="hero-info">
+                <h1 class="hero-title">SÉRIES TV</h1>
+                <p class="opacity-75 fs-5">Plongez dans les meilleures productions télévisuelles du moment.</p>
             </div>
         </div>
-    </div>
+    </header>
+
+    <section class="content-lane">
+        <div class="d-flex flex-column align-items-center mb-5">
+            <div class="search-hero mb-4">
+                <i class="ph ph-magnifying-glass text-muted fs-4"></i>
+                <input type="text" id="series-search" placeholder="Rechercher une série...">
+            </div>
+            
+            <div class="d-flex gap-3 flex-wrap justify-content-center" id="series-genre-filters">
+                <a href="#" class="cat-tag active" data-genre="">TOUTES</a>
+                <a href="#" class="cat-tag" data-genre="10759">ACTION</a>
+                <a href="#" class="cat-tag" data-genre="18">DRAME</a>
+                <a href="#" class="cat-tag" data-genre="35">COMÉDIE</a>
+                <a href="#" class="cat-tag" data-genre="80">CRIME</a>
+                <a href="#" class="cat-tag" data-genre="10765">S-FICTION</a>
+            </div>
+        </div>
+
+        <div id="series-search-results-section" style="display: none;">
+            <div class="lane-title">RÉSULTATS DE RECHERCHE</div>
+            <div id="series-search-results" class="movie-grid mb-5"></div>
+            <hr class="border-secondary opacity-25 my-5">
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">SÉRIES LES PLUS POPULAIRES</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('popular-series')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="popular-series" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">MIEUX NOTÉES</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('top-rated-series')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="top-rated-series" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">ACTION & AVENTURE</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('action-series')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="action-series" class="movie-grid"></div>
+    </section>
+</main>
+
+<footer class="py-5 text-center border-top border-secondary mt-5 opacity-50">
+    <p class="small fw-bold">© 2026 MYCINÉ • EXPERIENCE PREMIUM</p>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="PROJET_TM/Films/series.js"></script>
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
+
+<script>
+    const API_KEY = "04c35731a5ee918f014970082a0088b1";
+    const BASE_URL = "https://api.themoviedb.org/3";
+    const IMG_URL = "https://image.tmdb.org/t/p/w500";
+    const BACKDROP_URL = "https://image.tmdb.org/t/p/original";
+
+    const laneStates = {
+        'popular-series': { page: 1, endpoint: '/tv/popular', params: '' },
+        'top-rated-series': { page: 1, endpoint: '/tv/top_rated', params: '' },
+        'action-series': { page: 1, endpoint: '/discover/tv', params: '&with_genres=10759' }
+    };
+
+    async function loadSeriesHome() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+        renderAuth(auth);
+
+        try {
+            await loadDefaultSeriesLanes();
+            setupSeriesSearchAndFilters();
+        } catch(e) { console.error(e); }
+    }
+
+    async function loadDefaultSeriesLanes() {
+        const [popular, topRated, action] = await Promise.all([
+            fetch(`${BASE_URL}${laneStates['popular-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['top-rated-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['action-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&with_genres=10759&page=1`).then(r => r.json())
+        ]);
+
+        if(popular.results[0]) {
+            document.getElementById('series-hero-img').src = BACKDROP_URL + popular.results[0].backdrop_path;
+        }
+
+        renderLane(popular.results, 'popular-series');
+        renderLane(topRated.results, 'top-rated-series');
+        renderLane(action.results, 'action-series');
+    }
+
+    async function loadMore(laneId) {
+        const state = laneStates[laneId];
+        if (!state || state.loading) return;
+        state.loading = true;
+
+        const titleBtn = document.querySelector(`button[onclick="loadMore('${laneId}')"]`);
+        if(titleBtn) titleBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span>...`;
+
+        state.page++;
+        try {
+            const res = await fetch(`${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=fr-FR${state.params}&page=${state.page}`).then(r => r.json());
+            if (res.results && res.results.length > 0) {
+                appendCards(res.results, laneId);
+            } else {
+                if(titleBtn) titleBtn.style.display = 'none';
+            }
+        } catch(e) { console.error(e); state.page--; }
+        finally {
+            state.loading = false;
+            if(titleBtn) titleBtn.innerHTML = `VOIR PLUS <i class="ph ph-plus"></i>`;
+        }
+    }
+
+    function renderLane(data, elementId) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+        container.innerHTML = generateCardsHTML(data);
+    }
+
+    function appendCards(data, elementId) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+        container.insertAdjacentHTML('beforeend', generateCardsHTML(data));
+    }
+
+    function generateCardsHTML(data) {
+        return data.map(item => `
+            <div class="premium-card" onclick="window.location.href='PROJET_TM/Films/serie-details.html?id=${item.id}'">
+                <img src="${item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/220x330?text=No+Image'}" loading="lazy">
+                <div class="card-details">
+                    <div class="card-title">${item.name}</div>
+                    <div class="card-meta">
+                        <span class="rating-badge">
+                            <i class="ph-fill ph-star"></i> ${item.vote_average ? item.vote_average.toFixed(1) : '0.0'}
+                        </span>
+                        <span class="opacity-75">${item.first_air_date ? new Date(item.first_air_date).getFullYear() : 'N/A'}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderAuth(a) {
+        const c = document.getElementById("auth-section");
+        const pathPrefix = "PROJET_TM/Films/";
+        if (a) {
+            c.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <a href="${pathPrefix}profilUser.html" class="text-decoration-none text-white">
+                            <div class="fw-bold small">${a.username}</div>
+                            <div class="x-small opacity-50">MON PROFIL</div>
+                        </a>
+                    </div>
+                    <button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                </div>
+            `;
+        } else {
+            c.innerHTML = `<a href="PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>`;
+        }
+    }
+
+    function setupSeriesSearchAndFilters() {
+        const searchInput = document.getElementById('series-search');
+        const searchSection = document.getElementById('series-search-results-section');
+        const genreTags = document.querySelectorAll('#series-genre-filters .cat-tag');
+
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) {
+                searchSection.style.display = 'none';
+                return;
+            }
+
+            searchTimeout = setTimeout(async () => {
+                const res = await fetch(`${BASE_URL}/search/tv?api_key=${API_KEY}&language=fr-FR&query=${encodeURIComponent(query)}`).then(r => r.json());
+                if (res.results && res.results.length > 0) {
+                    searchSection.style.display = 'block';
+                    renderLane(res.results, 'series-search-results');
+                }
+            }, 500);
+        });
+
+        genreTags.forEach(tag => {
+            tag.addEventListener('click', async (e) => {
+                e.preventDefault();
+                genreTags.forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+
+                const genreId = tag.dataset.genre;
+                
+                // Update state for load more
+                laneStates['popular-series'].endpoint = genreId ? '/discover/tv' : '/tv/popular';
+                laneStates['popular-series'].params = genreId ? `&with_genres=${genreId}` : '';
+                laneStates['popular-series'].page = 1;
+
+                const url = genreId 
+                    ? `${BASE_URL}/discover/tv?api_key=${API_KEY}&language=fr-FR&with_genres=${genreId}`
+                    : `${BASE_URL}/tv/popular?api_key=${API_KEY}&language=fr-FR`;
+
+                const res = await fetch(url).then(r => r.json());
+                renderLane(res.results, 'popular-series');
+                document.querySelector('.lane-title').textContent = genreId ? `SÉRIES : ${tag.textContent}` : "SÉRIES LES PLUS POPULAIRES";
+            });
+        });
+    }
+
+    function notify(msg, type) {
+        const c = document.getElementById("toast-container") || document.body;
+        const t = document.createElement("div");
+        t.className = `toast show bg-${type} text-white p-3 mb-2 rounded-4 shadow-lg position-fixed bottom-0 end-0 m-4`;
+        t.style.zIndex = "9999";
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 4000);
+    }
+
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+
+    document.addEventListener('DOMContentLoaded', loadSeriesHome);
+</script>
+</body>
+</html>
 </body>
 </html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCiné - Bibliothèque Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cinema-premium.css">
+    <!-- On réutilise premium-home.css pour garantir l'identité avec index.html -->
+    <link rel="stylesheet" href="premium-home.css">
+    <style>
+        /* Grille Verticale 6 colonnes */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        @media (max-width: 1400px) {
+            .movie-grid { grid-template-columns: repeat(5, 1fr); }
+        }
+        @media (max-width: 1200px) {
+            .movie-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 992px) {
+            .movie-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 576px) {
+            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        }
+
+        .movie-grid .premium-card {
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            margin-bottom: 10px;
+        }
+
+        /* Override for collection cards in vertical grid */
+        .movie-grid .collection-card {
+            grid-column: span 2;
+            aspect-ratio: 16/9;
+        }
+        @media (max-width: 576px) {
+            .movie-grid .collection-card { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top px-5">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: #fff;">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
+        </a>
+        <div class="collapse navbar-collapse justify-content-center">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold text-white" href="films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../series.html">SÉRIES</a></li>
+            </ul>
+        </div>
+        <div id="auth-section" class="d-flex align-items-center gap-3">
+            <!-- Injecté par JS -->
+        </div>
+    </div>
+</nav>
+
+<main>
+    <!-- Cinematic Hero - Identique à index.html -->
+    <section class="hero-slider" id="hero-showcase">
+        <div class="hero-slide active">
+            <img src="https://image.tmdb.org/t/p/original/5m0v89Yp9YmN4V1V19x0j91V19X.jpg" class="hero-backdrop" id="films-hero-img">
+            <div class="hero-overlay-top"></div>
+            <div class="hero-overlay-bottom"></div>
+            <div class="hero-info">
+                <h1 class="hero-title">BIBLIOTHÈQUE</h1>
+                <p class="opacity-75 mb-4 fs-5">Explorez des milliers de films, des blockbusters aux trésors cachés.</p>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-light rounded-pill px-5 py-3 fw-black" onclick="document.getElementById('films-search').focus()"><i class="ph ph-magnifying-glass me-2"></i> RECHERCHER</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenu Principal avec Lanes Netflix-style -->
+    <section class="content-lane">
+        <div class="d-flex flex-column align-items-center mb-5" style="margin-top: -50px; position: relative; z-index: 100;">
+            <!-- Search Bar - Identique à index.html -->
+            <div class="search-hero mb-4">
+                <i class="ph ph-magnifying-glass text-muted fs-4"></i>
+                <input type="text" id="films-search" placeholder="Rechercher un titre, un genre...">
+            </div>
+            
+            <!-- Advanced Filter Panel - Design Glassmorphism -->
+            <div class="filter-panel shadow-lg">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Genre</label>
+                        <select id="filter-genre" class="premium-select">
+                            <option value="">Tous les genres</option>
+                            <option value="28">Action</option>
+                            <option value="35">Comédie</option>
+                            <option value="18">Drame</option>
+                            <option value="878">S-Fiction</option>
+                            <option value="27">Horreur</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Année</label>
+                        <input type="number" id="filter-year" class="year-input" placeholder="2024">
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Studio</label>
+                        <select id="filter-studio" class="premium-select">
+                            <option value="">Tous les studios</option>
+                            <option value="420">Marvel Studios</option>
+                            <option value="33">Warner Bros.</option>
+                            <option value="2739">Disney</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Trier</label>
+                        <select id="filter-sort" class="premium-select">
+                            <option value="popularity.desc">Populaires</option>
+                            <option value="vote_average.desc">Mieux notés</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="btn-apply-filters" class="btn-apply-filters">METTRE À JOUR LA LISTE</button>
+            </div>
+        </div>
+
+        <!-- Search Results Lane -->
+        <div id="films-search-results-section" style="display: none;">
+            <div class="lane-title">RÉSULTATS DE RECHERCHE</div>
+            <div id="films-search-results" class="movie-grid mb-5"></div>
+            <hr class="border-secondary opacity-25 my-5">
+        </div>
+
+        <!-- Saga Lane -->
+        <div class="lane-title">COLLECTIONS & SAGAS</div>
+        <div id="popular-collections" class="movie-grid mb-5"></div>
+
+        <!-- Main Dynamic Lanes -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0" id="main-lane-title">LES MIEUX NOTÉS</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('top-rated-films')">CHARGER PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="top-rated-films" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">SORTIES CINÉMA</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('now-playing-films')">CHARGER PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="now-playing-films" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0" id="category-lane-title">PAR CATÉGORIE : ACTION</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('category-films')">CHARGER PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="category-films" class="movie-grid"></div>
+    </section>
+</main>
+
+<footer class="py-5 text-center border-top border-secondary mt-5 opacity-50">
+    <p class="small fw-bold">© 2026 MYCINÉ • BIBLIOTHÈQUE PREMIUM</p>
+</footer>
+
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
+
+<script>
+    const API_KEY = "04c35731a5ee918f014970082a0088b1";
+    const BASE_URL = "https://api.themoviedb.org/3";
+    const IMG_URL = "https://image.tmdb.org/t/p/w500";
+    const BACKDROP_URL = "https://image.tmdb.org/t/p/original";
+
+    const laneStates = {
+        'top-rated-films': { page: 1, endpoint: '/movie/top_rated', params: '' },
+        'now-playing-films': { page: 1, endpoint: '/movie/now_playing', params: '&region=BE' },
+        'category-films': { page: 1, endpoint: '/discover/movie', params: '&with_genres=28' }
+    };
+
+    async function initFilmsPage() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+        renderAuth(auth);
+        
+        try {
+            await loadDefaultLanes();
+            setupSearchAndFilters();
+        } catch(e) { console.error(e); }
+    }
+
+    async function loadDefaultLanes() {
+        try {
+            const [topRated, nowPlaying, actionMovies] = await Promise.all([
+                fetch(`${BASE_URL}${laneStates['top-rated-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['now-playing-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=BE&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['category-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&with_genres=28&page=1`).then(r => r.json())
+            ]);
+
+            if(topRated.results[0]) {
+                document.getElementById('films-hero-img').src = BACKDROP_URL + topRated.results[0].backdrop_path;
+            }
+
+            renderLane(topRated.results, 'top-rated-films');
+            renderLane(nowPlaying.results, 'now-playing-films');
+            renderLane(actionMovies.results, 'category-films');
+            renderPopularCollections();
+        } catch(e) { console.error(e); }
+    }
+
+    async function loadMore(laneId) {
+        const state = laneStates[laneId];
+        if (!state || state.loading) return;
+        
+        const container = document.getElementById(laneId);
+        if (!container) return;
+
+        state.loading = true;
+        
+        // Find title button
+        const titleBtns = document.querySelectorAll('button');
+        let titleBtn = null;
+        for (let b of titleBtns) {
+            if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(laneId)) {
+                titleBtn = b;
+                break;
+            }
+        }
+
+        if(titleBtn) {
+            titleBtn.disabled = true;
+            titleBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>...`;
+        }
+
+        state.page++;
+        
+        try {
+            const url = `${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=fr-FR${state.params}&page=${state.page}`;
+            const res = await fetch(url).then(r => r.json());
+            
+            if (res.results && res.results.length > 0) {
+                appendCards(res.results, laneId);
+            } else {
+                if(titleBtn) titleBtn.style.display = 'none';
+                notify("Fin de la liste", "info");
+            }
+        } catch(e) { 
+            console.error(e);
+            notify("Erreur", "danger");
+            state.page--;
+        } finally {
+            state.loading = false;
+            if(titleBtn) {
+                titleBtn.disabled = false;
+                titleBtn.innerHTML = `CHARGER PLUS <i class="ph ph-plus"></i>`;
+            }
+        }
+    }
+
+    function appendCards(data, elementId) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+
+        const html = data.map(item => `
+            <div class="premium-card" onclick="window.location.href='movie-details.html?id=${item.id}'">
+                <img src="${item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/210x315'}" loading="lazy">
+                <div class="card-details">
+                    <div class="card-title">${item.title}</div>
+                    <div class="card-meta">
+                        <span class="rating-badge"><i class="ph-fill ph-star"></i> ${item.vote_average ? item.vote_average.toFixed(1) : '0.0'}</span>
+                        <span class="opacity-75">${item.release_date ? new Date(item.release_date).getFullYear() : 'N/A'}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function notify(msg, type) {
+        const c = document.getElementById("toast-container");
+        if(!c) return;
+        const t = document.createElement("div");
+        t.className = `toast show bg-${type} text-white p-3 mb-2 rounded-4 shadow-lg`;
+        t.style.minWidth = "250px";
+        t.textContent = msg;
+        c.appendChild(t);
+        setTimeout(() => t.remove(), 4000);
+    }
+
+    async function renderPopularCollections() {
+        const ids = [10, 86311, 131230, 528, 1241, 119];
+        const container = document.getElementById('popular-collections');
+        try {
+            const data = await Promise.all(ids.map(id => 
+                fetch(`${BASE_URL}/collection/${id}?api_key=${API_KEY}&language=fr-FR`).then(r => r.json())
+            ));
+
+            container.innerHTML = data.map(c => `
+                <div class="premium-card collection-card" onclick="window.location.href='collection.html?id=${c.id}'">
+                    <img src="${c.backdrop_path ? BACKDROP_URL + c.backdrop_path : 'https://via.placeholder.com/380x213'}" loading="lazy">
+                    <div class="collection-badge">SAGA</div>
+                    <div class="card-details">
+                        <div class="card-title">${c.name.toUpperCase()}</div>
+                        <div class="card-meta"><span class="rating-badge"><i class="ph ph-stack"></i> ${c.parts.length} FILMS</span></div>
+                    </div>
+                </div>
+            `).join('');
+        } catch(e) { console.error(e); }
+    }
+
+    function setupSearchAndFilters() {
+        const searchInput = document.getElementById('films-search');
+        const searchSection = document.getElementById('films-search-results-section');
+        const btnApply = document.getElementById('btn-apply-filters');
+
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            if (query.length < 2) { searchSection.style.display = 'none'; return; }
+            searchTimeout = setTimeout(async () => {
+                const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=fr-FR&query=${encodeURIComponent(query)}`).then(r => r.json());
+                if (res.results) {
+                    searchSection.style.display = 'block';
+                    renderLane(res.results, 'films-search-results', true);
+                    searchSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 500);
+        });
+
+        btnApply.onclick = async () => {
+            const genreSelect = document.getElementById('filter-genre');
+            const genreId = genreSelect.value;
+            const genreName = genreSelect.options[genreSelect.selectedIndex].text;
+            const year = document.getElementById('filter-year').value;
+            const studio = document.getElementById('filter-studio').value;
+            const sort = document.getElementById('filter-sort').value;
+
+            let queryParams = `api_key=${API_KEY}&language=fr-FR&sort_by=${sort}`;
+            if (genreId) queryParams += `&with_genres=${genreId}`;
+            if (year) queryParams += `&primary_release_year=${year}`;
+            if (studio) queryParams += `&with_companies=${studio}`;
+
+            // Update lane states for filters
+            laneStates['top-rated-films'].endpoint = '/discover/movie';
+            laneStates['top-rated-films'].params = `&sort_by=${sort}${genreId ? '&with_genres='+genreId : ''}${year ? '&primary_release_year='+year : ''}${studio ? '&with_companies='+studio : ''}`;
+            laneStates['top-rated-films'].page = 1;
+
+            const res = await fetch(`${BASE_URL}/discover/movie?${queryParams}`).then(r => r.json());
+            document.getElementById('main-lane-title').textContent = "RÉSULTATS DU FILTRE";
+            renderLane(res.results, 'top-rated-films');
+            if (genreId) {
+                laneStates['category-films'].params = laneStates['top-rated-films'].params;
+                laneStates['category-films'].page = 1;
+                document.getElementById('category-lane-title').textContent = `PAR CATÉGORIE : ${genreName.toUpperCase()}`;
+                renderLane(res.results, 'category-films');
+            }
+            document.getElementById('main-lane-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+    }
+
+    function renderLane(data, elementId, isSearch = false) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+        
+        let html = data.map(item => `
+            <div class="premium-card" onclick="window.location.href='movie-details.html?id=${item.id}'">
+                <img src="${item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/210x315'}" loading="lazy">
+                <div class="card-details">
+                    <div class="card-title">${item.title}</div>
+                    <div class="card-meta">
+                        <span class="rating-badge"><i class="ph-fill ph-star"></i> ${item.vote_average ? item.vote_average.toFixed(1) : '0.0'}</span>
+                        <span class="opacity-75">${item.release_date ? new Date(item.release_date).getFullYear() : 'N/A'}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        if (!isSearch && laneStates[elementId]) {
+            html += `
+                <div class="premium-card d-flex align-items-center justify-content-center view-more-card" style="background: rgba(255,255,255,0.03); border: 2px dashed var(--border);" onclick="loadMore('${elementId}')">
+                    <div class="text-center">
+                        <i class="ph ph-plus-circle fs-1 mb-2 text-accent"></i>
+                        <div class="fw-bold small">VOIR PLUS</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+    }
+
+    function renderAuth(a) {
+        const c = document.getElementById("auth-section");
+        if (a) {
+            c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-white text-decoration-none"><div class="fw-bold small">${a.username}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button></div>`;
+        } else {
+            c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>`;
+        }
+    }
+
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+
+    document.addEventListener('DOMContentLoaded', initFilmsPage);
+</script>
+</body>
+</html>

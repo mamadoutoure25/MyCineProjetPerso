@@ -46,7 +46,7 @@ const COMPANIES_LIST = [
     { id: 78952, name: 'Wanda Pictures' },
     { id: 9383, name: 'Blue Sky Studios' },
     { id: 9993, name: 'DC Entertainment' },
-
+    { id: 20555,name: 'Taurus Film'},
     { id: 22213, name: 'TSG Entertainment' },
     { id: 25120, name: 'Warner Animation Group' },
     { id: 30148, name: 'Bona Film Group' },
@@ -183,7 +183,7 @@ function afficherSocietes(companies) {
                             <i class="ph ph-eye"></i>
                             <span>Voir</span>
                         </a>
-                        <a href="projetBD.html?company=${company.id}" class="btn btn-company btn-company-filter" title="Filtrer par cette société">
+                        <a href="films.html?company=${company.id}" class="btn btn-company btn-company-filter" title="Filtrer par cette société">
                             <i class="ph ph-funnel"></i>
                             <span>Filtrer</span>
                         </a>

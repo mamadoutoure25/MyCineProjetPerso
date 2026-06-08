@@ -113,9 +113,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Reload films
                 await loadFilms();
                 deleteFilmForm.reset();
-                // Redirect to projetBD.html to show the updated list
+                // Redirect to films.html to show the updated list
                 setTimeout(() => {
-                    window.location.href = '../Films/projetBD.html?deleted=true';
+                    window.location.href = '../Films/films.html?deleted=true';
                 }, 1000);
             } else {
                 alertContainer.innerHTML = `<div class="alert alert-danger">Erreur: ${data.message || 'Impossible de supprimer le film'}</div>`;

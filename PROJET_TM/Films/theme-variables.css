@@ -52,14 +52,14 @@
     --bg-card: #ffffff;
     --bg-glass: rgba(255, 255, 255, 0.9);
 
-    --text-primary: #1f2937;
-    --text-secondary: #4b5563;
-    --text-muted: #6b7280;
+    --text-primary: #000000;
+    --text-secondary: #1a1a1a;
+    --text-muted: #333333;
 
     --border: #e5e7eb;
     --border-light: #d1d5db;
     --glass-bg: rgba(255, 255, 255, 0.95);
-    --text: #1f2937;
+    --text: #000000;
     --background: #f9fafb;
     --background-secondary: #ffffff;
     --card-bg: #ffffff;

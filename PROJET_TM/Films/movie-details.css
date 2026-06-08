@@ -295,7 +295,7 @@ body {
 
 /* Section Hero - Design Ultra-moderne */
 .movie-hero-section {
-    min-height: 100vh;
+    min-height: 70vh; /* Hauteur réduite pour plus de compacité */
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 23, 42, 0.95) 100%),
                 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4"/></filter></defs><rect fill="%230f172a" width="1200" height="800"/><circle cx="100" cy="100" r="200" fill="%23ff0000" opacity="0.08" filter="url(%23noise)"/><circle cx="1100" cy="700" r="250" fill="%23800080" opacity="0.06" filter="url(%23noise)"/></svg>');
     background-size: cover, 800px 600px;
@@ -1088,11 +1088,19 @@ body {
 .trailer-container {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 */
+    max-width: 900px; /* Taille réduite */
+    margin: 0 auto;   /* Centrage */
+    padding-bottom: calc(900px * 0.5625); /* Maintient le ratio 16:9 basé sur la largeur max */
     background: #000;
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
+}
+
+@media (max-width: 992px) {
+    .trailer-container {
+        padding-bottom: 56.25%; /* Ratio fluide sur petits écrans */
+    }
 }
 
 .trailer-container iframe {
@@ -1147,12 +1155,12 @@ body {
 
 /* Carte d'image */
 .image-card {
-    cursor: pointer;
     border-radius: 0.75rem;
     overflow: hidden;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .image-card:hover {
@@ -1166,6 +1174,7 @@ body {
     width: 100%;
     padding-top: 56.25%; /* Ratio 16:9 */
     overflow: hidden;
+    cursor: pointer;
 }
 
 .image-card-poster {
@@ -1227,6 +1236,36 @@ body {
     color: var(--text-secondary);
 }
 
+.btn-download-image {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 20;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.image-card:hover .btn-download-image {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn-download-image:hover {
+    background: var(--primary-dark);
+    transform: scale(1.1) !important;
+}
+
 .badge-rating {
     position: absolute;
     top: 8px;
@@ -1238,6 +1277,7 @@ body {
     font-size: 0.75rem;
     font-weight: 600;
     z-index: 10;
+}
 }
 
 /* Responsive */
@@ -1301,19 +1341,7 @@ body {
     margin: 0;
 }
 
-/* Bande-annonce */
-.trailer-container {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-}
-
-.trailer-container iframe {
-    width: 100%;
-    height: 500px;
-    border: none;
-}
+/* Bande-annonce section styles moved and consolidated */
 
 /* Vidéos */
 .videos-grid {

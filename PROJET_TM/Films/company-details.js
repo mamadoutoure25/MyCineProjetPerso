@@ -394,7 +394,7 @@ function afficherErreur(message) {
                     <i class="ph ph-warning" style="font-size: 4rem; color: var(--danger); margin-bottom: 20px;"></i>
                     <h1>Erreur</h1>
                     <p style="color: var(--text-secondary); font-size: 1.1rem;">${message}</p>
-                    <a href="projetBD.html" class="btn btn-primary mt-3">
+                    <a href="../../index.html" class="btn btn-primary mt-3">
                         <i class="ph ph-arrow-left me-2"></i> Retour aux films
                     </a>
                 </div>

@@ -3,222 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCiné - Détails de la Saison</title>
+    <title>MyCiné - Saison Experience</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../Films/movie-details.css">
-    <script src="../Films/sombre_clair.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cinema-premium.css">
+    <link rel="stylesheet" href="premium-home.css">
     <style>
-        .episode-card {
-            background: var(--card-bg, #1e293b);
-            border-radius: 12px;
+        .hero-slider { height: 65vh; }
+        .hero-info { bottom: 15%; }
+        
+        /* Episode Premium Card */
+        .ep-card-premium {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .episode-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-        .episode-image {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-        }
-        .episode-content {
-            padding: 1.25rem;
-        }
-        .episode-number {
-            color: var(--bs-primary);
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        .episode-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: #fff;
-        }
-        .episode-overview {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 0;
-        }
-        .episode-director {
-            font-size: 0.85rem;
-            color: var(--bs-primary);
-            margin-bottom: 0.5rem;
-        }
-        .episode-rating-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(4px);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #ffc107;
             display: flex;
-            align-items: center;
-            gap: 4px;
-            border: 1px solid rgba(255, 193, 7, 0.3);
+            margin-bottom: 30px;
+            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
         }
-        .episode-air-date {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.5);
+        .ep-card-premium:hover {
+            transform: translateX(15px) scale(1.01);
+            border-color: var(--accent);
+            background: rgba(40, 40, 40, 0.4);
         }
-        .episode-guests {
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 0.75rem;
+        .ep-thumb-wrap {
+            width: 350px;
+            aspect-ratio: 16/9;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
         }
-        .season-breadcrumb {
-            margin-bottom: 2rem;
-        }
-        .season-breadcrumb a {
-            color: var(--bs-primary);
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        .season-breadcrumb a:hover {
-            opacity: 0.8;
-        }
-        .season-breadcrumb span {
-            color: rgba(255, 255, 255, 0.5);
-            margin: 0 0.5rem;
-        }
+        .ep-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+        .ep-card-premium:hover .ep-thumb-wrap img { transform: scale(1.1); }
+        
+        .ep-content { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .ep-meta-top { color: var(--accent); font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
+        .ep-title-main { font-weight: 800; font-size: 1.4rem; margin-bottom: 12px; color: #fff; }
+        .ep-desc-main { color: var(--text-dim); font-size: 1rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .ep-footer-meta { margin-top: 20px; display: flex; gap: 20px; font-size: 0.85rem; font-weight: 700; opacity: 0.6; }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg fixed-top">
+
+<nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="../../index.html">
-            <div class="logo-container me-2">
-                <span class="logo-text">M</span>
-            </div>
-            <span class="brand-text d-none d-sm-inline">MyCiné</span>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: #fff;">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <i class="ph ph-list"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="../../index.html" id="nav-home">
-                        <i class="ph ph-house me-1"></i> Accueil
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../series.html">
-                        <i class="ph ph-television me-1"></i> Séries
-                    </a>
-                </li>
+        <div class="collapse navbar-collapse justify-content-center">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold text-white" href="../../series.html">SÉRIES</a></li>
             </ul>
-            <div class="d-flex align-items-center">
-                <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème">
-                    <i class="ph ph-sun" id="theme-icon"></i>
-                </button>
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" id="login-link" href="../connexion/connexion.html"><i class="ph ph-sign-in me-1"></i> Connexion</a></li>
-                    <li class="nav-item d-none" id="profile-link"><a class="nav-link" href="profilUser.html"><i class="ph ph-user me-1"></i> Profil</a></li>
-                    <li class="nav-item d-none" id="logout-link"><a class="nav-link" href="#"><i class="ph ph-sign-out me-1"></i> Déconnexion</a></li>
-                </ul>
-            </div>
         </div>
+        <div id="auth-section"></div>
     </div>
 </nav>
 
-<main class="container-fluid mt-10 pt-4">
-    <section class="movie-hero-section mb-10 position-relative" id="season-hero-section">
-        <div class="movie-hero-overlay"></div>
-        <div class="movie-hero-content container position-relative">
-            <div class="season-breadcrumb">
-                <a href="../../series.html">Séries</a>
-                <span>/</span>
-                <a href="#" id="breadcrumb-serie-name">Série</a>
-                <span>/</span>
-                <span id="breadcrumb-season-name">Saison</span>
+<main>
+    <!-- Cinematic Header -->
+    <header class="hero-slider">
+        <div class="hero-slide active">
+            <img id="hero-backdrop" src="" class="hero-backdrop">
+            <div class="hero-overlay-top"></div>
+            <div class="hero-overlay-bottom"></div>
+            
+            <div class="hero-info">
+                <a href="#" id="back-to-serie" class="text-white text-decoration-none small fw-black opacity-50 mb-3 d-block"><i class="ph ph-arrow-left me-2"></i> RETOUR À LA SÉRIE</a>
+                <h1 id="season-title" class="hero-title" style="font-size: 4rem;">...</h1>
+                <div id="season-tags" class="d-flex gap-3 fw-bold opacity-75 mb-4"></div>
+                <p id="season-overview" class="hero-desc" style="max-width: 800px;"></p>
             </div>
-            <div class="row align-items-end">
-                <div class="col-lg-8">
-                    <div class="hero-content-wrapper">
-                        <h1 class="movie-title" id="season-title"></h1>
-                        <div class="movie-meta mb-3" id="season-tags"></div>
-                        <p class="movie-overview" id="season-overview"></p>
-                    </div>
-                </div>
-                <div class="col-lg-4 d-none d-lg-block">
-                    <div class="poster-container">
-                        <img id="season-poster" class="movie-poster" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E%3Crect fill='%23334155' width='300' height='450'/%3E%3C/svg%3E" alt="">
-                    </div>
-                </div>
+            
+            <div style="position: absolute; right: 5%; bottom: 15%; width: 220px;" class="d-none d-lg-block">
+                <img id="season-poster" src="" class="premium-card shadow-lg" style="width: 100%; pointer-events: none;">
             </div>
         </div>
-    </section>
+    </header>
 
-    <!-- Distribution -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-users"></i></span>
-                Distribution de la saison
-            </h2>
-            <div class="cast-grid" id="season-cast"></div>
+    <!-- Episodes Section -->
+    <section class="content-lane">
+        <div class="lane-title">ÉPISODES DE LA SAISON</div>
+        <div id="episodes-container" class="mt-4">
+            <!-- Injected by JS -->
         </div>
     </section>
 
-    <!-- Galerie -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-images"></i></span>
-                Galerie de posters
-            </h2>
-            <div class="cast-grid" id="season-posters"></div>
-        </div>
-    </section>
-
-    <!-- Vidéos -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-play-circle"></i></span>
-                Vidéos et Bandes-annonces
-            </h2>
-            <div class="videos-grid" id="season-videos"></div>
-        </div>
-    </section>
-
-    <!-- Épisodes -->
-    <section class="content-section mb-5">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon"><i class="ph ph-list-numbers"></i></span>
-                Épisodes
-            </h2>
-            <div class="row g-4" id="episodes-container">
-                <!-- Les épisodes seront injectés ici -->
-            </div>
-        </div>
+    <!-- Season Cast -->
+    <section class="content-lane pt-0">
+        <div class="lane-title">DISTRIBUTION DE LA SAISON</div>
+        <div id="season-cast" class="movie-scroller"></div>
     </section>
 </main>
 
-<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+<footer class="py-5 text-center border-top border-secondary mt-5 opacity-50">
+    <p class="small fw-bold">© 2026 MYCINÉ • SAISON EXPERIENCE PREMIUM</p>
+</footer>
+
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="saison-details.js"></script>
+<script>
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+</script>
 </body>
 </html>

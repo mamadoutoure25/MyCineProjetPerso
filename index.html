@@ -3,224 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCiné - Découvrez les meilleurs films</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
-    <link rel="stylesheet" href="PROJET_TM/Films/theme-variables.css">
-    <link rel="stylesheet" href="PROJET_TM/Films/projet.css">
-    <script src="PROJET_TM/Films/sombre_clair.js"></script>
+    <title>MyCiné - Premium Experience</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="PROJET_TM/Films/premium-home.css">
+    <style>
+        /* Grille Verticale 6 colonnes */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+        @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (max-width: 1200px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 992px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 576px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
+
+        .movie-grid .premium-card {
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+        }
+        .text-accent { color: #a78bfa !important; }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg fixed-top">
+
+<nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="#">
-            <div class="logo-container me-2">
-                <span class="logo-text">M</span>
-            </div>
-            <span class="brand-text d-none d-sm-inline">MyCiné</span>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="index.html" style="font-weight: 900; color: #fff;">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <i class="ph ph-list"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" href="#">Accueil</a></li>
-                <li class="nav-item"><a class="nav-link" href="series.html">Séries</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Explorer</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="PROJET_TM/Films/projetBD.html"><i class="ph ph-film-strip me-2"></i> Base de Données</a></li>
-                        <li><a class="dropdown-item" href="PROJET_TM/Films/collections-browse.html"><i class="ph ph-stack me-2"></i> Collections</a></li>
-                        <li><a class="dropdown-item" href="PROJET_TM/Films/companies-browse.html"><i class="ph ph-buildings me-2"></i> Sociétés</a></li>
-                        <li><a class="dropdown-item" href="PROJET_TM/Cine_map/cine_map.html"><i class="ph ph-map-pin me-2"></i> CineMap</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Sociétés</a>
-                    <ul class="dropdown-menu" id="companies-container"></ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Années</a>
-                    <ul class="dropdown-menu" id="years-container"></ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Genres</a>
-                    <ul class="dropdown-menu" id="genres-container"></ul>
-                </li>
+        <div class="collapse navbar-collapse justify-content-center">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold text-white" href="index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="series.html">SÉRIES</a></li>
             </ul>
-            <form class="d-flex search-container" id="search-form">
-                <div class="search-input-wrapper">
-                    <input class="form-control search-input" id="search-input" type="search" placeholder="Rechercher un film..." aria-label="Search">
-                    <button class="btn search-btn" type="submit"><i class="ph ph-magnifying-glass"></i></button>
-                </div>
-                <div class="search-results" id="search-results" style="display: none;"></div>
-            </form>
-            <div class="d-flex align-items-center">
-                <button class="theme-toggle ms-3" id="theme-toggle" title="Changer de thème">
-                    <i class="ph ph-sun" id="theme-icon"></i>
-                </button>
-            </div>
-            <ul class="navbar-nav ms-3">
-                <li class="nav-item"><a class="nav-link" id="login-link" href="PROJET_TM/connexion/connexion.html"><i class="ph ph-sign-in me-2"></i> Se connecter</a></li>
-                <li class="nav-item d-none" id="profile-link"><a class="nav-link" href="PROJET_TM/Films/profilUser.html"><i class="ph ph-user me-2"></i> Profil</a></li>
-                <li class="nav-item d-none" id="favorites-link"><a class="nav-link" href="#"><i class="ph ph-heart me-2"></i> Favoris</a></li>
-                <li class="nav-item d-none" id="admin-link"><a class="nav-link" href="#"><i class="ph ph-gear me-2"></i> Admin</a></li>
-                <li class="nav-item d-none" id="logout-link"><a class="nav-link" href="#" onclick="gererDeconnexion()"><i class="ph ph-sign-out me-2"></i> Déconnexion</a></li>
-            </ul>
+        </div>
+        <div class="d-flex align-items-center gap-3" id="auth-section">
+            <a href="PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
         </div>
     </div>
 </nav>
 
-<!-- Section Hero -->
-<section id="hero-section" class="hero-section">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <h1 class="hero-title">Bienvenue sur MyCiné</h1>
-        <p class="hero-description">Découvrez les meilleurs films et où les regarder</p>
-        <button class="btn btn-hero"><i class="ph ph-play-circle"></i> Explorer maintenant</button>
-    </div>
-</section>
+<main>
+    <!-- Cinematic Hero -->
+    <section class="hero-slider" id="hero-showcase">
+        <div class="hero-slide active">
+            <img src="PROJET_TM/img/ciné.jpg" class="hero-backdrop" id="main-hero-img">
+            <div class="hero-overlay-top"></div>
+            <div class="hero-overlay-bottom"></div>
+            <div class="hero-info">
+                <h1 class="hero-title" id="main-hero-title">EXPLOREZ LE CINÉMA</h1>
+                <p class="opacity-75 mb-4 fs-5" id="main-hero-desc">Découvrez les dernières sorties, vos classiques préférés et gérez votre collection personnelle.</p>
+                <div class="d-flex gap-3">
+                    <a href="PROJET_TM/Films/films.html" class="btn btn-light rounded-pill px-5 py-3 fw-black"><i class="ph-fill ph-play me-2"></i> EXPLORER</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-
-
-<!-- Section Genres -->
-<section class="content-section" id="genre-browser-section">
-    <h2 class="section-title text-uppercase">Trouve ton contenu par genre</h2>
-    <div class="d-flex overflow-auto pb-3 genre-carousel" id="genre-carousel">
-        <!-- Généré dynamiquement par JavaScript -->
-    </div>
-</section>
-<!-- Section Collections Populaires -->
-<section class="content-section" id="collections-section">
-    <div class="section-header">
-        <h2 class="section-title"><i class="ph ph-film-slate me-2"></i>Collections Populaires</h2>
-        <a href="PROJET_TM/Films/collections-browse.html" class="view-all-btn">Voir toutes les collections</a>
-    </div>
-    <div class="collections-grid" id="home-collections-grid">
-        <!-- Généré dynamiquement par JavaScript -->
-    </div>
-</section>
-
-
-
-<!-- Section Tendances -->
-<section class="content-section" id="trending-section">
-    <div class="section-header">
-        <h2 class="section-title">Tendances du jour</h2>
-        <a href="#" id="view-trending" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="movie-carousel-container">
-        <div class="movie-carousel" id="trending-carousel"></div>
-    </div>
-</section>
-<!-- Section Lecture en cours -->
-<section class="content-section" id="now-playing-section">
-    <div class="section-header">
-        <h2 class="section-title"><i class="ph ph-play-circle me-2"></i>Lecture en cours</h2>
-        <a href="#" id="view-now-playing" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="movie-carousel-container">
-        <div class="movie-carousel" id="now-playing-carousel"></div>
-    </div>
-</section>
-<!-- Section Filtres Actifs -->
-<section class="content-section mb-4" id="genre-section" style="display: none;">
-    <div class="filter-tags mb-3" id="filter-tags"></div>
-</section>
-
-<!-- Section Films Filtrés -->
-<section class="content-section" id="filtered-movies-section" style="display: none;">
-    <div class="section-header">
-        <h2 class="section-title" id="filtered-movies-title">Films filtrés</h2>
-        <button class="btn btn-outline-secondary" id="clear-filters-btn">
-            <i class="ph ph-x"></i> Effacer les filtres
-        </button>
-    </div>
-    <div class="movies-grid" id="filtered-movies"></div>
-    <!-- Supprimé le bouton "Charger plus" -->
-</section>
-
-<!-- Section Populaires -->
-<section class="content-section" id="popular-section">
-    <div class="section-header">
-        <h2 class="section-title">Populaires</h2>
-        <a href="#" id="view-popular" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="movies-grid" id="popular-movies"></div>
-</section>
-
-<!-- Section Mieux Notés -->
-<section class="content-section" id="top-rated-section">
-    <div class="section-header">
-        <h2 class="section-title">Mieux notés</h2>
-        <a href="#" id="view-top-rated" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="movies-grid" id="top-rated-movies"></div>
-</section>
-
-<!-- Section À Venir -->
-<section class="content-section" id="upcoming-section">
-    <div class="section-header">
-        <h2 class="section-title">À venir</h2>
-        <a href="#" id="view-upcoming" class="view-all-btn">Voir tout</a>
-    </div>
-    <div class="movies-grid" id="upcoming-movies"></div>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="footer-brand">
-                    <div class="logo-container">
-                        <span class="logo-text">M</span>
+    <section class="content-lane">
+        <div class="d-flex flex-column align-items-center mb-5">
+            <div class="search-hero mb-4">
+                <i class="ph ph-magnifying-glass text-muted fs-4"></i>
+                <input type="text" id="main-search" placeholder="Rechercher un film, une série, un acteur...">
+            </div>
+            
+            <div class="filter-panel shadow-lg">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Genre</label>
+                        <select id="filter-genre" class="premium-select">
+                            <option value="">Tous les genres</option>
+                            <option value="28">Action</option>
+                            <option value="35">Comédie</option>
+                            <option value="18">Drame</option>
+                            <option value="878">S-Fiction</option>
+                            <option value="27">Horreur</option>
+                            <option value="10749">Romance</option>
+                        </select>
                     </div>
-                    <span class="brand-text ms-2">MyCiné</span>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Année de sortie</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="number" id="filter-year" class="year-input" placeholder="2024" min="1900" max="2030">
+                            <span class="opacity-50">Précis</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Studio / Plateforme</label>
+                        <select id="filter-studio" class="premium-select">
+                            <option value="">Tous les studios</option>
+                            <option value="420">Marvel Studios</option>
+                            <option value="9933">DC Studios</option>
+                            <option value="33">Warner Bros.</option>
+                            <option value="213">Netflix</option>
+                            <option value="2739">Disney+</option>
+                            <option value="453">Sony Pictures</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Type de contenu</label>
+                        <select id="filter-type" class="premium-select">
+                            <option value="movie">Films uniquement</option>
+                            <option value="tv">Séries uniquement</option>
+                        </select>
+                    </div>
                 </div>
-                <p class="footer-description">Votre destination pour découvrir les meilleurs films et où les regarder.</p>
+                <button id="btn-apply-filters" class="btn-apply-filters">APPLIQUER LES FILTRES</button>
             </div>
-            <div class="col-md-2 mb-4">
-                <h5 class="footer-title">Explorer</h5>
-                <ul class="footer-links">
-                    <li><a href="PROJET_TM/Films/projetBD.html">Films</a></li>
-                    <li><a href="PROJET_TM/Films/collections-browse.html">Collections</a></li>
-                    <li><a href="PROJET_TM/Cine_map/cine_map.html">CineMap</a></li>
-                    <li><a href="#">Années</a></li>
-                </ul>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h5 class="footer-title">Liens utiles</h5>
-                <ul class="footer-links">
-                    <li><a href="#">À propos</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href="#">Conditions d'utilisation</a></li>
-                    <li><a href="#">Politique de confidentialité</a></li>
-                </ul>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h5 class="footer-title">Mon compte</h5>
-                <ul class="footer-links">
-                    <li><a href="PROJET_TM/connexion/connexion.html">Se connecter</a></li>
-                    <li><a href="#">Ma watchlist</a></li>
-                    <li><a href="#">Films vus</a></li>
-                </ul>
-            </div>
-            <div class="col-md-2 mb-4">
-                <h5 class="footer-title">Suivez-nous</h5>
-                <div class="social-links">
-                    <a href="#" class="social-link"><i class="ph ph-facebook-logo"></i></a>
-                    <a href="#" class="social-link"><i class="ph ph-twitter-logo"></i></a>
-                    <a href="#" class="social-link"><i class="ph ph-instagram-logo"></i></a>
+        </div>
+
+        <div id="search-results-section" style="display: none;">
+            <div class="lane-title">RÉSULTATS DE RECHERCHE</div>
+            <div id="search-results" class="movie-grid mb-5"></div>
+            <hr class="border-secondary opacity-25 my-5">
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">FILMS TENDANCE</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('trending-movies')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="trending-movies" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">SÉRIES DU MOMENT</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('trending-series')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="trending-series" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">BIENTÔT AU CINÉMA</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('upcoming-movies')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="upcoming-movies" class="movie-grid"></div>
+    </section>
+</main>
+
+<footer class="py-5 text-center border-top border-secondary mt-5 opacity-50">
+    <p class="small fw-bold">© 2026 MYCINÉ • EXPERIENCE PREMIUM</p>
+</footer>
+
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
+
+<script>
+    const API_KEY = "04c35731a5ee918f014970082a0088b1";
+    const BASE_URL = "https://api.themoviedb.org/3";
+    const IMG_URL = "https://image.tmdb.org/t/p/w500";
+    const BACKDROP_URL = "https://image.tmdb.org/t/p/original";
+
+    const laneStates = {
+        'trending-movies': { page: 1, endpoint: '/trending/movie/week', params: '', type: 'movie' },
+        'trending-series': { page: 1, endpoint: '/trending/tv/week', params: '', type: 'tv' },
+        'upcoming-movies': { page: 1, endpoint: '/movie/upcoming', params: '', type: 'movie' }
+    };
+
+    async function loadPremiumHome() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+        renderAuth(auth);
+
+        try {
+            await loadDefaultLanes();
+            setupSearchAndFilters();
+        } catch(e) { console.error(e); }
+    }
+
+    async function loadDefaultLanes() {
+        const [movies, series, upcoming] = await Promise.all([
+            fetch(`${BASE_URL}${laneStates['trending-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['trending-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['upcoming-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json())
+        ]);
+
+        if(movies.results[0]) {
+            const top = movies.results[0];
+            document.getElementById('main-hero-img').src = BACKDROP_URL + top.backdrop_path;
+            document.getElementById('main-hero-title').textContent = top.title;
+            document.getElementById('main-hero-desc').textContent = top.overview;
+        }
+
+        renderLane(movies.results, 'trending-movies', 'movie');
+        renderLane(series.results, 'trending-series', 'tv');
+        renderLane(upcoming.results, 'upcoming-movies', 'movie');
+    }
+
+    async function loadMore(laneId) {
+        const state = laneStates[laneId];
+        if (!state || state.loading) return;
+        state.loading = true;
+
+        const titleBtn = document.querySelector(`button[onclick="loadMore('${laneId}')"]`);
+        if(titleBtn) titleBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span>...`;
+
+        state.page++;
+        try {
+            const res = await fetch(`${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=fr-FR${state.params}&page=${state.page}`).then(r => r.json());
+            if (res.results && res.results.length > 0) {
+                appendCards(res.results, laneId, state.type);
+            } else {
+                if(titleBtn) titleBtn.style.display = 'none';
+                notify("Plus de résultats", "info");
+            }
+        } catch(e) { console.error(e); state.page--; }
+        finally {
+            state.loading = false;
+            if(titleBtn) titleBtn.innerHTML = `VOIR PLUS <i class="ph ph-plus"></i>`;
+        }
+    }
+
+    function renderLane(data, elementId, type) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+        container.innerHTML = generateCardsHTML(data, type);
+    }
+
+    function appendCards(data, elementId, type) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+        container.insertAdjacentHTML('beforeend', generateCardsHTML(data, type));
+    }
+
+    function generateCardsHTML(data, type) {
+        const pathPrefix = "PROJET_TM/Films/";
+        return data.map(item => {
+            const itemType = type === 'multi' ? item.media_type : type;
+            let page, title, date, vote, img, badge = "";
+
+            if (itemType === 'person') {
+                page = `${pathPrefix}actor-details.html`;
+                title = item.name;
+                date = item.known_for_department === 'Acting' ? 'ACTEUR' : 'RÉALISATEUR/CREW';
+                img = item.profile_path ? IMG_URL + item.profile_path : 'https://via.placeholder.com/220x330?text=No+Image';
+                vote = item.popularity ? item.popularity.toFixed(0) : '0';
+                badge = `<i class="ph-fill ph-fire"></i>`;
+            } else {
+                page = itemType === 'movie' ? `${pathPrefix}movie-details.html` : `${pathPrefix}serie-details.html`;
+                title = item.title || item.name;
+                date = (item.release_date || item.first_air_date || "").substring(0, 4) || 'N/A';
+                img = item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/220x330?text=No+Image';
+                vote = item.vote_average ? item.vote_average.toFixed(1) : '0.0';
+                badge = `<i class="ph-fill ph-star"></i>`;
+            }
+
+            return `
+                <div class="premium-card" onclick="window.location.href='${page}?id=${item.id}'">
+                    <img src="${img}" loading="lazy">
+                    <div class="card-details">
+                        <div class="card-title text-truncate">${title}</div>
+                        <div class="card-meta">
+                            <span class="rating-badge">${badge} ${vote}</span>
+                            <span class="opacity-75">${date}</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            `;
+        }).join('');
+    }
 
+    function renderAuth(a) {
+        const c = document.getElementById("auth-section");
+        const pathPrefix = "PROJET_TM/Films/";
+        if (a) {
+            c.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <a href="${pathPrefix}profilUser.html" class="text-decoration-none text-white">
+                            <div class="fw-bold small">${a.username}</div>
+                            <div class="x-small opacity-50">MON PROFIL</div>
+                        </a>
+                    </div>
+                    <button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                </div>`;
+        } else {
+            c.innerHTML = `<a href="PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>`;
+        }
+    }
 
-<!-- Container pour les notifications -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+    function setupSearchAndFilters() {
+        const searchInput = document.getElementById('main-search');
+        const searchSection = document.getElementById('search-results-section');
+        const btnApply = document.getElementById('btn-apply-filters');
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="PROJET_TM/Films/projet.js"></script>
+        const selGenre = document.getElementById('filter-genre');
+        const selYear = document.getElementById('filter-year');
+        const selStudio = document.getElementById('filter-studio');
+        const selType = document.getElementById('filter-type');
+
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            if (query.length < 2) { searchSection.style.display = 'none'; return; }
+            searchTimeout = setTimeout(async () => {
+                const res = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=fr-FR&query=${encodeURIComponent(query)}`).then(r => r.json());
+                if (res.results) {
+                    searchSection.style.display = 'block';
+                    renderLane(res.results, 'search-results', 'multi');
+                }
+            }, 500);
+        });
+
+        btnApply.onclick = async () => {
+            const type = selType.value;
+            const genre = selGenre.value;
+            const year = selYear.value;
+            const studio = selStudio.value;
+
+            let queryParams = `api_key=${API_KEY}&language=fr-FR&sort_by=popularity.desc`;
+            if (genre) queryParams += `&with_genres=${genre}`;
+            if (year) queryParams += type === 'movie' ? `&primary_release_year=${year}` : `&first_air_date_year=${year}`;
+            if (studio) queryParams += type === 'movie' ? `&with_companies=${studio}` : `&with_networks=${studio}`;
+
+            laneStates['trending-movies'].endpoint = `/discover/${type}`;
+            laneStates['trending-movies'].params = `&sort_by=popularity.desc${genre?'&with_genres='+genre:''}${year?(type==='movie'?'&primary_release_year='+year:'&first_air_date_year='+year):''}${studio?(type==='movie'?'&with_companies='+studio:'&with_networks='+studio):''}`;
+            laneStates['trending-movies'].page = 1;
+            laneStates['trending-movies'].type = type;
+
+            const res = await fetch(`${BASE_URL}/discover/${type}?${queryParams}`).then(r => r.json());
+            const trendingTitle = document.querySelector('.lane-title');
+            trendingTitle.textContent = "CONTENU FILTRÉ";
+            renderLane(res.results, 'trending-movies', type);
+            trendingTitle.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+    }
+
+    function notify(msg, type) {
+        const c = document.getElementById("toast-container");
+        if(!c) return;
+        const t = document.createElement("div");
+        t.className = `toast show bg-${type} text-white p-3 mb-2 rounded-4 shadow-lg`;
+        t.textContent = msg;
+        c.appendChild(t);
+        setTimeout(() => t.remove(), 4000);
+    }
+
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+
+    document.addEventListener('DOMContentLoaded', loadPremiumHome);
+</script>
 </body>
 </html>

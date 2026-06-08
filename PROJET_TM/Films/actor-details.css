@@ -751,3 +751,70 @@ body {
     outline-offset: 2px;
 }
 
+/* Filmography Grid */
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+}
+
+@media (max-width: 1200px) {
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}
+
+.x-small { font-size: 0.7rem; }
+.text-accent { color: var(--accent) !important; }
+.fw-black { font-weight: 900; }
+
+/* Custom adjustments for premium cards in grid */
+.movie-grid .premium-card {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+
+/* Scrollbar styling for horizontal lanes */
+.movie-scroller::-webkit-scrollbar {
+    height: 4px;
+    display: block !important;
+}
+
+.movie-scroller::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.movie-scroller::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+}
+
+/* Animations */
+@keyframes cardFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.premium-card {
+    animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Staggered animation for grid */
+.movie-grid .premium-card:nth-child(1) { animation-delay: 0.1s; }
+.movie-grid .premium-card:nth-child(2) { animation-delay: 0.15s; }
+.movie-grid .premium-card:nth-child(3) { animation-delay: 0.2s; }
+.movie-grid .premium-card:nth-child(4) { animation-delay: 0.25s; }
+.movie-grid .premium-card:nth-child(5) { animation-delay: 0.3s; }
+.movie-grid .premium-card:nth-child(n+6) { animation-delay: 0.35s; }
+
+

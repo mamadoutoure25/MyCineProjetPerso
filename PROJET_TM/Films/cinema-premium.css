@@ -1,0 +1,322 @@
+:root {
+    --accent: #a78bfa;
+    --accent-glow: rgba(167, 139, 250, 0.4);
+    --bg-black: #050505;
+    --bg-glass: rgba(20, 20, 20, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-white: #ffffff;
+    --text-dim: #a0a0a0;
+    --card-radius: 20px;
+    --card-transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================================
+   1. CARTE DE FILM / SÉRIE (VERTICALE 2:3)
+   ============================================================ */
+.premium-card {
+    width: calc((100% - 100px) / 5); /* 5 cards with 25px gaps */
+    min-width: 180px;
+    aspect-ratio: 2/3;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    position: relative;
+    background: #111;
+    border: 1px solid var(--glass-border);
+    transition: var(--card-transition);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.premium-card:hover {
+    transform: scale(1.08) translateY(-10px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(167, 139, 250, 0.2);
+    z-index: 10;
+}
+
+.premium-card img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.premium-card:hover img {
+    transform: scale(1.1);
+}
+
+/* Overlay Détails au survol */
+.card-details {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.4) 60%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+}
+
+.premium-card:hover .card-details, .poster-card:hover .card-details {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card-title {
+    font-weight: 900;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.rating-badge {
+    background: var(--accent);
+    color: #000;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 900;
+}
+
+/* ============================================================
+   2. CARTE DE COLLECTION / SAGA (HORIZONTALE 16:9)
+   ============================================================ */
+.premium-card.collection-card {
+    min-width: 380px;
+    max-width: 380px;
+    aspect-ratio: 16/9;
+}
+
+.collection-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 5px 15px;
+    border-radius: 50px;
+    z-index: 5;
+    letter-spacing: 1px;
+}
+
+/* ============================================================
+   3. CARTE D'ACTEUR (PORTRAIT COMPACT)
+   ============================================================ */
+.actor-card {
+    width: calc((100% - 100px) / 5);
+    min-width: 150px;
+    aspect-ratio: 2/3;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    background: #111;
+    border: 1px solid var(--glass-border);
+    transition: var(--card-transition);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.actor-card:hover {
+    transform: scale(1.06) translateY(-5px);
+    border-color: var(--accent);
+    z-index: 10;
+}
+
+.actor-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.actor-details {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px;
+    opacity: 1; /* Always visible for actors */
+}
+
+.actor-name {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.actor-role {
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ============================================================
+   4. CARTE D'ÉPISODE (MODERNE 16:9)
+   ============================================================ */
+.ep-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 25px;
+    transition: var(--card-transition);
+}
+
+.ep-card:hover {
+    transform: translateX(15px);
+    border-color: var(--accent);
+    background: rgba(40, 40, 40, 0.6);
+}
+
+.ep-thumb {
+    width: 320px;
+    aspect-ratio: 16/9;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.ep-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: 0.5s;
+}
+
+.ep-card:hover .ep-thumb img { transform: scale(1.1); }
+
+.ep-body { padding: 25px; flex-grow: 1; }
+.ep-num {
+    color: var(--accent);
+    font-weight: 900;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+.ep-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 12px; color: #fff; }
+.ep-text {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ============================================================
+   5. CARTE MÉDIA (VIDÉO / GALERIE)
+   ============================================================ */
+.media-rect {
+    min-width: 420px;
+    aspect-ratio: 16/9;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--glass-border);
+    transition: var(--card-transition);
+}
+
+.media-rect:hover {
+    transform: scale(1.04);
+    border-color: var(--accent);
+}
+
+.play-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    opacity: 0;
+    transition: 0.3s;
+    color: #fff;
+}
+
+.media-rect:hover .play-overlay { opacity: 1; }
+
+/* Poster Card (utilisée dans les collections/détails) */
+.poster-card {
+    width: calc((100% - 100px) / 5);
+    min-width: 180px;
+    aspect-ratio: 2/3;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    position: relative;
+    transition: var(--card-transition);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.poster-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.poster-card:hover {
+    transform: scale(1.08) translateY(-10px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(167, 139, 250, 0.2);
+    z-index: 10;
+}
+
+/* ============================================================
+   UTILS & SCROLLERS
+   ============================================================ */
+.h-scroller {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding: 15px 5px 30px;
+    scrollbar-width: none;
+}
+
+.h-scroller::-webkit-scrollbar { display: none; }
+
+.remove-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 59, 48, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ff3b30;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: 0.3s;
+}
+
+.remove-btn:hover {
+    background: #ff3b30;
+    color: #fff;
+    transform: rotate(90deg) scale(1.1);
+}
