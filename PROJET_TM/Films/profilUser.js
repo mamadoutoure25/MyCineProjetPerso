@@ -26,7 +26,7 @@ const DOM = {
 
 const ETAT = {
     user: null,
-    enChargement: false
+    acteursFavorisDetails: []
 };
 
 async function initialiserProfil() {
@@ -86,27 +86,28 @@ function renderItems(items, selector, typeListe, mediaType) {
     const container = document.querySelector(selector);
     if (!container) return;
     if (!items.length) {
-        container.innerHTML = `<div class="p-4 opacity-50 small">Aucun contenu trouvé.</div>`;
+        container.innerHTML = `<div class="p-4 opacity-50 small text-center w-100">Aucun contenu trouvé.</div>`;
         return;
     }
 
     container.innerHTML = items.map(item => {
         const title = item.title || item.name;
-        const date = (item.release_date || item.first_air_date || "").substring(0, 4);
+        const date = (item.release_date || item.first_air_date || "").substring(0, 4) || "N/A";
         const img = item.poster_path ? CONFIG.URL_IMAGE + item.poster_path : CONFIG.AFFICHE_PAR_DEFAUT;
         const page = mediaType === 'movie' ? 'movie-details.html' : 'serie-details.html';
         const rating = item.vote_average ? item.vote_average.toFixed(1) : '0.0';
 
         return `
-            <div class="small-actor-card" onclick="window.location.href='${page}?id=${item.id}'">
-                <img src="${img}" loading="lazy">
+            <div class="actor-credit-card">
+                <img src="${img}" onclick="window.location.href='${page}?id=${item.id}'">
                 <button class="remove-btn-premium" onclick="event.stopPropagation(); supprimerItem(${item.id}, '${typeListe}', '${mediaType}')">
                     <i class="ph ph-x"></i>
                 </button>
-                <div class="actor-hover-overlay">
-                    <div class="actor-name">${title}</div>
-                    <div class="actor-role"><i class="ph-fill ph-star"></i> ${rating} • ${date}</div>
+                <div class="wide-credit-overlay" onclick="window.location.href='${page}?id=${item.id}'">
+                    <div class="wide-title text-truncate">${title}</div>
+                    <div class="character-badge"><i class="ph-fill ph-star"></i> ${rating}</div>
                 </div>
+                <div class="wide-year">${date}</div>
             </div>
         `;
     }).join("");
@@ -116,25 +117,88 @@ async function chargerActeurs(uid) {
     try {
         const res = await fetch(`favorite-actors.php?user_id=${uid}`).then(r => r.json());
         if (res.success && res.favorite_actors) {
-            const details = await Promise.all(res.favorite_actors.map(a => 
+            ETAT.acteursFavorisDetails = await Promise.all(res.favorite_actors.map(a => 
                 fetch(`${CONFIG.URL_BASE}/person/${a.tmdb_id}?api_key=${CONFIG.CLE_API}&language=fr-FR`).then(r => r.json())
             ));
-            
-            const cont = document.getElementById("actors-favorites");
-            cont.innerHTML = details.map(a => `
-                <div class="small-actor-card" onclick="window.location.href='actor-details.html?id=${a.id}'">
-                    <img src="${a.profile_path ? CONFIG.URL_IMAGE + a.profile_path : 'https://via.placeholder.com/300x450'}" loading="lazy">
-                    <button class="remove-btn-premium" onclick="event.stopPropagation(); supprimerActeur(${a.id})" title="Retirer">
-                        <i class="ph ph-trash"></i>
-                    </button>
-                    <div class="actor-hover-overlay">
-                        <div class="actor-name">${a.name}</div>
-                        <div class="actor-role">CÉLÉBRITÉ</div>
-                    </div>
-                </div>
-            `).join("");
+            renderActeurs(ETAT.acteursFavorisDetails);
         }
     } catch (e) { console.error(e); }
+}
+
+function renderActeurs(data) {
+    const cont = document.getElementById("actors-favorites");
+    if (!cont) return;
+    if (!data.length) {
+        cont.innerHTML = `<div class="p-4 opacity-50 small text-center w-100">Aucun acteur trouvé.</div>`;
+        return;
+    }
+
+    cont.innerHTML = data.map(a => {
+        const age = a.birthday ? calculerAge(a.birthday) : "N/A";
+        return `
+            <div class="actor-credit-card">
+                <img src="${a.profile_path ? CONFIG.URL_IMAGE + a.profile_path : 'https://via.placeholder.com/300x450'}" onclick="window.location.href='actor-details.html?id=${a.id}'">
+                <button class="remove-btn-premium" onclick="event.stopPropagation(); supprimerActeur(${a.id})" title="Retirer">
+                    <i class="ph ph-trash"></i>
+                </button>
+                <div class="wide-credit-overlay" onclick="window.location.href='actor-details.html?id=${a.id}'">
+                    <div class="wide-title">${a.name}</div>
+                    <div class="character-badge">${age !== "N/A" ? age + " ANS" : "ÂGE INCONNU"}</div>
+                </div>
+                <div class="wide-year">${a.gender === 1 ? 'FEMME' : (a.gender === 2 ? 'HOMME' : 'N/A')}</div>
+            </div>
+        `;
+    }).join("");
+}
+
+function calculerAge(birthday) {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+    return age;
+}
+
+function appliquerFiltresActeurs() {
+    let results = [...ETAT.acteursFavorisDetails];
+
+    // Filtre Sexe
+    const sex = document.getElementById("filter-actor-sex").value;
+    if (sex) results = results.filter(a => a.gender == sex);
+
+    // Filtre Age
+    const ageRange = document.getElementById("filter-actor-age").value;
+    if (ageRange) {
+        results = results.filter(a => {
+            if (!a.birthday) return false;
+            const age = calculerAge(a.birthday);
+            if (ageRange === "0-30") return age < 30;
+            if (ageRange === "30-50") return age >= 30 && age <= 50;
+            if (ageRange === "50-100") return age > 50;
+            return true;
+        });
+    }
+
+    // Tri
+    const sort = document.getElementById("sort-actor").value;
+    results.sort((a, b) => {
+        if (sort === "name-asc") return a.name.localeCompare(b.name);
+        if (sort === "name-desc") return b.name.localeCompare(a.name);
+        if (sort === "age-asc") {
+            const ageA = a.birthday ? calculerAge(a.birthday) : 999;
+            const ageB = b.birthday ? calculerAge(b.birthday) : 999;
+            return ageA - ageB;
+        }
+        if (sort === "age-desc") {
+            const ageA = a.birthday ? calculerAge(a.birthday) : -1;
+            const ageB = b.birthday ? calculerAge(b.birthday) : -1;
+            return ageB - ageA;
+        }
+        return 0;
+    });
+
+    renderActeurs(results);
 }
 
 async function supprimerItem(id, type, media) {
@@ -153,6 +217,7 @@ async function supprimerItem(id, type, media) {
 }
 
 async function supprimerActeur(id) {
+    if (!confirm("Retirer cet acteur de vos favoris ?")) return;
     const uid = ETAT.user.userId || ETAT.user.id;
     try {
         await fetch('favorite-actors.php', {
@@ -167,9 +232,9 @@ async function supprimerActeur(id) {
 }
 
 function mettreAJourStats() {
-    const favs = document.querySelectorAll("#favorites-movies .small-actor-card, #favorites-series .small-actor-card").length;
-    const watch = document.querySelectorAll("#watchlist-movies .small-actor-card, #watchlist-series .small-actor-card").length;
-    const done = document.querySelectorAll("#watched-movies .small-actor-card, #watched-series .small-actor-card").length;
+    const favs = document.querySelectorAll("#pills-fav .actor-credit-card").length;
+    const watch = document.querySelectorAll("#pills-watch .actor-credit-card").length;
+    const done = document.querySelectorAll("#pills-done .actor-credit-card").length;
     
     if (DOM.favoritesCount) DOM.favoritesCount.textContent = favs;
     if (DOM.watchlistCount) DOM.watchlistCount.textContent = watch;
@@ -178,6 +243,7 @@ function mettreAJourStats() {
 
 function notify(msg, type) {
     const c = document.getElementById("toast-container");
+    if (!c) return;
     const t = document.createElement("div");
     t.className = `toast show bg-${type} text-white p-3 mb-2 rounded-4 shadow-lg`;
     t.textContent = msg;
@@ -185,4 +251,5 @@ function notify(msg, type) {
     setTimeout(() => t.remove(), 4000);
 }
 
+window.appliquerFiltresActeurs = appliquerFiltresActeurs;
 document.addEventListener("DOMContentLoaded", initialiserProfil);

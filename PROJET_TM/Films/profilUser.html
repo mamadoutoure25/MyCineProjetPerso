@@ -74,39 +74,92 @@
             padding-right: 20px;
         }
         
-        /* Grille 6 colonnes standard */
+        /* Grille Verticale 6 colonnes (Standard) */
         .movie-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 20px;
-            padding-bottom: 40px;
+            padding: 20px 0;
         }
+
         @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
         @media (max-width: 1100px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 800px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
 
-        /* Acteurs Portrait Grid */
-        .actor-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
-        }
-        .actor-portrait {
-            aspect-ratio: 2/3;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border);
+        /* Credits Card (Like screenshot) */
+        .actor-credit-card {
             position: relative;
+            width: 100%;
+            aspect-ratio: 2/3;
+            border-radius: 15px;
+            overflow: hidden;
             cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .actor-portrait:hover { transform: translateY(-10px) scale(1.03); border-color: var(--accent); }
-        .actor-portrait img { width: 100%; height: 100%; object-fit: cover; }
-        
+
+        .actor-credit-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--accent);
+            z-index: 10;
+        }
+
+        .actor-credit-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .actor-credit-card:hover img { transform: scale(1.1); }
+
+        .wide-credit-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 70%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 15px;
+        }
+
+        .wide-title {
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: #fff;
+            margin-bottom: 5px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .character-badge {
+            background: #f1c40f;
+            color: #000;
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .wide-year {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-weight: 900;
+            font-size: 0.75rem;
+            color: #fff;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 8px;
+            border-radius: 6px;
+            backdrop-filter: blur(5px);
+        }
+
         .remove-btn-premium {
             position: absolute;
-            top: 12px; right: 12px;
+            top: 12px; left: 12px;
             width: 32px; height: 32px;
             border-radius: 50%;
             background: rgba(255, 60, 60, 0.2);
@@ -114,7 +167,8 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #ff3b30;
             display: flex; align-items: center; justify-content: center;
-            z-index: 10; transition: 0.3s;
+            z-index: 20; transition: 0.3s;
+            border: none;
         }
         .remove-btn-premium:hover { background: #ff3b30; color: #fff; transform: rotate(90deg); }
 
@@ -128,6 +182,7 @@
             font-size: 0.75rem;
             transition: 0.3s;
             text-transform: uppercase;
+            text-decoration: none;
         }
         .btn-outline-premium:hover { border-color: var(--accent); color: var(--accent); }
         
@@ -225,11 +280,32 @@
 
             <!-- Acteurs -->
             <div class="tab-pane fade" id="pills-actors">
-                <div class="section-header-premium">
+                <div class="section-header-premium flex-wrap gap-3">
                     <div class="lane-title mb-0">STARS PRÉFÉRÉES</div>
-                    <a href="actor-stats.html" class="btn-outline-premium"><i class="ph ph-chart-pie me-2"></i>STATISTIQUES</a>
+                    
+                    <!-- Actor Filters & Sort -->
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <select id="filter-actor-sex" class="btn-outline-premium bg-dark" onchange="appliquerFiltresActeurs()">
+                            <option value="">Tous les sexes</option>
+                            <option value="1">Femmes</option>
+                            <option value="2">Hommes</option>
+                        </select>
+                        <select id="filter-actor-age" class="btn-outline-premium bg-dark" onchange="appliquerFiltresActeurs()">
+                            <option value="">Tous les âges</option>
+                            <option value="0-30">- 30 ans</option>
+                            <option value="30-50">30-50 ans</option>
+                            <option value="50-100">+ 50 ans</option>
+                        </select>
+                        <select id="sort-actor" class="btn-outline-premium bg-dark" onchange="appliquerFiltresActeurs()">
+                            <option value="name-asc">Nom (A-Z)</option>
+                            <option value="name-desc">Nom (Z-A)</option>
+                            <option value="age-asc">Âge (Croissant)</option>
+                            <option value="age-desc">Âge (Décroissant)</option>
+                        </select>
+                        <a href="actor-stats.html" class="btn-outline-premium"><i class="ph ph-chart-pie me-2"></i>STATISTIQUES</a>
+                    </div>
                 </div>
-                <div id="actors-favorites" class="actor-grid"></div>
+                <div id="actors-favorites" class="movie-grid"></div>
             </div>
         </div>
     </div>
