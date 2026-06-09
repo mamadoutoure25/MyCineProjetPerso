@@ -218,16 +218,20 @@ function togglePasswordVisibility() {
  * Définit les états du formulaire
  */
 function setFormState(isLoading) {
-	const submitButton = document.querySelector('.btn-auth-submit');
-	const inputs = document.querySelectorAll('.form-control, .form-select');
+	const submitButton = document.querySelector('.btn-submit');
+	const inputs = document.querySelectorAll('.auth-input');
 
 	if (isLoading) {
-		submitButton.disabled = true;
-		submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Connexion en cours...';
+		if (submitButton) {
+			submitButton.disabled = true;
+			submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Connexion...';
+		}
 		inputs.forEach(input => input.disabled = true);
 	} else {
-		submitButton.disabled = false;
-		submitButton.innerHTML = '<i class="ph ph-sign-in"></i><span class="btn-text">Se connecter</span>';
+		if (submitButton) {
+			submitButton.disabled = false;
+			submitButton.innerHTML = 'SE CONNECTER <i class="ph-bold ph-arrow-right ms-2"></i>';
+		}
 		inputs.forEach(input => input.disabled = false);
 	}
 }
@@ -275,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// Réinitialiser l'erreur en cas de modification
-	const formInputs = document.querySelectorAll('.form-control, .form-select');
+	const formInputs = document.querySelectorAll('.auth-input');
 	formInputs.forEach(input => {
 		input.addEventListener('input', () => {
 			const formGroup = input.closest('.form-group');
