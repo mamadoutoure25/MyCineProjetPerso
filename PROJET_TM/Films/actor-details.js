@@ -99,13 +99,16 @@ function generateCreditsHTML(data) {
         const date = (m.release_date || m.first_air_date || "").substring(0, 4) || "N/A";
         const img = m.poster_path ? CONFIG.W500 + m.poster_path : CONFIG.EMPTY_POSTER;
         const page = m.title ? "movie-details.html" : "serie-details.html";
+        
+        // Use character name if cast, or job title if crew
+        const roleText = m.character || m.job || "Équipe";
 
         return `
             <div class="actor-credit-card" onclick="window.location.href='${page}?id=${m.id}'">
                 <img src="${img}" loading="lazy">
                 <div class="wide-credit-overlay">
                     <div class="wide-title text-truncate">${title}</div>
-                    ${m.character ? `<div class="character-badge">${m.character}</div>` : ''}
+                    <div class="character-badge">${roleText}</div>
                 </div>
                 <div class="wide-year">${date}</div>
             </div>

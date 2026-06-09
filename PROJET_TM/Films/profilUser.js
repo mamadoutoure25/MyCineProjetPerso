@@ -26,6 +26,9 @@ const DOM = {
 
 const ETAT = {
     user: null,
+    favorites: [],
+    watchlist: [],
+    watched: [],
     acteursFavorisDetails: []
 };
 
@@ -37,7 +40,6 @@ async function initialiserProfil() {
     }
     ETAT.user = auth;
     
-    // UI Init
     DOM.userPseudo.textContent = (auth.pseudo || auth.username || "Utilisateur").toUpperCase();
     const avatar = document.getElementById("user-avatar");
     if (avatar) avatar.textContent = (auth.pseudo || auth.username || "U").charAt(0).toUpperCase();
@@ -48,26 +50,20 @@ async function initialiserProfil() {
 async function chargerToutesLesListes() {
     const uid = ETAT.user.userId || ETAT.user.id;
     await Promise.all([
-        chargerListe("favorites", uid),
-        chargerListe("watchlist", uid),
-        chargerListe("watched", uid),
+        chargerDonneesListe("favorites", uid),
+        chargerDonneesListe("watchlist", uid),
+        chargerDonneesListe("watched", uid),
         chargerActeurs(uid)
     ]);
     mettreAJourStats();
 }
 
-async function chargerListe(type, uid) {
+async function chargerDonneesListe(type, uid) {
     try {
         const res = await fetch(`${type}.php?user_id=${uid}`).then(r => r.json());
         if (res.success && res[type]) {
-            const films = res[type].filter(i => i.media_type === 'movie' || !i.media_type);
-            const series = res[type].filter(i => i.media_type === 'tv');
-
-            const fDetails = await Promise.all(films.map(i => recupererDetails(i.tmdb_id, 'movie')));
-            const sDetails = await Promise.all(series.map(i => recupererDetails(i.tmdb_id, 'tv')));
-
-            renderItems(fDetails.filter(d => d), `#${type}-movies`, type, 'movie');
-            renderItems(sDetails.filter(d => d), `#${type}-series`, type, 'tv');
+            ETAT[type] = await Promise.all(res[type].map(i => recupererDetails(i.tmdb_id, i.media_type || 'movie')));
+            renderListeType(type);
         }
     } catch (e) { console.error(e); }
 }
@@ -77,16 +73,26 @@ async function recupererDetails(id, type) {
     if (cacheContenu.has(key)) return cacheContenu.get(key);
     try {
         const d = await fetch(`${CONFIG.URL_BASE}/${type}/${id}?api_key=${CONFIG.CLE_API}&language=fr-FR`).then(r => r.json());
+        d.media_type = type; // Inject type for filtering
         cacheContenu.set(key, d);
         return d;
     } catch (e) { return null; }
+}
+
+function renderListeType(type) {
+    const data = ETAT[type].filter(d => d);
+    const films = data.filter(i => i.media_type === 'movie');
+    const series = data.filter(i => i.media_type === 'tv');
+
+    renderItems(films, `#${type}-movies`, type, 'movie');
+    renderItems(series, `#${type}-series`, type, 'tv');
 }
 
 function renderItems(items, selector, typeListe, mediaType) {
     const container = document.querySelector(selector);
     if (!container) return;
     if (!items.length) {
-        container.innerHTML = `<div class="p-4 opacity-50 small text-center w-100">Aucun contenu trouvé.</div>`;
+        container.innerHTML = ""; // Clear if empty
         return;
     }
 
@@ -111,6 +117,34 @@ function renderItems(items, selector, typeListe, mediaType) {
             </div>
         `;
     }).join("");
+}
+
+function appliquerFiltres(type) {
+    const genre = document.getElementById(`filter-${type === 'favorites' ? 'fav' : (type === 'watchlist' ? 'watch' : 'watched')}-genre`).value;
+    const sort = document.getElementById(`sort-${type === 'favorites' ? 'fav' : (type === 'watchlist' ? 'watch' : 'watched')}`).value;
+
+    let filtered = [...ETAT[type]].filter(d => d);
+
+    if (genre) {
+        filtered = filtered.filter(i => i.genres?.some(g => g.id == genre));
+    }
+
+    filtered.sort((a, b) => {
+        if (sort === "title-asc") return (a.title || a.name).localeCompare(b.title || b.name);
+        if (sort === "rating-desc") return (b.vote_average || 0) - (a.vote_average || 0);
+        if (sort === "date-desc") {
+            const dateA = new Date(a.release_date || a.first_air_date || "1900-01-01");
+            const dateB = new Date(b.release_date || b.first_air_date || "1900-01-01");
+            return dateB - dateA;
+        }
+        return 0;
+    });
+
+    const films = filtered.filter(i => i.media_type === 'movie');
+    const series = filtered.filter(i => i.media_type === 'tv');
+
+    renderItems(films, `#${type}-movies`, type, 'movie');
+    renderItems(series, `#${type}-series`, type, 'tv');
 }
 
 async function chargerActeurs(uid) {
@@ -162,42 +196,27 @@ function calculerAge(birthday) {
 
 function appliquerFiltresActeurs() {
     let results = [...ETAT.acteursFavorisDetails];
-
-    // Filtre Sexe
     const sex = document.getElementById("filter-actor-sex").value;
     if (sex) results = results.filter(a => a.gender == sex);
-
-    // Filtre Age
     const ageRange = document.getElementById("filter-actor-age").value;
     if (ageRange) {
         results = results.filter(a => {
             if (!a.birthday) return false;
             const age = calculerAge(a.birthday);
             if (ageRange === "0-30") return age < 30;
-            if (ageRange === "30-50") return age >= 30 && age <= 50;
-            if (ageRange === "50-100") return age > 50;
+            if (ageRange === "30-50") age >= 30 && age <= 50;
+            if (ageRange === "50-100") age > 50;
             return true;
         });
     }
-
-    // Tri
     const sort = document.getElementById("sort-actor").value;
     results.sort((a, b) => {
         if (sort === "name-asc") return a.name.localeCompare(b.name);
         if (sort === "name-desc") return b.name.localeCompare(a.name);
-        if (sort === "age-asc") {
-            const ageA = a.birthday ? calculerAge(a.birthday) : 999;
-            const ageB = b.birthday ? calculerAge(b.birthday) : 999;
-            return ageA - ageB;
-        }
-        if (sort === "age-desc") {
-            const ageA = a.birthday ? calculerAge(a.birthday) : -1;
-            const ageB = b.birthday ? calculerAge(b.birthday) : -1;
-            return ageB - ageA;
-        }
+        if (sort === "age-asc") return (a.birthday?calculerAge(a.birthday):999) - (b.birthday?calculerAge(b.birthday):999);
+        if (sort === "age-desc") return (b.birthday?calculerAge(b.birthday):-1) - (a.birthday?calculerAge(a.birthday):-1);
         return 0;
     });
-
     renderActeurs(results);
 }
 
@@ -205,12 +224,8 @@ async function supprimerItem(id, type, media) {
     if (!confirm("Retirer ce contenu de votre liste ?")) return;
     const uid = ETAT.user.userId || ETAT.user.id;
     try {
-        await fetch(`${type}.php`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: uid, film_id: id, media_type: media })
-        });
-        await chargerListe(type, uid);
+        await fetch(`${type}.php`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: uid, film_id: id, media_type: media }) });
+        await chargerDonneesListe(type, uid);
         mettreAJourStats();
         notify("Contenu retiré", "info");
     } catch (e) { console.error(e); }
@@ -220,11 +235,7 @@ async function supprimerActeur(id) {
     if (!confirm("Retirer cet acteur de vos favoris ?")) return;
     const uid = ETAT.user.userId || ETAT.user.id;
     try {
-        await fetch('favorite-actors.php', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: uid, actor_id: id })
-        });
+        await fetch('favorite-actors.php', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: uid, actor_id: id }) });
         await chargerActeurs(uid);
         mettreAJourStats();
         notify("Acteur retiré", "info");
@@ -232,10 +243,9 @@ async function supprimerActeur(id) {
 }
 
 function mettreAJourStats() {
-    const favs = document.querySelectorAll("#pills-fav .actor-credit-card").length;
-    const watch = document.querySelectorAll("#pills-watch .actor-credit-card").length;
-    const done = document.querySelectorAll("#pills-done .actor-credit-card").length;
-    
+    const favs = ETAT.favorites.length;
+    const watch = ETAT.watchlist.length;
+    const done = ETAT.watched.length;
     if (DOM.favoritesCount) DOM.favoritesCount.textContent = favs;
     if (DOM.watchlistCount) DOM.watchlistCount.textContent = watch;
     if (DOM.watchedCount) DOM.watchedCount.textContent = done;
@@ -252,4 +262,5 @@ function notify(msg, type) {
 }
 
 window.appliquerFiltresActeurs = appliquerFiltresActeurs;
+window.appliquerFiltres = appliquerFiltres;
 document.addEventListener("DOMContentLoaded", initialiserProfil);

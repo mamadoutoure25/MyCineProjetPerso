@@ -1,4 +1,4 @@
-// actor-stats.js (Dashboard Global)
+// actor-stats.js (Advanced Analytics Edition - Full French)
 
 const CONFIG = {
     URL_BASE: "https://api.themoviedb.org/3",
@@ -7,16 +7,18 @@ const CONFIG = {
 };
 
 const CHART_COLORS = {
-    primary: '#f59e0b', secondary: '#8b5cf6', accent: '#ec4899',
-    blue: '#3b82f6', teal: '#2dd4bf', pink: '#f43f5e',
-    gray: '#64748b', white: '#ffffff'
+    accent: '#a78bfa',
+    secondary: '#f472b6',
+    blue: '#60a5fa',
+    teal: '#2dd4bf',
+    orange: '#fb923c',
+    gray: 'rgba(255,255,255,0.1)',
+    white: '#ffffff'
 };
 
 const GENRE_COLORS = [
-    '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', 
-    '#ff9f40', '#4dc9f6', '#f67019', '#f53794', '#537bc4', 
-    '#acc236', '#166a8f', '#00a950', '#58595b', '#8549ba',
-    '#eb4d4b', '#22a6b3', '#f0932b', '#6ab04c', '#be2edd'
+    '#a78bfa', '#f472b6', '#60a5fa', '#2dd4bf', '#fb923c', 
+    '#f87171', '#818cf8', '#fb7185', '#34d399', '#fbbf24'
 ];
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -28,19 +30,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         const loadingScreen = document.getElementById("loading-screen");
+        const uid = auth.userId || auth.id;
         
-        // Charger toutes les données en parallèle
         const [movies, series, actors] = await Promise.all([
-            chargerFavoris(auth.userId, 'movie'),
-            chargerFavoris(auth.userId, 'tv'),
-            chargerActeursFavoris(auth.userId)
+            chargerFavoris(uid, 'movie'),
+            chargerFavoris(uid, 'tv'),
+            chargerActeursFavoris(uid)
         ]);
 
-        // Masquer chargement
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => loadingScreen.classList.add('d-none'), 500);
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => loadingScreen.classList.add('d-none'), 500);
+        }
 
-        // Initialiser les stats
         initMovieStats(movies);
         initTVStats(series);
         initActorStats(actors);
@@ -49,8 +51,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Erreur stats:", e);
     }
 });
-
-// --- CHARGEMENT ---
 
 async function chargerFavoris(userId, type) {
     try {
@@ -85,82 +85,73 @@ async function chargerActeursFavoris(userId) {
 
     const details = await Promise.all(
         list.map(async (a) => {
-            const r = await fetch(`${CONFIG.URL_BASE}/person/${a.id}?api_key=${CONFIG.CLE_API}&language=${CONFIG.LANG}`);
+            const r = await fetch(`${CONFIG.URL_BASE}/person/${a.id}?api_key=${CONFIG.CLE_API}&language=fr-FR`);
             return r.ok ? await r.json() : null;
         })
     );
     return details.filter(d => d !== null);
 }
 
-// --- FILMS ---
-
 function initMovieStats(movies) {
     document.getElementById('movie-count').textContent = movies.length;
     if (movies.length === 0) return;
 
-    // Note moyenne
-    const avgRating = movies.reduce((acc, m) => acc + m.vote_average, 0) / movies.length;
+    const avgRating = movies.reduce((acc, m) => acc + (m.vote_average || 0), 0) / movies.length;
     document.getElementById('movie-avg-rating').textContent = avgRating.toFixed(1);
 
-    // Temps total
     const totalMinutes = movies.reduce((acc, m) => acc + (m.runtime || 0), 0);
     document.getElementById('movie-total-runtime').textContent = Math.round(totalMinutes / 60) + "h";
 
-    // Genres
     const genreMap = {};
-    movies.forEach(m => {
-        m.genres.forEach(g => {
-            genreMap[g.name] = (genreMap[g.name] || 0) + 1;
-        });
-    });
+    movies.forEach(m => m.genres?.forEach(g => genreMap[g.name] = (genreMap[g.name] || 0) + 1));
+    renderRadarChart('movieGenreChart', Object.keys(genreMap), Object.values(genreMap), CHART_COLORS.accent);
 
-    renderPieChart('movieGenreChart', Object.keys(genreMap), Object.values(genreMap), GENRE_COLORS);
-
-    // Années
     const yearMap = {};
     movies.forEach(m => {
         if (m.release_date) {
-            const decade = Math.floor(new Date(m.release_date).getFullYear() / 10) * 10;
-            const label = decade + "s";
-            yearMap[label] = (yearMap[label] || 0) + 1;
+            const year = new Date(m.release_date).getFullYear();
+            yearMap[year] = (yearMap[year] || 0) + 1;
         }
     });
-    renderBarChart('movieYearChart', Object.keys(yearMap).sort(), Object.values(yearMap), CHART_COLORS.primary);
+    renderLineChart('movieYearChart', Object.keys(yearMap).sort(), Object.values(yearMap), CHART_COLORS.blue);
 }
-
-// --- SERIES ---
 
 function initTVStats(series) {
     document.getElementById('tv-count').textContent = series.length;
     if (series.length === 0) return;
 
-    // Moyenne épisodes
     const avgEps = series.reduce((acc, s) => acc + (s.number_of_episodes || 0), 0) / series.length;
     document.getElementById('tv-avg-episodes').textContent = Math.round(avgEps);
 
-    // Genre dominant
     const genreMap = {};
-    series.forEach(s => {
-        s.genres.forEach(g => genreMap[g.name] = (genreMap[g.name] || 0) + 1);
-    });
+    series.forEach(s => s.genres?.forEach(g => genreMap[g.name] = (genreMap[g.name] || 0) + 1));
     const mostCommon = Object.entries(genreMap).sort((a,b) => b[1] - a[1])[0]?.[0] || "-";
     document.getElementById('tv-most-genre').textContent = mostCommon;
 
-    renderPieChart('tvGenreChart', Object.keys(genreMap), Object.values(genreMap), GENRE_COLORS);
+    renderPolarChart('tvGenreChart', Object.keys(genreMap), Object.values(genreMap), GENRE_COLORS);
 
-    // Statut
+    // Traduction des statuts
+    const statusTranslations = {
+        "Returning Series": "En cours",
+        "Ended": "Terminée",
+        "Canceled": "Annulée",
+        "Pilot": "Pilote",
+        "In Production": "En production",
+        "Planned": "Prévue"
+    };
+
     const statusMap = {};
-    series.forEach(s => statusMap[s.status] = (statusMap[s.status] || 0) + 1);
+    series.forEach(s => {
+        const label = statusTranslations[s.status] || s.status;
+        statusMap[label] = (statusMap[label] || 0) + 1;
+    });
     renderBarChart('tvStatusChart', Object.keys(statusMap), Object.values(statusMap), CHART_COLORS.secondary);
 }
-
-// --- ACTEURS ---
 
 function initActorStats(actors) {
     document.getElementById('actor-count').textContent = actors.length;
     if (actors.length === 0) return;
 
-    // Âge Moyen
     let totalAge = 0, countAge = 0;
     const genderMap = { 'Hommes': 0, 'Femmes': 0, 'Autres': 0 };
     const ageRanges = { "Moins de 30": 0, "30-45": 0, "45-60": 0, "60+": 0 };
@@ -185,36 +176,114 @@ function initActorStats(actors) {
     const ratio = Math.round((genderMap['Femmes'] / actors.length) * 100);
     document.getElementById('actor-gender-ratio').textContent = `${ratio}% Femmes`;
 
-    renderPieChart('actorGenderChart', Object.keys(genderMap), Object.values(genderMap), [CHART_COLORS.blue, CHART_COLORS.accent, CHART_COLORS.gray]);
-    renderBarChart('actorAgeChart', Object.keys(ageRanges), Object.values(ageRanges), CHART_COLORS.accent);
+    renderDoughnutChart('actorGenderChart', Object.keys(genderMap), Object.values(genderMap), [CHART_COLORS.blue, CHART_COLORS.secondary, CHART_COLORS.gray]);
+    renderBarChart('actorAgeChart', Object.keys(ageRanges), Object.values(ageRanges), CHART_COLORS.orange);
 }
 
-// --- CHARTS HELPERS ---
+// --- NEW STYLED CHARTS ---
 
-function renderPieChart(id, labels, data, colors) {
-    new Chart(document.getElementById(id), {
-        type: 'doughnut',
+function renderRadarChart(id, labels, data, color) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    new Chart(ctx, {
+        type: 'radar',
         data: {
             labels: labels,
-            datasets: [{ data: data, backgroundColor: colors, borderWidth: 0 }]
+            datasets: [{
+                label: 'Titres',
+                data: data,
+                backgroundColor: color + '33',
+                borderColor: color,
+                borderWidth: 2,
+                pointBackgroundColor: color,
+                pointRadius: 4
+            }]
         },
         options: {
-            plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } }
+            scales: {
+                r: {
+                    angleLines: { color: 'rgba(255,255,255,0.1)' },
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    pointLabels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } },
+                    ticks: { display: false }
+                }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+function renderLineChart(id, labels, data, color) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                borderColor: color,
+                backgroundColor: color + '11',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 0,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            scales: {
+                y: { display: false },
+                x: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 9 } }, grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+function renderPolarChart(id, labels, data, colors) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    new Chart(ctx, {
+        type: 'polarArea',
+        data: {
+            labels: labels,
+            datasets: [{ data: data, backgroundColor: colors.map(c => c + 'AA'), borderWidth: 0 }]
+        },
+        options: {
+            scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false } } },
+            plugins: { legend: { position: 'right', labels: { color: '#fff', boxWidth: 12, font: { size: 10 } } } }
+        }
+    });
+}
+
+function renderDoughnutChart(id, labels, data, colors) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderWidth: 0 }] },
+        options: {
+            cutout: '75%',
+            plugins: { legend: { position: 'bottom', labels: { color: '#fff', padding: 20 } } }
         }
     });
 }
 
 function renderBarChart(id, labels, data, color) {
-    new Chart(document.getElementById(id), {
+    const ctx = document.getElementById(id);
+    if (!ctx) return;
+    new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
-            datasets: [{ data: data, backgroundColor: color, borderRadius: 5 }]
+            datasets: [{ data: data, backgroundColor: color, borderRadius: 8 }]
         },
         options: {
+            indexAxis: 'y',
             scales: {
-                y: { beginAtZero: true, ticks: { color: '#fff', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                x: { ticks: { color: '#fff' }, grid: { display: false } }
+                x: { grid: { display: false }, ticks: { display: false } },
+                y: { grid: { display: false }, ticks: { color: '#fff', font: { weight: '600' } } }
             },
             plugins: { legend: { display: false } }
         }

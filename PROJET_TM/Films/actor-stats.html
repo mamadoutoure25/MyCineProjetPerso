@@ -3,147 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistiques Globales - MyCiné</title>
+    <title>Analytique Premium - MyCiné Experience</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="projet.css">
-    <link rel="stylesheet" href="profilUser.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="premium-home.css">
     <style>
-        .stats-container { padding: 2rem 0; }
+        .stats-hero {
+            padding: 140px 5% 60px;
+            background: linear-gradient(to bottom, #101010 0%, #050505 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .nav-pills-premium {
+            display: flex;
+            gap: 10px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 50px;
+            width: fit-content;
+            margin: 40px auto;
+        }
+        .nav-pills-premium .nav-link {
+            border-radius: 50px;
+            color: #fff;
+            font-weight: 700;
+            padding: 10px 25px;
+            border: none;
+            transition: 0.3s;
+            font-size: 0.85rem;
+        }
+        .nav-pills-premium .nav-link.active {
+            background: var(--accent);
+            color: #000;
+        }
+
         .chart-card {
-            background: var(--bg-card, #1e293b);
-            border: 1px solid var(--border, rgba(255,255,255,0.1));
-            border-radius: 16px;
-            padding: 1.5rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
             height: 100%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        .chart-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
         }
         .chart-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary, #ffffff);
+            font-size: 0.8rem;
+            font-weight: 900;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
         }
-        .stat-summary {
+
+        .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
-        .summary-item {
-            background: linear-gradient(135deg, var(--primary, #ff0000), var(--secondary, #800080));
-            padding: 1.2rem;
-            border-radius: 12px;
-            color: white;
+        .summary-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
         }
-        .summary-value { display: block; font-size: 2rem; font-weight: 800; }
-        .summary-label { font-size: 0.85rem; opacity: 0.9; }
-        .nav-pills-custom {
-            background: rgba(255,255,255,0.05);
-            padding: 0.5rem;
-            border-radius: 12px;
-            display: inline-flex;
-            margin-bottom: 2rem;
+        .summary-val { font-size: 2.2rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 8px; }
+        .summary-lbl { font-size: 0.7rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+
+        .loading-screen {
+            position: fixed; inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            transition: 0.5s;
         }
-        .nav-pills-custom .nav-link {
-            color: white;
-            border-radius: 8px;
-            padding: 0.6rem 1.5rem;
-            transition: all 0.3s ease;
-        }
-        .nav-pills-custom .nav-link.active {
-            background: var(--primary, #ff0000);
-            box-shadow: 0 4px 12px rgba(255,0,0,0.3);
-        }
-        canvas { max-height: 300px; width: 100% !important; }
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-body, #0f172a);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 9999; transition: opacity 0.5s ease;
-        }
+
+        canvas { max-height: 320px; }
+
+        .section-wrapper { padding: 0 5% 80px; }
     </style>
 </head>
 <body>
 
-<div id="loading-screen" class="loading-overlay">
-    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-    <p class="mt-3 text-muted">Analyse de votre collection...</p>
+<div id="loading-screen" class="loading-screen">
+    <div class="spinner-border text-accent" style="width: 3rem; height: 3rem;" role="status"></div>
+    <p class="mt-4 fw-bold text-accent opacity-50 letter-spacing-2">GÉNÉRATION DES ANALYTIQUES...</p>
 </div>
 
-<nav class="navbar navbar-expand-lg fixed-top">
+<nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="../../index.html">
-            <div class="logo-container me-2"><span class="logo-text">M</span></div>
-            <span class="brand-text">MyCiné Stats</span>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: #fff;">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
         </a>
+        <div class="collapse navbar-collapse justify-content-center">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../series.html">SÉRIES</a></li>
+            </ul>
+        </div>
         <div class="ms-auto">
-            <a class="btn btn-outline-light btn-sm" href="profilUser.html">
-                <i class="ph ph-arrow-left me-1"></i> Retour au Profil
-            </a>
+            <a href="profilUser.html" class="btn btn-outline-premium"><i class="ph ph-user me-2"></i>RETOUR PROFIL</a>
         </div>
     </div>
 </nav>
 
-<main class="container stats-container mt-5 pt-5">
-    <div class="text-center">
-        <div class="nav nav-pills nav-pills-custom" id="stats-tabs" role="tablist">
-            <button class="nav-link active" id="movies-tab" data-bs-toggle="pill" data-bs-target="#movies-stats" type="button">Films</button>
-            <button class="nav-link" id="series-tab" data-bs-toggle="pill" data-bs-target="#series-stats" type="button">Séries</button>
-            <button class="nav-link" id="actors-tab" data-bs-toggle="pill" data-bs-target="#actors-stats" type="button">Acteurs</button>
+<main>
+    <header class="stats-hero">
+        <div class="container-fluid text-center">
+            <h1 class="hero-title mb-1" style="font-size: 3.5rem;">VOTRE ADN CINÉ</h1>
+            <p class="opacity-50 fs-5">Découvrez les tendances et statistiques de votre collection personnelle.</p>
+            
+            <ul class="nav nav-pills nav-pills-premium" id="stats-tabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-movies">FILMS</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-series">SÉRIES TV</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-actors">TALENTS</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="section-wrapper">
+        <div class="tab-content">
+            <!-- Stats Films -->
+            <div class="tab-pane fade show active" id="tab-movies">
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-val" id="movie-count">0</div>
+                        <div class="summary-lbl">Films en collection</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-val" id="movie-avg-rating">0</div>
+                        <div class="summary-lbl">Note moyenne</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-val" id="movie-total-runtime">0</div>
+                        <div class="summary-lbl">Temps de visionnage</div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h3 class="chart-title"><i class="ph-fill ph-mask-happy"></i> Genres de prédilection</h3>
+                            <canvas id="movieGenreChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h3 class="chart-title"><i class="ph-fill ph-calendar"></i> Voyage dans le temps</h3>
+                            <canvas id="movieYearChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Séries -->
+            <div class="tab-pane fade" id="tab-series">
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-val" id="tv-count">0</div>
+                        <div class="summary-lbl">Séries suivies</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-val" id="tv-avg-episodes">0</div>
+                        <div class="summary-lbl">Épisodes / série</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-val" id="tv-most-genre">-</div>
+                        <div class="summary-lbl">Genre dominant</div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h3 class="chart-title"><i class="ph-fill ph-television"></i> Répartition thématique</h3>
+                            <canvas id="tvGenreChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h3 class="chart-title"><i class="ph-fill ph-broadcast"></i> Statut de production</h3>
+                            <canvas id="tvStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Acteurs -->
+            <div class="tab-pane fade" id="tab-actors">
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-val" id="actor-count">0</div>
+                        <div class="summary-lbl">Stars favorites</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-val" id="actor-avg-age">0</div>
+                        <div class="summary-lbl">Âge moyen des stars</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-val" id="actor-gender-ratio">-</div>
+                        <div class="summary-lbl">Répartition des sexes</div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h3 class="chart-title"><i class="ph-fill ph-gender-intersex"></i> Équilibre des genres</h3>
+                            <canvas id="actorGenderChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h3 class="chart-title"><i class="ph-fill ph-cake"></i> Générations d'acteurs</h3>
+                            <canvas id="actorAgeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="tab-content">
-        <!-- STATS FILMS -->
-        <div class="tab-pane fade show active" id="movies-stats">
-            <div class="stat-summary" id="movie-summary">
-                <div class="summary-item"><span class="summary-value" id="movie-count">0</span><span class="summary-label">Films Favoris</span></div>
-                <div class="summary-item" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"><span class="summary-value" id="movie-avg-rating">0</span><span class="summary-label">Note Moyenne</span></div>
-                <div class="summary-item" style="background: linear-gradient(135deg, #10b981, #059669);"><span class="summary-value" id="movie-total-runtime">0</span><span class="summary-label">Heures de visionnage</span></div>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-mask-happy"></i> Genres Préférés</h3><canvas id="movieGenreChart"></canvas></div></div>
-                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-calendar"></i> Par Décennie</h3><canvas id="movieYearChart"></canvas></div></div>
-            </div>
-        </div>
-
-        <!-- STATS SERIES -->
-        <div class="tab-pane fade" id="series-stats">
-            <div class="stat-summary" id="series-summary">
-                <div class="summary-item"><span class="summary-value" id="tv-count">0</span><span class="summary-label">Séries Favorites</span></div>
-                <div class="summary-item" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"><span class="summary-value" id="tv-avg-episodes">0</span><span class="summary-label">Épisodes en moyenne</span></div>
-                <div class="summary-item" style="background: linear-gradient(135deg, #f43f5e, #be123c);"><span class="summary-value" id="tv-most-genre">-</span><span class="summary-label">Genre Dominant</span></div>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-television"></i> Répartition des Genres</h3><canvas id="tvGenreChart"></canvas></div></div>
-                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-broadcast"></i> Statut des séries</h3><canvas id="tvStatusChart"></canvas></div></div>
-            </div>
-        </div>
-
-        <!-- STATS ACTEURS -->
-        <div class="tab-pane fade" id="actors-stats">
-            <div class="stat-summary" id="actor-summary">
-                <div class="summary-item"><span class="summary-value" id="actor-count">0</span><span class="summary-label">Acteurs Favoris</span></div>
-                <div class="summary-item" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><span class="summary-value" id="actor-avg-age">0</span><span class="summary-label">Âge Moyen</span></div>
-                <div class="summary-item" style="background: linear-gradient(135deg, #ec4899, #db2777);"><span class="summary-value" id="actor-gender-ratio">-</span><span class="summary-label">Répartition</span></div>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-gender-intersex"></i> Par Genre</h3><canvas id="actorGenderChart"></canvas></div></div>
-                <div class="col-md-6"><div class="chart-card"><h3 class="chart-title"><i class="ph ph-cake"></i> Tranches d'Âge</h3><canvas id="actorAgeChart"></canvas></div></div>
-            </div>
-        </div>
-    </div>
+    <footer class="py-5 text-center border-top border-secondary mt-5 opacity-50">
+        <p class="small fw-bold">© 2026 MYCINÉ • ANALYTIQUE PREMIUM</p>
+    </footer>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="sombre_clair.js"></script>
-<script src="actor-stats.js"></script> <!-- Je vais réutiliser ce nom ou le renommer plus tard -->
+<script src="actor-stats.js"></script>
+<script>
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+</script>
 </body>
 </html>

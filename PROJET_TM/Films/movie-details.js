@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderCast(movie.credits?.cast);
         renderVideos(movie.videos?.results);
         renderGallery(movie.images);
-        renderProviders(movie["watch/providers"]?.results?.BE);
+        renderProviders(movie["watch/providers"]?.results);
         renderTechnical(movie);
         
         if (movie.belongs_to_collection) {
@@ -84,12 +84,24 @@ function renderHero(m) {
     const year = m.release_date ? new Date(m.release_date).getFullYear() : "";
     const runtime = m.runtime ? `${m.runtime} min` : "";
     const genres = m.genres?.slice(0,3).map(g => g.name).join(", ") || "";
-    const cert = m.release_dates?.results?.find(r => r.iso_3166_1 === "US")?.release_dates[0]?.certification || "PG";
+
+    let cert = "";
+    if (m.release_dates && m.release_dates.results) {
+        const fr = m.release_dates.results.find(r => r.iso_3166_1 === 'FR');
+        const us = m.release_dates.results.find(r => r.iso_3166_1 === 'US');
+        const target = fr || us || m.release_dates.results[0];
+        
+        if (target && target.release_dates && target.release_dates.length > 0) {
+            const validCert = target.release_dates.find(d => d.certification !== "");
+            if (validCert) cert = validCert.certification;
+        }
+    }
+    
+    const certBadge = cert ? `<span style="border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 800;">${cert}</span><div class="v-sep"></div>` : "";
 
     if (el("movie-tags")) {
-        el("movie-tags").innerHTML = `<span>${year}</span><div class="v-sep"></div><span>${genres}</span><div class="v-sep"></div><span>${runtime}</span>`;
+        el("movie-tags").innerHTML = `${certBadge}<span>${year}</span><div class="v-sep"></div><span>${genres}</span><div class="v-sep"></div><span>${runtime}</span>`;
     }
-    if (el("maturity-rating")) el("maturity-rating").textContent = cert;
 
     const studioTag = el("studio-tag");
     const studio = m.production_companies?.[0];
@@ -164,17 +176,55 @@ function renderGallery(imgs) {
     renderGrid(imgs?.posters, "grid-posters", true);
 }
 
-function renderProviders(be) {
+function renderProviders(providerResults) {
     const cont = document.getElementById("movie-providers");
     const noProv = document.getElementById("noProviders");
     if (!cont) return;
-    const stream = be?.flatrate || [];
+
+    // Find the best region match
+    let be = null;
+    if (providerResults) {
+        be = providerResults.BE || providerResults.FR || providerResults.US || Object.values(providerResults)[0];
+    }
+    
+    const stream = be?.flatrate || be?.rent || be?.buy || [];
+    const movieTitle = document.getElementById("movie-title")?.textContent || "";
+
     if (!stream.length) {
         if (noProv) noProv.classList.remove("d-none");
         return;
     }
+    
     if (noProv) noProv.classList.add("d-none");
-    cont.innerHTML = stream.map(p => `<img src="${CONFIG.W500}${p.logo_path}" class="provider-logo" style="width:45px; border-radius:10px;" title="${p.provider_name}">`).join("");
+// Provider ID Mapping to their search URLs
+const searchQuery = encodeURIComponent(movieTitle).replace(/%20/g, '+');
+const providerLinks = {
+    8: `https://www.netflix.com/search?q=${searchQuery}`, // Netflix
+    119: `https://www.amazon.com/s?k=${searchQuery}&i=instant-video`, // Amazon Prime
+    337: `https://www.disneyplus.com/search?q=${searchQuery}`, // Disney+
+    384: `https://play.hbomax.com/search/result?q=${searchQuery}`, // HBO Max
+    1889: `https://play.hbomax.com/search/result?q=${searchQuery}`, // Max (New ID)
+    1899: `https://play.hbomax.com/search/result?q=${searchQuery}`, // HBO Max BE
+    1825: `https://play.hbomax.com/search/result?q=${searchQuery}`, // HBO Max Amazon Channel
+    10: `https://www.amazon.com/s?k=${searchQuery}&i=instant-video`, // Amazon Video (Rent)
+    350: `https://tv.apple.com/search?term=${searchQuery}`, // Apple TV+
+    2: `https://tv.apple.com/search?term=${searchQuery}`, // Apple iTunes
+    3: `https://play.google.com/store/search?q=${searchQuery}&c=movies`, // Google Play Movies
+};
+    
+    cont.innerHTML = stream.map(p => {
+        // Use smart link if mapped, otherwise fallback to TMDB specific link or generic watch link
+        let href = providerLinks[p.provider_id];
+        if (!href) {
+            href = be?.link ? be.link : `https://www.themoviedb.org/movie/${id}/watch`;
+        }
+
+        return `
+            <a href="${href}" target="_blank" title="Rechercher sur ${p.provider_name}" class="provider-link" style="transition: 0.3s; display: inline-block;">
+                <img src="${CONFIG.W500}${p.logo_path}" alt="${p.provider_name}" style="width:45px; border-radius:10px; border: 1px solid rgba(255,255,255,0.1);">
+            </a>
+        `;
+    }).join("");
 }
 
 function renderTechnical(m) {
