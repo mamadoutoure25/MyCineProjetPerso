@@ -79,21 +79,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $data = json_decode(file_get_contents('php://input'), true);
 $pseudo = trim($data['pseudo'] ?? '');
 $mot_de_passe = $data['mot_de_passe'] ?? '';
-$role = trim($data['role'] ?? '');
 
-error_log('connexion.php: Données reçues: pseudo=' . $pseudo . ', role=' . $role);
+error_log('connexion.php: Données reçues: pseudo=' . $pseudo);
 
-if (empty($pseudo) || empty($mot_de_passe) || empty($role)) {
+if (empty($pseudo) || empty($mot_de_passe)) {
     error_log('connexion.php: Champs manquants');
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Tous les champs sont obligatoires']);
-    exit;
-}
-
-if (!in_array($role, ['user', 'admin'])) {
-    error_log('connexion.php: Rôle invalide: ' . $role);
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Rôle invalide']);
     exit;
 }
 
@@ -102,7 +94,7 @@ try {
     $stmt->execute([$pseudo]);
     $user = $stmt->fetch();
 
-    if ($user && password_verify($mot_de_passe, $user['mot_de_passe']) && $user['role'] === $role) {
+    if ($user && password_verify($mot_de_passe, $user['mot_de_passe'])) {
         $token = bin2hex(random_bytes(16));
         error_log('connexion.php: Nouveau token généré: ' . $token);
 
