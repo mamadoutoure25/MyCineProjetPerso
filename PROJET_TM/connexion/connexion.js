@@ -7,7 +7,7 @@ const REDIRECT_USER = '../../index.html';
 /**
  * Valide les identifiants de connexion
  */
-function validateLoginForm(pseudo, password, role) {
+function validateLoginForm(pseudo, password) {
 	const errors = [];
 
 	if (!pseudo || pseudo.trim().length === 0) {
@@ -16,10 +16,6 @@ function validateLoginForm(pseudo, password, role) {
 
 	if (!password || password.trim().length === 0) {
 		errors.push('Le mot de passe est requis');
-	}
-
-	if (!role || role.trim().length === 0) {
-		errors.push('Le rôle est requis');
 	}
 
 	return errors;
@@ -40,8 +36,7 @@ function displayFormErrors(errors) {
 
 	const errorInput = {
 		'username': 0,
-		'password': 1,
-		'role': 2
+		'password': 1
 	};
 
 	errors.forEach((error, index) => {
@@ -98,9 +93,9 @@ function redirectByRole(role) {
 /**
  * Envoie les identifiants au serveur
  */
-async function handleLogin(pseudo, password, role) {
+async function handleLogin(pseudo, password) {
 	try {
-		const validationErrors = validateLoginForm(pseudo, password, role);
+		const validationErrors = validateLoginForm(pseudo, password);
 		if (validationErrors.length > 0) {
 			displayFormErrors(validationErrors);
 			return { success: false, message: validationErrors[0] };
@@ -114,8 +109,7 @@ async function handleLogin(pseudo, password, role) {
 			},
 			body: JSON.stringify({
 				pseudo: pseudo.trim(),
-				mot_de_passe: password,
-				role: role.trim()
+				mot_de_passe: password
 			})
 		});
 
@@ -221,17 +215,15 @@ function setFormState(isLoading) {
 	const submitButton = document.querySelector('.btn-submit');
 	const inputs = document.querySelectorAll('.auth-input');
 
+	if (!submitButton) return;
+
 	if (isLoading) {
-		if (submitButton) {
-			submitButton.disabled = true;
-			submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Connexion...';
-		}
+		submitButton.disabled = true;
+		submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>CONNEXION...';
 		inputs.forEach(input => input.disabled = true);
 	} else {
-		if (submitButton) {
-			submitButton.disabled = false;
-			submitButton.innerHTML = 'SE CONNECTER <i class="ph-bold ph-arrow-right ms-2"></i>';
-		}
+		submitButton.disabled = false;
+		submitButton.innerHTML = 'SE CONNECTER <i class="ph-bold ph-arrow-right ms-2"></i>';
 		inputs.forEach(input => input.disabled = false);
 	}
 }
@@ -246,11 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			const pseudo = document.getElementById('username').value;
 			const password = document.getElementById('password').value;
-			const role = document.getElementById('role').value;
 
 			setFormState(true);
 
-			const result = await handleLogin(pseudo, password, role);
+			const result = await handleLogin(pseudo, password);
 
 			setFormState(false);
 

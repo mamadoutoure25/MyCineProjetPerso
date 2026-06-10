@@ -81,14 +81,20 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center; /* Add horizontal centering */
             padding: 40px;
             background: var(--bg-black);
             position: relative;
             z-index: 5;
         }
 
+        .auth-form-content {
+            width: 100%;
+            max-width: 400px; /* Constrain width for a sleek look */
+        }
+
         @media (min-width: 992px) {
-            .auth-form-side { padding: 80px; max-width: 600px; }
+            .auth-form-side { padding: 80px; }
         }
 
         .back-btn {
@@ -273,55 +279,47 @@
         <div class="auth-form-side">
             <a href="../../index.html" class="back-btn"><i class="ph ph-x fs-4"></i> FERMER</a>
             
-            <a href="../../index.html" class="brand-logo">
-                <div class="logo-box">M</div>
-                <span class="fs-4 fw-black">MYCINÉ</span>
-            </a>
+            <div class="auth-form-content">
+                <a href="../../index.html" class="brand-logo">
+                    <div class="logo-box">M</div>
+                    <span class="fs-4 fw-black">MYCINÉ</span>
+                </a>
 
-            <div class="form-header">
-                <h2>Bon retour parmi nous.</h2>
-                <p>Veuillez entrer vos identifiants pour continuer.</p>
-            </div>
-
-            <div id="error-message" class="alert-error"></div>
-
-            <form id="loginForm">
-                <!-- Username Field -->
-                <div class="form-group">
-                    <label for="username" class="form-label">Identifiant</label>
-                    <input type="text" id="username" class="auth-input" placeholder="Entrez votre pseudo" autocomplete="username" required>
-                    <i class="ph-fill ph-user input-icon"></i>
-                    <div class="form-error">Pseudo requis</div>
+                <div class="form-header">
+                    <h2>Bon retour parmi nous.</h2>
+                    <p>Veuillez entrer vos identifiants pour continuer.</p>
                 </div>
 
-                <!-- Password Field -->
-                <div class="form-group">
-                    <label for="password" class="form-label">Mot de passe</label>
-                    <input type="password" id="password" class="auth-input" placeholder="••••••••" autocomplete="current-password" required>
-                    <i class="ph-fill ph-lock-key input-icon"></i>
-                    <button type="button" class="toggle-password" id="togglePassword">
-                        <i class="ph ph-eye"></i>
+                <div id="error-message" class="alert-error"></div>
+
+                <form id="loginForm">
+                    <!-- Username Field -->
+                    <div class="form-group">
+                        <label for="username" class="form-label">Identifiant</label>
+                        <input type="text" id="username" class="auth-input" placeholder="Entrez votre pseudo" autocomplete="username" required>
+                        <i class="ph-fill ph-user input-icon"></i>
+                        <div class="form-error">Pseudo requis</div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <input type="password" id="password" class="auth-input" placeholder="••••••••" autocomplete="current-password" required>
+                        <i class="ph-fill ph-lock-key input-icon"></i>
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <i class="ph ph-eye"></i>
+                        </button>
+                        <div class="form-error">Mot de passe requis</div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        SE CONNECTER <i class="ph-bold ph-arrow-right ms-2"></i>
                     </button>
-                    <div class="form-error">Mot de passe requis</div>
+                </form>
+
+                <div class="auth-footer">
+                    Nouveau sur MyCiné ? <a href="inscription.html" class="auth-link">Créer un compte</a>
                 </div>
-
-                <!-- Role Field -->
-                <div class="form-group">
-                    <label for="role" class="form-label">Type de compte</label>
-                    <select id="role" class="auth-input" required>
-                        <option value="user" selected>Utilisateur Premium</option>
-                        <option value="admin">Administrateur</option>
-                    </select>
-                    <i class="ph-fill ph-shield-check input-icon"></i>
-                </div>
-
-                <button type="submit" class="btn-submit">
-                    SE CONNECTER <i class="ph-bold ph-arrow-right ms-2"></i>
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                Nouveau sur MyCiné ? <a href="inscription.html" class="auth-link">Créer un compte</a>
             </div>
         </div>
     </div>
