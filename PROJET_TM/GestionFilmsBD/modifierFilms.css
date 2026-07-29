@@ -87,8 +87,8 @@ body {
 }
 
 .navbar-toggler {
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white !important;
+    border: 1px solid var(--border);
+    color: var(--text-primary) !important;
     font-size: clamp(1.2rem, 3vw, 1.4rem);
     padding: clamp(6px, 1.5vw, 8px);
     transition: var(--transition);
@@ -219,7 +219,7 @@ body {
 textarea {
     background: rgba(30, 41, 59, 0.8);
     color: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
     border-radius: var(--border-radius);
     padding: clamp(0.5rem, 1vw, 0.75rem);
     font-size: clamp(0.9rem, 2.5vw, 1rem);
@@ -292,7 +292,7 @@ textarea:focus {
 
 .btn-secondary.tmdb-lookup {
     background: var(--glass-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
     color: var(--text);
     margin-top: 0.5rem;
     font-size: clamp(0.8rem, 2vw, 0.9rem);

@@ -9,53 +9,37 @@
   <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="projet.css" rel="stylesheet">
   <link href="ajouterFilms.css" rel="stylesheet">
+<link rel="stylesheet" href="../Films/theme-variables.css">
 </head>
 <body>
 <!-- Barre de navigation -->
-<nav class="navbar navbar-expand-lg fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="../../index.html">
-      <img src="../Films/images/logo.png" alt="Logo MyCiné" class="me-2" style="height: 40px;">
-      <span>MyCiné</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-            aria-controls="navbarContent" aria-expanded="false" aria-label="Basculer la navigation">
-      <i class="ph ph-list"></i>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="../../index.html">
-            <i class="ph ph-house me-1"></i> Accueil
-          </a>
-        </li>
-      </ul>
-      <div class="d-flex align-items-center">
-        <button class="theme-toggle me-3" id="theme-toggle" title="Changer de thème">
-          <i class="ph ph-sun" id="theme-icon"></i>
+<nav class="navbar navbar-expand-lg fixed-top px-5">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="ph ph-list fs-2 text-theme"></i>
         </button>
-        <ul class="navbar-nav">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button"
-               data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="ph ph-user me-1"></i> <span id="username-display" class="d-none"></span> Compte
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" id="user-menu">
-              <li><a class="dropdown-item" href="PROJET_TM_GRoupe/connexion/connexion.html" id="login-link"><i class="ph ph-sign-in me-2"></i> Se connecter</a></li>
-              <li><a class="dropdown-item d-none" href="profilUser.html" id="profile-link"><i class="ph ph-user me-2"></i> Mon profil</a></li>
-              <li class="dropdown-submenu d-none" id="admin-link">
-                <a class="dropdown-item" href="modifierFilms.html"><i class="ph ph-pencil me-2"></i> Modifier un film</a>
-                <a class="dropdown-item" href="supprimerFilms.html"><i class="ph ph-trash me-2"></i> Supprimer un film</a>
-              </li>
-              <li><a class="dropdown-item d-none" href="../profilUser.html" id="favorites-link"><i class="ph ph-heart me-2"></i> Mes favoris</a></li>
-              <li><hr class="dropdown-divider d-none" id="divider"></li>
-              <li><a class="dropdown-item d-none" href="../../index.html" id="logout-link"><i class="ph ph-sign-out me-2"></i> Déconnexion</a></li>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
             </ul>
-          </li>
-        </ul>
-      </div>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
+                <i class="ph ph-moon fs-4" id="theme-icon"></i>
+            </button>
+            <div id="auth-section">
+                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+            </div>
+        </div>
     </div>
-  </div>
 </nav>
 
 <!-- Contenu principal -->
@@ -202,5 +186,6 @@
 <script src="../connexion/navbarAuth.js"></script>
 <script src="ajouterFilms.js"></script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'939f72d36d736765',t:'MTc0NjI3MjA1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script src="../theme.js"></script>
 </body>
 </html>

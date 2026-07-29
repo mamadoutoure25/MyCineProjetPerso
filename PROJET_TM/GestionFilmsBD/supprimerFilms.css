@@ -148,7 +148,7 @@ main {
 .form-control {
     background-color: rgba(30, 41, 59, 0.8);
     color: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
     border-radius: 8px;
     transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
@@ -183,7 +183,7 @@ main {
     padding: 0.75rem;
     background-color: var(--danger-color);
     border-color: var(--danger-color);
-    color: #fff;
+    color: var(--text-primary);
     transition: var(--transition);
 }
 

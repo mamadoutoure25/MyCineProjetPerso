@@ -20,7 +20,7 @@
     border-radius: var(--card-radius);
     overflow: hidden;
     position: relative;
-    background: #111;
+    background: var(--bg-card);
     border: 1px solid var(--glass-border);
     transition: var(--card-transition);
     cursor: pointer;
@@ -67,7 +67,7 @@
     font-weight: 900;
     font-size: 0.95rem;
     margin-bottom: 8px;
-    color: #fff;
+    color: var(--text-primary);
     text-transform: uppercase;
     line-height: 1.2;
 }
@@ -82,7 +82,7 @@
 
 .rating-badge {
     background: var(--accent);
-    color: #000;
+    color: var(--text-primary);
     padding: 3px 8px;
     border-radius: 6px;
     display: flex;
@@ -106,8 +106,8 @@
     left: 20px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
     font-size: 0.7rem;
     font-weight: 800;
     padding: 5px 15px;
@@ -126,7 +126,7 @@
     border-radius: 12px;
     overflow: hidden;
     position: relative;
-    background: #111;
+    background: var(--bg-card);
     border: 1px solid var(--glass-border);
     transition: var(--card-transition);
     cursor: pointer;
@@ -159,7 +159,7 @@
 .actor-name {
     font-weight: 800;
     font-size: 0.85rem;
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 2px;
 }
 
@@ -213,7 +213,7 @@
     margin-bottom: 8px;
     text-transform: uppercase;
 }
-.ep-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 12px; color: #fff; }
+.ep-title { font-weight: 800; font-size: 1.3rem; margin-bottom: 12px; color: var(--text-primary); }
 .ep-text {
     color: var(--text-dim);
     font-size: 0.95rem;
@@ -252,7 +252,7 @@
     font-size: 4rem;
     opacity: 0;
     transition: 0.3s;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .media-rect:hover .play-overlay { opacity: 1; }
@@ -303,7 +303,7 @@
     right: 15px;
     background: rgba(255, 59, 48, 0.2);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
     color: #ff3b30;
     width: 36px;
     height: 36px;
@@ -317,6 +317,6 @@
 
 .remove-btn:hover {
     background: #ff3b30;
-    color: #fff;
+    color: var(--text-primary);
     transform: rotate(90deg) scale(1.1);
 }

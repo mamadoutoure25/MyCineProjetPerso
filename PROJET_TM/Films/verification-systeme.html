@@ -17,7 +17,7 @@
             border-radius: 12px;
             padding: 1.5rem;
             margin: 1rem 0;
-            color: #ffffff;
+            color: var(--text-primary)fff;
         }
         .success { color: #10b981; }
         .warning { color: #f59e0b; }
@@ -29,6 +29,7 @@
             font-size: 0.9rem;
         }
     </style>
+<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
     <div class="container">
@@ -102,17 +103,17 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
                 <div style="border: 1px solid #334155; border-radius: 14px; padding: 1.25rem; background: rgba(245, 158, 11, 0.15);">
                     <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                        <div style="background: linear-gradient(135deg, #f59e0b, rgba(245, 158, 11, 0.7)); width: 50px; height: 60px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;">
+                        <div style="background: linear-gradient(135deg, #f59e0b, rgba(245, 158, 11, 0.7)); width: 50px; height: 60px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-primary);">
                             <div style="font-size: 1.4rem; font-weight: 800;">10</div>
                             <div style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px;">NOV</div>
                         </div>
                         <div style="flex: 1;">
-                            <h4 style="margin: 0; font-size: 1rem; color: #ffffff; font-weight: 700;">France</h4>
+                            <h4 style="margin: 0; font-size: 1rem; color: var(--text-primary)fff; font-weight: 700;">France</h4>
                             <p style="margin: 0.35rem 0 0 0; font-size: 0.8rem; color: #9ca3af; display: flex; align-items: center; gap: 0.4rem;">
                                 <i class="ph ph-popcorn"></i> Sortie ciné
                             </p>
                         </div>
-                        <div style="background: #f59e0b; color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem;">16</div>
+                        <div style="background: #f59e0b; color: var(--text-primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem;">16</div>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
                         <small style="color: #9ca3af; font-size: 0.75rem;">1999</small>
@@ -122,6 +123,7 @@
             </div>
         </div>
     </div>
+<script src="../theme.js"></script>
 </body>
 </html>
 

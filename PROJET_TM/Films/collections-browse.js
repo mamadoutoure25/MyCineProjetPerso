@@ -191,25 +191,16 @@ function renderCollections(collectionsToDisplay) {
   }
 
   grid.innerHTML = collectionsToDisplay.map(collection => `
-    <a href="collection.html?id=${collection.id}" class="collection-card-link">
-      <div class="collection-card-preview">
-        <img src="${collection.poster_path ? `${COLLECTIONS_CONFIG.IMAGE_BASE_URL}/${COLLECTIONS_CONFIG.POSTER_SIZE}${collection.poster_path}` : 'https://via.placeholder.com/500x750?text=Affiche+indisponible'}" 
-             alt="${collection.name}" 
-             class="collection-card-image"
-             loading="lazy">
-        <div class="collection-card-overlay"></div>
-        <div class="collection-card-info">
-          <div class="collection-card-title">${collection.name}</div>
-          <div class="collection-card-meta">
-            <span class="collection-card-badge">
-              <i class="ph ph-film-slate me-1"></i> ${collection.parts ? collection.parts.length : 0} films
-            </span>
-            ${collection.original_language ? `<span style="opacity: 0.8;">🌐 ${getLanguageName(collection.original_language)}</span>` : ''}
-          </div>
+        <div class="premium-card" onclick="window.location.href='collection.html?id=${collection.id}'">
+            <img src="${collection.poster_path ? `${COLLECTIONS_CONFIG.IMAGE_BASE_URL}/${COLLECTIONS_CONFIG.POSTER_SIZE}${collection.poster_path}` : 'https://via.placeholder.com/500x750?text=Affiche+indisponible'}" loading="lazy" alt="${collection.name}">
+            <div class="card-details">
+                <div class="card-title text-truncate">${collection.name}</div>
+                <div class="card-meta">
+                    <span class="rating-badge"><i class="ph-fill ph-stack"></i> ${collection.parts ? collection.parts.length : 0} FILMS</span>
+                </div>
+            </div>
         </div>
-      </div>
-    </a>
-  `).join('')
+    `).join('')
 
   noCollectionsDiv.style.display = "none"
   grid.style.display = "grid"

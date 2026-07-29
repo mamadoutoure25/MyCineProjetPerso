@@ -26,7 +26,7 @@
         }
         .nav-pills-premium .nav-link {
             border-radius: 50px;
-            color: #fff;
+            color: var(--text-primary);
             font-weight: 700;
             padding: 10px 25px;
             border: none;
@@ -76,7 +76,7 @@
             padding: 25px;
             text-align: center;
         }
-        .summary-val { font-size: 2.2rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 8px; }
+        .summary-val { font-size: 2.2rem; font-weight: 900; color: var(--text-primary); line-height: 1; margin-bottom: 8px; }
         .summary-lbl { font-size: 0.7rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
 
         .loading-screen {
@@ -92,6 +92,7 @@
 
         .section-wrapper { padding: 0 5% 80px; }
     </style>
+<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
 
@@ -102,22 +103,27 @@
 
 <nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: #fff;">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
             <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
             MYCINÉ
         </a>
         <div class="collapse navbar-collapse justify-content-center">
             <ul class="navbar-nav gap-4">
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../index.html">ACCUEIL</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="films.html">FILMS</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
             </ul>
         </div>
         <div class="ms-auto">
             <a href="profilUser.html" class="btn btn-outline-premium"><i class="ph ph-user me-2"></i>RETOUR PROFIL</a>
         </div>
-    </div>
-</nav>
+    
+        <div class="d-flex align-items-center gap-3">
+            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
+                <i class="ph ph-moon fs-4" id="theme-icon"></i>
+            </button>
+        </div>
+        $1
 
 <main>
     <header class="stats-hero">
@@ -248,5 +254,6 @@
         else nav.classList.remove('scrolled');
     };
 </script>
+<script src="../theme.js"></script>
 </body>
 </html>

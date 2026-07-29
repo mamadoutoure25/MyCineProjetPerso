@@ -334,21 +334,16 @@ function afficherFilms(movies) {
 
   // Fonction pour rendre les films
   function renderMovies(moviesToRender) {
-    moviesGrid.className = "movies-grid"
+    moviesGrid.className = "movie-grid"
     moviesGrid.innerHTML = moviesToRender.map(movie => `
-      <div class="movie-card" data-id="${movie.id}" onclick="voirFilm(${movie.id})">
-        <img src="${movie.poster_path ? `${CONFIG.IMAGE_BASE_URL}/${CONFIG.POSTER_SIZE}${movie.poster_path}` : "https://via.placeholder.com/500x750?text=Aucune+affiche"}" 
-             class="card-img-top" 
-             alt="${movie.title}"
-             loading="lazy"
-             onerror="this.src='https://via.placeholder.com/500x750?text=Image+indisponible'">
-        <div class="movie-card-overlay"></div>
-        <div class="badge bg-warning text-dark fw-bold">
-          <i class="ph ph-star-fill me-1"></i> ${movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">${movie.title}</h5>
-          <small class="text-muted">${movie.release_date ? movie.release_date.split("-")[0] : "N/A"}</small>
+      <div class="premium-card" onclick="window.location.href='movie-details.html?id=${movie.id}'">
+        <img src="${movie.poster_path ? `${CONFIG.IMAGE_BASE_URL}/${CONFIG.POSTER_SIZE}${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=Aucune+affiche'}" 
+             alt="${movie.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/500x750?text=Image+indisponible'">
+        <div class="card-details">
+            <div class="card-title text-truncate">${movie.title}</div>
+            <div class="card-meta">
+                <span class="rating-badge"><i class="ph-fill ph-star"></i> ${movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}</span>
+            </div>
         </div>
       </div>
     `).join("")

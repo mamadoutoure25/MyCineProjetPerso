@@ -115,7 +115,7 @@ body {
 
 .navbar-brand:hover {
     transform: translateY(-2px);
-    color: white !important;
+    color: var(--text-primary) !important;
 }
 
 .logo-container {
@@ -135,19 +135,19 @@ body {
 }
 
 .logo-text {
-    color: #fff;
+    color: var(--text-primary);
     font-weight: 800;
     font-size: 1.2rem;
 }
 
 .brand-text {
-    color: white;
+    color: var(--text-primary);
     font-weight: 800;
 }
 
 .navbar-toggler {
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    color: white !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-primary) !important;
     font-size: 1.5rem;
     border-radius: 8px;
 }
@@ -196,7 +196,7 @@ body {
 
 .theme-toggle:hover {
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     transform: rotate(180deg);
 }
 
@@ -520,7 +520,7 @@ body {
 }
 
 .social-link:hover {
-    color: #fff;
+    color: var(--text-primary);
     background: var(--primary);
     transform: translateY(-3px);
 }
@@ -637,7 +637,7 @@ body {
 .external-link:hover {
     transform: translateY(-4px);
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     border-color: var(--primary);
 }
 
@@ -724,7 +724,7 @@ body {
     border: none;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.6);
-    color: white;
+    color: var(--text-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -791,7 +791,7 @@ body {
 }
 
 .movie-scroller::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--filter-select-bg);
 }
 
 .movie-scroller::-webkit-scrollbar-thumb {

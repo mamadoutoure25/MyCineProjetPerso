@@ -75,7 +75,7 @@ body {
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
     position: relative;
 }
 
@@ -148,13 +148,13 @@ body {
 }
 
 .logo-text {
-    color: white;
+    color: var(--text-primary);
     font-weight: 800;
     font-size: 1.2rem;
 }
 
 .brand-text {
-    color: white;
+    color: var(--text-primary);
     font-weight: 800;
     font-size: 1.1rem;
     transition: var(--transition);
@@ -165,7 +165,7 @@ body {
 }
 
 .navbar .navbar-brand {
-    color: white !important;
+    color: var(--text-primary) !important;
 }
 
 [data-theme="light"] .navbar .navbar-brand {
@@ -239,8 +239,8 @@ body {
 }
 
 .navbar-toggler {
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border) !important;
     background: rgba(255, 255, 255, 0.1) !important;
 }
 
@@ -262,8 +262,8 @@ body {
 
 .theme-toggle {
     background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -277,20 +277,20 @@ body {
 
 .theme-toggle:hover {
     background: #ff6b6b;
-    color: white;
+    color: var(--text-primary);
     transform: rotate(180deg);
     border-color: #ff6b6b;
 }
 
 .theme-toggle:hover {
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     transform: rotate(180deg);
 }
 
 [data-theme="light"] .theme-toggle:hover {
     background: linear-gradient(135deg, #dc2626, #7e22ce);
-    color: white;
+    color: var(--text-primary);
 }
 
 /* Section Hero - Design Ultra-moderne */
@@ -355,7 +355,7 @@ body {
     font-family: 'Playfair Display', serif;
     font-size: clamp(2.5rem, 7vw, 5.5rem);
     font-weight: 900;
-    color: white;
+    color: var(--text-primary);
     text-shadow:
         0 4px 8px rgba(0, 0, 0, 0.3),
         0 8px 16px rgba(255, 0, 0, 0.2),
@@ -452,7 +452,7 @@ body {
 
 .btn-action.btn-primary {
     background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
-    color: white;
+    color: var(--text-primary);
     box-shadow: 0 8px 24px rgba(255, 0, 0, 0.4);
 }
 
@@ -463,7 +463,7 @@ body {
 
 .btn-action.btn-warning {
     background: linear-gradient(135deg, #800080 0%, #600060 100%);
-    color: white;
+    color: var(--text-primary);
     box-shadow: 0 8px 24px rgba(128, 0, 128, 0.4);
 }
 
@@ -475,7 +475,7 @@ body {
 .btn-action.btn-success {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
+    color: var(--text-primary);
     backdrop-filter: blur(15px);
 }
 
@@ -488,8 +488,8 @@ body {
 
 .btn-action.btn-outline-light {
     border: 2px solid rgba(255, 255, 255, 0.4);
-    color: white;
-    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    background: var(--filter-select-bg);
     backdrop-filter: blur(10px);
 }
 
@@ -503,7 +503,7 @@ body {
 .rating-section {
     background: rgba(30, 41, 59, 0.6);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 2rem;
     margin-top: 3rem;
@@ -524,7 +524,7 @@ body {
 }
 
 .rating-title {
-    color: white;
+    color: var(--text-primary);
     font-weight: 800;
     font-size: 1.3rem;
     margin: 0;
@@ -555,7 +555,7 @@ body {
     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     max-width: 100%;
     width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--border);
     display: block;
 }
 
@@ -729,7 +729,7 @@ body {
 
 .btn-clear-rating:hover {
     background: #ef4444;
-    color: white;
+    color: var(--text-primary);
     transform: scale(1.05);
     box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
 }
@@ -757,7 +757,7 @@ body {
 .star {
     background: transparent;
     border: none;
-    color: #ffffff;
+    color: var(--text-primary);
     cursor: pointer;
     user-select: none;
     display: inline-flex;
@@ -860,7 +860,7 @@ body {
     height: 48px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     border-radius: 12px;
-    color: white;
+    color: var(--text-primary);
     font-size: 1.5rem;
     box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
 }
@@ -921,7 +921,7 @@ body {
 
 .cast-carousel::-webkit-scrollbar-track, 
 .seasons-grid::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--filter-select-bg);
     border-radius: 10px;
 }
 
@@ -981,7 +981,7 @@ body {
     right: 0;
     padding: 1.5rem;
     background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 40%, transparent 100%);
-    color: white;
+    color: var(--text-primary);
     transform: translateY(0);
     transition: var(--transition);
 }
@@ -989,7 +989,7 @@ body {
 .season-name {
     font-size: 1.1rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-primary);
     margin: 0 0 0.5rem 0;
     line-height: 1.3;
 }
@@ -1005,7 +1005,7 @@ body {
     top: 10px;
     left: 10px;
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     padding: 2px 8px;
     border-radius: 6px;
     font-size: 0.75rem;
@@ -1091,7 +1091,7 @@ body {
     max-width: 900px; /* Taille réduite */
     margin: 0 auto;   /* Centrage */
     padding-bottom: calc(900px * 0.5625); /* Maintient le ratio 16:9 basé sur la largeur max */
-    background: #000;
+    background: var(--background);
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
@@ -1220,7 +1220,7 @@ body {
 
 .image-card-info {
     text-align: center;
-    color: white;
+    color: var(--text-primary);
 }
 
 .image-card-info i {
@@ -1244,7 +1244,7 @@ body {
     height: 36px;
     border-radius: 50%;
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     border: none;
     display: flex;
     align-items: center;
@@ -1271,7 +1271,7 @@ body {
     top: 8px;
     right: 8px;
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     padding: 0.4rem 0.8rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -1441,7 +1441,7 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: white;
+    color: var(--text-primary);
 }
 
 .play-button:hover {
@@ -1458,7 +1458,7 @@ body {
     top: 8px;
     right: 8px;
     background: var(--success);
-    color: white;
+    color: var(--text-primary);
     padding: 0.4rem 0.8rem;
     border-radius: 9999px;
     font-size: 0.7rem;
@@ -1541,7 +1541,7 @@ body {
 .external-link:hover {
     background: var(--primary);
     border-color: var(--primary);
-    color: white;
+    color: var(--text-primary);
     transform: translateY(-2px);
     box-shadow: var(--shadow);
 }
@@ -1567,7 +1567,7 @@ body {
 .external-link-badge:hover {
     background: var(--primary);
     border-color: var(--primary);
-    color: white;
+    color: var(--text-primary);
 }
 
 /* Animations */
@@ -1682,7 +1682,7 @@ body {
     border-radius: 50%;
     background: var(--primary);
     border: none;
-    color: white;
+    color: var(--text-primary);
     font-size: 1.8rem;
     display: flex;
     align-items: center;
@@ -1703,7 +1703,7 @@ body {
     top: 10px;
     right: 10px;
     background: var(--primary);
-    color: white;
+    color: var(--text-primary);
     padding: 0.4rem 0.8rem;
     border-radius: 9999px;
     font-size: 0.75rem;
@@ -1858,7 +1858,7 @@ body {
     margin-top: auto;
     padding: 8px 12px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
+    color: var(--text-primary);
     border: none;
     border-radius: 6px;
     font-size: 0.85rem;
@@ -1874,7 +1874,7 @@ body {
 
 .production-link-btn:hover {
     transform: scale(1.05);
-    color: white;
+    color: var(--text-primary);
 }
 
 /* Styles pour la section des dates de sortie */
@@ -1948,7 +1948,7 @@ body {
     border-radius: 6px;
     font-size: 0.85rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-primary);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     flex-shrink: 0;
 }

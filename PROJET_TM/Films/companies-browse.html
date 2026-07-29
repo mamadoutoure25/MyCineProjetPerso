@@ -5,341 +5,257 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sociétés de production - MyCiné</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link href="projet.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Unified Premium Styles -->
+    <link rel="stylesheet" href="premium-home.css">
+    <link rel="stylesheet" href="theme-variables.css">
     <style>
-        .companies-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+        .companies-hero {
+            padding: 140px 5% 60px;
+            background: linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border);
+            text-align: center;
         }
 
-        .company-card {
-            background: var(--card-bg);
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .company-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
-        }
-
-        .company-logo-section {
-            width: 100%;
-            height: 200px;
-            background: var(--glass-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .company-logo-section img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-        }
-
-        .company-info-section {
-            padding: 1.5rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .company-name {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
-        }
-
-        .company-country {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .company-headquarters {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-bottom: auto;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .company-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .btn-company {
-            flex: 1;
-            padding: 0.5rem;
-            font-size: 0.85rem;
-            border-radius: 6px;
-            transition: var(--transition);
-        }
-
-        .btn-company-view {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-company-view:hover {
-            transform: scale(1.05);
-            color: white;
-        }
-
-        .btn-company-filter {
-            background: var(--glass-bg);
-            color: var(--text);
-            border: 1px solid var(--border);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-company-filter:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .companies-header {
-            margin-bottom: 3rem;
-        }
-
-        .search-filter {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .search-input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-
-        .search-input-wrapper input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: var(--glass-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
-            transition: var(--transition);
-        }
-
-        .search-input-wrapper input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-        }
-
-        .search-input-wrapper input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .stats-bar {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            background: var(--glass-bg);
-            border: 1px solid var(--border);
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 20px 30px;
+            border-radius: 20px;
             text-align: center;
             min-width: 150px;
+            transition: 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .stat-val { font-size: 1.8rem; font-weight: 900; color: var(--text-primary); }
+        .stat-lbl { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; }
+
+        .search-input-wrapper {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 15px 25px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+        
+        .search-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
         }
 
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
+        .section-wrapper { padding: 40px 5% 80px; }
+        
+        /* Grid for premium cards */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 25px;
+            justify-content: center;
+        }
+        @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (max-width: 1100px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 800px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
+
+        /* Custom Premium Card specifically for Studios (Square) */
+        .premium-company-card {
+            width: 100%;
+            min-width: 0;
+            max-width: 220px;
+            aspect-ratio: 1; /* Square for logos */
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background: rgba(255, 255, 255, 0.05); /* Slight bright backing for dark logos */
+            border: 1px solid var(--border);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+        [data-theme="light"] .premium-company-card {
+            background: rgba(0, 0, 0, 0.03);
         }
 
-        .no-companies {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-muted);
+        .premium-company-card:hover {
+            transform: scale(1.06) translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(167, 139, 250, 0.2);
         }
 
-        .no-companies i {
-            font-size: 3rem;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
+        .premium-company-card img {
+            width: 55%;
+            height: 55%;
+            object-fit: contain;
+            transition: transform 0.8s ease;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        .premium-company-card:hover img {
+            transform: scale(1.15);
+        }
+
+        /* Hover Details */
+        .premium-company-card .card-details {
+            position: absolute;
+            inset: 0;
+            background: var(--card-details-bg, rgba(15, 23, 42, 0.9));
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .premium-company-card:hover .card-details {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .premium-company-card .card-title {
+            font-weight: 900;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .premium-company-card .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="../../index.html">
-                <div class="logo-container">
-                    <span class="logo-text">M</span>
-                </div>
-                <span class="brand-text ms-2">MyCiné</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="ph ph-list"></i>
+
+<!-- Unified Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top px-5">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="ph ph-list fs-2 text-theme"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
+                <i class="ph ph-moon fs-4" id="theme-icon"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../index.html"><i class="ph ph-house me-1"></i> Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="films.html"><i class="ph ph-film-strip me-1"></i> Films</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="collections-browse.html"><i class="ph ph-stack me-1"></i> Collections</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="companies-browse.html"><i class="ph ph-buildings me-1"></i> Sociétés</a>
-                    </li>
-                </ul>
-                <button class="btn theme-toggle ms-lg-3" id="theme-toggle"><i class="ph ph-moon" id="theme-icon"></i></button>
+            <div id="auth-section">
+                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- Main content -->
-    <main class="container-fluid">
-        <section class="content-section">
-            <div class="companies-header">
-                <h1 class="section-title mb-2">
-                    <i class="ph ph-buildings me-2"></i>Sociétés de Production
-                </h1>
-                <p class="text-secondary">Découvrez les studios et sociétés de production qui créent vos films préférés</p>
+<!-- Hero Section -->
+<header class="companies-hero">
+    <div class="container-fluid">
+        <h1 class="hero-title mb-3" style="font-size: 3.5rem;">SOCIÉTÉS DE PRODUCTION</h1>
+        <p class="opacity-50 fs-5 mb-5">Découvrez les studios de légende qui façonnent le cinéma</p>
+        
+        <!-- Stats -->
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <div class="stat-card">
+                <div class="stat-val" id="total-companies">0</div>
+                <div class="stat-lbl">Studios</div>
             </div>
-
-            <!-- Statistiques -->
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <div class="stat-number" id="total-companies">0</div>
-                    <div class="stat-label">Sociétés</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="total-countries">0</div>
-                    <div class="stat-label">Pays</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="total-films">0</div>
-                    <div class="stat-label">Films produits</div>
-                </div>
+            <div class="stat-card">
+                <div class="stat-val" id="total-countries">0</div>
+                <div class="stat-lbl">Pays</div>
             </div>
-
-            <!-- Recherche -->
-            <div class="search-filter">
-                <div class="search-input-wrapper">
-                    <input type="text" id="search-input" placeholder="Rechercher une société..." aria-label="Rechercher">
-                </div>
-            </div>
-
-            <!-- Grille des sociétés -->
-            <div class="companies-grid" id="companies-container"></div>
-
-            <!-- Aucune société trouvée -->
-            <div class="no-companies" id="no-companies" style="display: none;">
-                <i class="ph ph-buildings"></i>
-                <p>Aucune société trouvée</p>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="footer-brand">
-                        <div class="logo-container">
-                            <span class="logo-text">M</span>
-                        </div>
-                        <span class="brand-text ms-2">MyCiné</span>
-                    </div>
-                    <p class="footer-description">Votre destination pour découvrir les meilleurs films et où les regarder.</p>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="footer-title">Explorer</h5>
-                    <ul class="footer-links">
-                        <li><a href="films.html">Films</a></li>
-                        <li><a href="collections-browse.html">Collections</a></li>
-                        <li><a href="companies-browse.html">Sociétés</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="footer-title">Liens utiles</h5>
-                    <ul class="footer-links">
-                        <li><a href="#">À propos</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Conditions d'utilisation</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="footer-title">Mon compte</h5>
-                    <ul class="footer-links">
-                        <li><a href="../connexion/connexion.html">Se connecter</a></li>
-                        <li><a href="#">Ma watchlist</a></li>
-                        <li><a href="#">Films vus</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="footer-title">Suivez-nous</h5>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="ph ph-facebook-logo"></i></a>
-                        <a href="#" class="social-link"><i class="ph ph-twitter-logo"></i></a>
-                        <a href="#" class="social-link"><i class="ph ph-instagram-logo"></i></a>
-                    </div>
-                </div>
+            <div class="stat-card">
+                <div class="stat-val" id="total-films">0</div>
+                <div class="stat-lbl">Films Produits</div>
             </div>
         </div>
-    </footer>
+    </div>
+</header>
 
-    <!-- Notifications -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+<main class="section-wrapper">
+    <!-- Recherche -->
+    <div class="search-input-wrapper">
+        <input type="text" id="search-input" placeholder="Rechercher un studio (ex: Warner Bros, Pixar)..." aria-label="Rechercher">
+        <i class="ph ph-magnifying-glass position-absolute text-theme opacity-50" style="right: 25px; top: 18px; font-size: 1.2rem;"></i>
+    </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="sombre_clair.js"></script>
-    <script src="companies-browse.js"></script>
+    <!-- Grille des sociétés -->
+    <div class="movie-grid" id="companies-container">
+        <div class="text-center py-5 w-100" style="grid-column: 1 / -1;">
+            <div class="spinner-border text-theme" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aucune société trouvée -->
+    <div id="no-companies" class="text-center py-5" style="display: none; grid-column: 1 / -1;">
+        <i class="ph ph-buildings fs-1 mb-3 opacity-50"></i>
+        <h3 class="fw-bold">Aucune société trouvée</h3>
+    </div>
+</main>
+
+<footer class="py-5 text-center border-top border-secondary mt-5 opacity-50">
+    <p class="small fw-bold">© 2026 MYCINÉ • EXPERIENCE PREMIUM</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="companies-browse.js"></script>
+<script>
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+    
+    // Auth section basic logic
+    const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+    const c = document.getElementById("auth-section");
+    if (auth) {
+        c.innerHTML = `
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end d-none d-md-block">
+                    <a href="profilUser.html" class="text-decoration-none text-theme">
+                        <div class="fw-bold small">${auth.username || auth.pseudo}</div>
+                        <div class="x-small opacity-50">MON PROFIL</div>
+                    </a>
+                </div>
+                <button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button>
+            </div>`;
+    } else {
+        c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>`;
+    }
+</script>
+<script src="../theme.js"></script>
 </body>
 </html>
-

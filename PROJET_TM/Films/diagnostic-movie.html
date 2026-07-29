@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
     <style>
         body {
             background: #1a1a1a;
-            color: #fff;
+            color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             padding: 20px;
         }
@@ -65,13 +65,14 @@
             width: 16px;
             height: 16px;
             border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
+            border-top-color: var(--text-primary);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             margin-right: 10px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
+<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
 <div class="diagnostic-container">
@@ -308,6 +309,7 @@
         testerAPIPHP();
     });
 </script>
+<script src="../theme.js"></script>
 </body>
 </html>
 

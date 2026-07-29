@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,7 @@
     <style>
         body {
             background: #0f172a;
-            color: #ffffff;
+            color: var(--text-primary)fff;
             padding: 2rem;
         }
         .test-section {
@@ -49,6 +49,7 @@
             font-size: 1.2rem;
         }
     </style>
+<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
     <div class="container">
@@ -177,6 +178,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../theme.js"></script>
 </body>
 </html>
 

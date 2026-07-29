@@ -255,7 +255,7 @@ function notify(msg, type) {
     const c = document.getElementById("toast-container");
     if (!c) return;
     const t = document.createElement("div");
-    t.className = `toast show bg-${type} text-white p-3 mb-2 rounded-4 shadow-lg`;
+    t.className = `toast show bg-${type} text-theme p-3 mb-2 rounded-4 shadow-lg`;
     t.textContent = msg;
     c.appendChild(t);
     setTimeout(() => t.remove(), 4000);

@@ -32,7 +32,7 @@
         .side-item { margin-bottom: 20px; }
         .side-item:last-child { margin-bottom: 0; }
         .side-label { font-size: 0.7rem; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-        .side-value { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .side-value { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
 
         /* Action Buttons */
         .btn-circle {
@@ -40,7 +40,7 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
-            color: #fff;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -115,26 +115,39 @@
         .small-actor-card:hover img { transform: scale(1.1); }
         .small-actor-card:hover .actor-hover-overlay { opacity: 1; }
 
-        .actor-name { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 4px; line-height: 1.2; }
+        .actor-name { font-size: 0.85rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; line-height: 1.2; }
         .actor-role { font-size: 0.75rem; color: var(--accent); font-weight: 600; opacity: 0.9; }
     </style>
+<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: #fff;">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
             <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
             MYCINÉ
         </a>
-        <div class="collapse navbar-collapse justify-content-center">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="ph ph-list fs-2 text-theme"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
             <ul class="navbar-nav gap-4">
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="../../index.html">ACCUEIL</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-white" href="films.html">FILMS</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold text-white" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
             </ul>
         </div>
-        <div id="auth-section"></div>
+        <div class="d-flex align-items-center gap-3">
+            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
+                <i class="ph ph-moon fs-4" id="theme-icon"></i>
+            </button>
+            <div id="auth-section">
+                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+            </div>
+        </div>
     </div>
 </nav>
 
@@ -149,8 +162,8 @@
             <div class="hero-info">
                 <nav aria-label="breadcrumb" class="mb-4 opacity-50">
                     <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800;">
-                        <li class="breadcrumb-item"><a href="../../index.html" class="text-white text-decoration-none">MYCINÉ</a></li>
-                        <li class="breadcrumb-item active text-white" id="breadcrumb-title">CHARGEMENT...</li>
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-theme text-decoration-none">MYCINÉ</a></li>
+                        <li class="breadcrumb-item active text-theme" id="breadcrumb-title">CHARGEMENT...</li>
                     </ol>
                 </nav>
                 <div id="studio-tag" class="d-flex align-items-center gap-2 mb-3" style="font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; opacity: 0.8;"></div>
@@ -212,9 +225,9 @@
     <section class="content-lane pt-0">
         <div class="lane-title">MÉDIAS & GALERIE</div>
         <ul class="nav nav-pills mb-4 gap-2" style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50px; width: fit-content;">
-            <li class="nav-item"><button class="nav-link active rounded-pill text-white fw-bold" data-bs-toggle="tab" data-bs-target="#tab-vid">VIDÉOS</button></li>
-            <li class="nav-item"><button class="nav-link rounded-pill text-white fw-bold" data-bs-toggle="tab" data-bs-target="#tab-back">IMAGES</button></li>
-            <li class="nav-item"><button class="nav-link rounded-pill text-white fw-bold" data-bs-toggle="tab" data-bs-target="#tab-post">AFFICHES</button></li>
+            <li class="nav-item"><button class="nav-link active rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-vid">VIDÉOS</button></li>
+            <li class="nav-item"><button class="nav-link rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-back">IMAGES</button></li>
+            <li class="nav-item"><button class="nav-link rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-post">AFFICHES</button></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade show active" id="tab-vid"><div id="serie-videos" class="movie-scroller"></div></div>
@@ -262,5 +275,6 @@
         else nav.classList.remove('scrolled');
     };
 </script>
+<script src="../theme.js"></script>
 </body>
 </html>

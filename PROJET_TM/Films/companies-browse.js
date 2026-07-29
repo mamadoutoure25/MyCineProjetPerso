@@ -149,51 +149,21 @@ function afficherSocietes(companies) {
     noCompanies.style.display = 'none';
 
     container.innerHTML = companies
-        .map(company => `
-            <div class="company-card">
-                <div class="company-logo-section">
-                    <img src="${company.logo_path ? IMG_BASE_URL + company.logo_path : 'https://via.placeholder.com/300x150?text=' + encodeURIComponent(company.name)}" 
-                         alt="${company.name}"
-                         onerror="this.src='https://via.placeholder.com/300x150?text=${encodeURIComponent(company.name)}'">
-                </div>
-                <div class="company-info-section">
-                    <div class="company-name" title="${company.name}">${company.name}</div>
-                    
-                    ${company.origin_country ? `
-                        <div class="company-country">
-                            <i class="ph ph-globe"></i>
-                            <span>${obtenirNomPays(company.origin_country)}</span>
-                        </div>
-                    ` : ''}
-
-                    ${company.headquarters ? `
-                        <div class="company-headquarters" title="${company.headquarters}">
-                            <i class="ph ph-map-pin"></i>
-                            <span>${company.headquarters}</span>
-                        </div>
-                    ` : ''}
-
-                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.85rem;">
-                        <i class="ph ph-film-strip me-1"></i>
-                        <span>${company.films_count} film(s)</span>
-                    </div>
-
-                    <div class="company-actions">
-                        <a href="company-details.html?id=${company.id}" class="btn btn-company btn-company-view">
-                            <i class="ph ph-eye"></i>
-                            <span>Voir</span>
-                        </a>
-                        <a href="films.html?company=${company.id}" class="btn btn-company btn-company-filter" title="Filtrer par cette société">
-                            <i class="ph ph-funnel"></i>
-                            <span>Filtrer</span>
-                        </a>
-                    </div>
+        .map(company => {
+            const hasLogo = company.logo_path !== null;
+            const logoUrl = hasLogo ? `${IMG_BASE_URL}${company.logo_path}` : `https://via.placeholder.com/300x300?text=${encodeURIComponent(company.name)}`;
+            return `
+        <div class="premium-company-card" onclick="window.location.href='company-details.html?id=${company.id}'">
+            <img src="${logoUrl}" loading="lazy" alt="${company.name}">
+            <div class="card-details">
+                <div class="card-title text-truncate">${company.name}</div>
+                <div class="card-meta">
+                    <span class="rating-badge"><i class="ph-fill ph-globe-hemisphere-west"></i> ${company.origin_country || 'Inconnu'}</span>
                 </div>
             </div>
-        `)
-        .join('');
+        </div>
+    `}).join('');
 }
-
 /**
  * Configurer la recherche
  */
@@ -278,3 +248,21 @@ function basculerTheme() {
     mettreAJourIconeTheme(nouveauTheme);
 }
 
+
+
+function generateCompanyCard(company) {
+    const hasLogo = company.logo_path !== null;
+    const logoUrl = hasLogo ? `${IMG_URL}${company.logo_path}` : 'https://via.placeholder.com/300x150?text=Logo+Non+Disponible';
+    const country = company.origin_country || 'Inconnu';
+    const hq = company.headquarters || 'Non spécifié';
+
+    return `
+        <a href="company-details.html?id=${company.id}" class="company-card-premium text-decoration-none">
+            <div class="company-logo-wrapper">
+                <img src="${logoUrl}" class="company-logo" alt="${company.name}">
+            </div>
+            <div class="company-name text-truncate">${company.name}</div>
+            <div class="company-country"><i class="ph-fill ph-globe-hemisphere-west"></i> ${country}</div>
+        </a>
+    `;
+}

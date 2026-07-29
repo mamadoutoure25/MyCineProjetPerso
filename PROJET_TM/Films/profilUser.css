@@ -32,7 +32,7 @@ body {
     justify-content: center;
     font-size: 3rem;
     font-weight: 900;
-    color: #fff;
+    color: var(--text-primary);
     box-shadow: 0 15px 35px var(--accent-glow);
 }
 
@@ -46,13 +46,13 @@ body {
     min-width: 150px;
 }
 
-.stat-val { font-size: 1.8rem; font-weight: 900; color: #fff; }
+.stat-val { font-size: 1.8rem; font-weight: 900; color: var(--text-primary); }
 .stat-lbl { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; }
 
 .nav-pills-premium {
     display: flex;
     gap: 15px;
-    background: rgba(255,255,255,0.05);
+    background: var(--filter-select-bg);
     padding: 8px;
     border-radius: 50px;
     width: fit-content;
@@ -61,7 +61,7 @@ body {
 
 .nav-pills-premium .nav-link {
     border-radius: 50px;
-    color: #fff;
+    color: var(--text-primary);
     font-weight: 700;
     padding: 10px 25px;
     border: none;
@@ -70,7 +70,7 @@ body {
 
 .nav-pills-premium .nav-link.active {
     background: var(--accent);
-    color: #000;
+    color: var(--text-primary);
 }
 
 .section-header-premium {
@@ -95,7 +95,7 @@ body {
 .btn-premium-outline {
     background: transparent;
     border: 1px solid var(--glass-border);
-    color: #fff;
+    color: var(--text-primary);
     padding: 8px 20px;
     border-radius: 50px;
     font-weight: 700;
@@ -105,9 +105,9 @@ body {
 }
 
 .btn-premium-outline:hover {
-    border-color: #fff;
+    border-color: var(--text-primary);
     background: rgba(255,255,255,0.1);
-    color: #fff;
+    color: var(--text-primary);
 }
 
 /* --- Re-using Card Styles for Consistency --- */
@@ -115,7 +115,7 @@ body {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    background: #111;
+    background: var(--bg-card);
     border: 1px solid var(--glass-border);
     transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
@@ -151,7 +151,7 @@ body {
     right: 10px;
     background: rgba(255,0,0,0.2);
     backdrop-filter: blur(5px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--border);
     color: #ff4d4d;
     width: 32px;
     height: 32px;
@@ -163,12 +163,12 @@ body {
     z-index: 20;
 }
 
-.remove-btn:hover { background: #ff4d4d; color: #fff; transform: rotate(90deg); }
+.remove-btn:hover { background: #ff4d4d; color: var(--text-primary); transform: rotate(90deg); }
 
 .card-body { padding: 12px; position: absolute; bottom: 0; left: 0; width: 100%; z-index: 5; pointer-events: none; }
 .card-title { font-weight: 800; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 5px; }
 .movie-meta { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 700; }
-.movie-rating { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; }
+.movie-rating { background: var(--accent); color: var(--text-primary); padding: 2px 6px; border-radius: 4px; }
 
 /* Empty State */
 .empty-state {

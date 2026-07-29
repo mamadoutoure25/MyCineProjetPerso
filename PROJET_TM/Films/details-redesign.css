@@ -83,7 +83,7 @@ body {
 .btn-action {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    color: #fff;
+    color: var(--text-primary);
     padding: 10px 20px;
     border-radius: 8px;
     font-weight: 600;
@@ -109,7 +109,7 @@ body {
     border: 2px solid var(--primary);
     padding: 12px 25px;
     border-radius: 10px;
-    color: #fff;
+    color: var(--text-primary);
     font-weight: 800;
     text-decoration: none;
     display: inline-flex;
@@ -213,7 +213,7 @@ body {
 
 .btn-media {
     background: var(--primary);
-    color: #fff;
+    color: var(--text-primary);
     width: 40px;
     height: 40px;
     border-radius: 50%;

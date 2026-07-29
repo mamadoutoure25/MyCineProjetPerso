@@ -29,21 +29,37 @@
             font-family: monospace;
         }
     </style>
+<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body style="padding-top: 80px;">
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <div class="logo-container" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 10px;">
-                    <span style="color: white; font-weight: 800; font-size: 1.2rem;">M</span>
-                </div>
-                <span class="brand-text ms-2">Test Thème MyCiné</span>
-            </a>
-            <button class="btn" id="theme-toggle" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                <i class="ph ph-moon" id="theme-icon" style="font-size: 1.2rem;"></i>
-            </button>
+    <nav class="navbar navbar-expand-lg fixed-top px-5">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="ph ph-list fs-2 text-theme"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+            </ul>
         </div>
-    </nav>
+        <div class="d-flex align-items-center gap-3">
+            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
+                <i class="ph ph-moon fs-4" id="theme-icon"></i>
+            </button>
+            <div id="auth-section">
+                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+            </div>
+        </div>
+    </div>
+</nav>
 
     <div class="container-lg">
         <div class="test-section">
@@ -69,7 +85,7 @@
                 <div class="col-md-6">
                     <h3 style="color: var(--primary);">Test des Cartes</h3>
                     <div class="card" style="margin-bottom: 1rem;">
-                        <div class="card-img-top" style="height: 150px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; color: white;">
+                        <div class="card-img-top" style="height: 150px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; color: var(--text-primary);">
                             <span>Image Placeholder</span>
                         </div>
                         <div class="card-body">
@@ -175,6 +191,7 @@
             });
         });
     </script>
+<script src="../theme.js"></script>
 </body>
 </html>
 

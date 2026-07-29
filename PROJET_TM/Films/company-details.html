@@ -76,7 +76,7 @@
             gap: 10px;
             padding: 12px 20px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+            color: var(--text-primary);
             border-radius: 8px;
             text-decoration: none;
             transition: var(--transition);
@@ -86,7 +86,7 @@
         .company-link:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
-            color: white;
+            color: var(--text-primary);
         }
 
         .parent-company {
@@ -314,36 +314,38 @@
             }
         }
     </style>
+<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body class="company-details-page">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="../../index.html">
-                <div class="logo-container">
-                    <span class="logo-text">M</span>
-                </div>
-                <span class="brand-text ms-2">MyCiné</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="ph ph-list"></i>
+    <nav class="navbar navbar-expand-lg fixed-top px-5">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="ph ph-list fs-2 text-theme"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
+                <i class="ph ph-moon fs-4" id="theme-icon"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../index.html"><i class="ph ph-house me-1"></i> Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="films.html"><i class="ph ph-film-strip me-1"></i> Films</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../series.html"><i class="ph ph-television me-1"></i> Séries</a>
-                    </li>
-                </ul>
-                <button class="btn theme-toggle ms-lg-3" id="theme-toggle"><i class="ph ph-moon" id="theme-icon"></i></button>
+            <div id="auth-section">
+                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Hero Société -->
     <section class="content-section company-hero-section">
@@ -619,6 +621,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="sombre_clair.js"></script>
     <script src="company-details.js"></script>
+<script src="../theme.js"></script>
 </body>
 </html>
 

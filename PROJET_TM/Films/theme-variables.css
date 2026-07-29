@@ -1,72 +1,114 @@
 /**
  * @file theme-variables.css
  * @description Centralized theme variables for light and dark mode
- * @version 1.0
+ * @version 1.1
  */
 
 :root {
     /* ===== COULEURS PRINCIPALES ===== */
-    --primary: red;
-    --primary-dark: #d97706;
-    --secondary: purple;
-    --accent: #ec4899;
+    --primary: #a78bfa;
+    --primary-dark: #8b5cf6;
+    --secondary: #f472b6;
+    --accent: #a78bfa;
+    --accent-glow: rgba(167, 139, 250, 0.4);
     --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
 
     /* ===== THÈME SOMBRE (Par défaut) ===== */
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-card: #1e293b;
-    --bg-glass: rgba(30, 41, 59, 0.8);
+    --bg-primary: #050505;
+    --bg-secondary: #121212;
+    --bg-black: #050505;
+    --bg-card: #111111;
+    --bg-glass: rgba(20, 20, 20, 0.7);
+    --glass-bg: rgba(20, 20, 20, 0.7);
+    --glass: rgba(20, 20, 20, 0.7);
 
     --text-primary: #ffffff;
+    --text-main: #ffffff;
     --text-secondary: #d1d5db;
     --text-muted: #9ca3af;
+    --text-dim: #a0a0a0;
 
-    --border: #334155;
-    --border-light: #475569;
+    --border: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --border-light: rgba(255, 255, 255, 0.2);
 
-    --shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    /* ===== OVERLAYS & GRADIENTS ===== */
+    --nav-bg: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+    --nav-scrolled: #050505;
+    --card-details-bg: linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.4) 50%, transparent 100%);
+    --hero-overlay-top: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, transparent 100%);
+    
+    --filter-select-bg: rgba(255,255,255,0.05);
+    --filter-select-hover: rgba(255,255,255,0.1);
+    --filter-option-bg: #111111;
+
+    --shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
 
     --radius: 12px;
     --radius-lg: 16px;
+    --card-radius: 20px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease;
-
-    /* Alias utilises dans les CSS */
-    --glass-bg: rgba(30, 41, 59, 0.8);
-    --border-radius: 12px;
-    --text: #ffffff;
-    --background: #0f172a;
-    --background-secondary: #1e293b;
-    --card-bg: #1e293b;
-    --border-radius-lg: 16px;
+    --card-transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    --card-bg: #111111;
+    --background: #050505;
+    --background-secondary: #121212;
 }
 
 /* ===== THÈME CLAIR ===== */
 [data-theme="light"] {
-    --bg-primary: #f9fafb;
+    --accent: #8b5cf6;
+    --primary: #8b5cf6;
+    --bg-primary: #f8f9fa;
     --bg-secondary: #ffffff;
+    --bg-black: #f8f9fa;
     --bg-card: #ffffff;
     --bg-glass: rgba(255, 255, 255, 0.9);
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass: rgba(255, 255, 255, 0.9);
 
-    --text-primary: #000000;
-    --text-secondary: #1a1a1a;
-    --text-muted: #333333;
+    --text-primary: #1a1a1a;
+    --text-main: #1a1a1a;
+    --text-secondary: #333333;
+    --text-muted: #666666;
+    --text-dim: #666666;
 
-    --border: #e5e7eb;
-    --border-light: #d1d5db;
-    --glass-bg: rgba(255, 255, 255, 0.95);
-    --text: #000000;
-    --background: #f9fafb;
-    --background-secondary: #ffffff;
+    --border: rgba(0, 0, 0, 0.1);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --border-light: rgba(0, 0, 0, 0.2);
+
+    --nav-bg: linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, transparent 100%);
+    --nav-scrolled: #ffffff;
+    --card-details-bg: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
+    --hero-overlay-top: linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
+    --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, transparent 100%);
+    
+    --filter-select-bg: rgba(0,0,0,0.05);
+    --filter-select-hover: rgba(0,0,0,0.1);
+    --filter-option-bg: #ffffff;
+
     --card-bg: #ffffff;
+    --background: #f8f9fa;
+    --background-secondary: #ffffff;
 
-    /* Ajuster les ombres pour le thème clair */
     --shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+/* Base Body Styling (Optional, maybe overridden by other CSS) */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Navbar Global Color Handling */
+.navbar .nav-link {
+    color: var(--text-primary) !important;
 }
 
 /* ===== SCROLLBAR ===== */
@@ -76,7 +118,7 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--background-secondary);
+    background: var(--bg-secondary);
     border-radius: 4px;
 }
 
@@ -90,3 +132,6 @@
     background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
 }
 
+/* Theme Utilities */
+.text-theme { color: var(--text-primary) !important; }
+.bg-theme { background-color: var(--bg-card) !important; }

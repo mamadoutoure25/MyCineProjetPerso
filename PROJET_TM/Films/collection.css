@@ -104,7 +104,7 @@ body {
 }
 
 .logo-text {
-    color: #fff;
+    color: var(--text-primary);
     font-weight: 800;
     font-size: 1.2rem;
 }
@@ -156,7 +156,7 @@ body {
 
 .theme-toggle:hover {
     background: var(--primary);
-    color: #fff;
+    color: var(--text-primary);
     transform: rotate(180deg) scale(1.06);
 }
 
@@ -342,7 +342,7 @@ body {
 .filter-btn.active {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     border: none;
-    color: white;
+    color: var(--text-primary);
     box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
 }
 
@@ -464,7 +464,7 @@ body {
 
 .badge.bg-warning {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
-    color: white !important;
+    color: var(--text-primary) !important;
     position: absolute;
     top: 12px;
     right: 12px;
@@ -481,7 +481,7 @@ body {
 }
 
 .badge.bg-warning.text-dark {
-    color: white !important;
+    color: var(--text-primary) !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 

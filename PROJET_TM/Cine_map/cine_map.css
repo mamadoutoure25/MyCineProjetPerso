@@ -252,7 +252,7 @@ header h1 {
 
 .filter-box select {
     background: var(--glass-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
     color: var(--text);
     padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
     border-radius: var(--border-radius);
