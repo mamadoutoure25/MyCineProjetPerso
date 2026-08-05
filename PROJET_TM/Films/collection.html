@@ -39,6 +39,66 @@
         @media (max-width: 1100px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 800px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
+
+        /* Distribution en vedette - Grille 6 colonnes */
+        #collection-cast, .movie-grid-6 {
+            display: grid !important;
+            grid-template-columns: repeat(6, 1fr) !important;
+            gap: 20px !important;
+            padding: 20px 0 !important;
+            overflow-x: visible !important;
+            width: 100% !important;
+        }
+
+        @media (max-width: 1400px) { #collection-cast, .movie-grid-6 { grid-template-columns: repeat(5, 1fr) !important; } }
+        @media (max-width: 1100px) { #collection-cast, .movie-grid-6 { grid-template-columns: repeat(4, 1fr) !important; } }
+        @media (max-width: 800px) { #collection-cast, .movie-grid-6 { grid-template-columns: repeat(3, 1fr) !important; } }
+        @media (max-width: 500px) { #collection-cast, .movie-grid-6 { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; } }
+
+        .small-actor-card {
+            position: relative;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            aspect-ratio: 2/3;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .small-actor-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .actor-hover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 15px;
+            opacity: 0;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .small-actor-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        }
+
+        .small-actor-card:hover img { transform: scale(1.1); }
+        .small-actor-card:hover .actor-hover-overlay { opacity: 1; }
+
+        .actor-name { font-size: 0.85rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; line-height: 1.2; }
+        .actor-role { font-size: 0.75rem; color: var(--accent); font-weight: 600; opacity: 0.9; }
     </style>
         
 </head>
@@ -95,7 +155,7 @@
 <section class="content-section" id="collection-content">
     <div class="container-fluid px-md-4 px-3">
         <h2 class="section-title">Distribution en vedette</h2>
-        <div id="collection-cast" class="people-grid mb-5"></div>
+        <div id="collection-cast" class="movie-grid-6 mb-5"></div>
 
         <h2 class="section-title">Equipe en vedette</h2>
         <div id="collection-crew" class="people-grid mb-5"></div>
@@ -103,7 +163,19 @@
         <div class="section-header">
             <h2 class="section-title mb-0">Films de la collection</h2>
         </div>
-        <div id="movies-grid" class="movies-grid" style="display: none;"></div>
+        <div id="movies-grid" class="movies-grid mb-5" style="display: none;"></div>
+
+        <section class="mb-5">
+            <h2 class="section-title">MÉDIAS & GALERIE</h2>
+            <ul class="nav nav-pills mb-4 gap-2" style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50px; width: fit-content;">
+                <li class="nav-item"><button class="nav-link active rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-back">IMAGES</button></li>
+                <li class="nav-item"><button class="nav-link rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-post">AFFICHES</button></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab-back"><div id="grid-backdrops" class="movie-grid-6"></div></div>
+                <div class="tab-pane fade" id="tab-post"><div id="grid-posters" class="movie-grid-6"></div></div>
+            </div>
+        </section>
 
         <div id="loading" class="text-center py-4">
             <div class="spinner-border" role="status">
@@ -113,8 +185,20 @@
     </div>
 </section>
 
+<div class="modal fade" id="mediaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg" style="background: var(--bg-card); border-radius: 24px; overflow: hidden;">
+            <div class="modal-header border-0 px-4 pt-4">
+                <h5 class="modal-title fw-extrabold text-theme" id="mediaModalTitle">Aperçu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center" id="mediaModalContent"></div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="collection.js"></script>
+<script src="collection.js?v=4"></script>
 <script src="../theme.js"></script>
 </body>
 </html>

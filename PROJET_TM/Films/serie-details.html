@@ -64,22 +64,47 @@
         }
         .tech-col-title { font-size: 0.75rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
 
-        /* Distribution Verticale & Petites Cartes */
-        .movie-grid {
+        /* Saisons Grille 6 colonnes */
+        .seasons-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 20px;
             padding: 20px 0;
         }
-        @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
-        @media (max-width: 1100px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 800px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        @media (max-width: 1400px) { .seasons-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (max-width: 1100px) { .seasons-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 800px) { .seasons-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 500px) { .seasons-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+        .seasons-grid .premium-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            aspect-ratio: 2/3;
+        }
+
+        /* Distribution Grille 8 colonnes */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        @media (max-width: 1600px) { .movie-grid { grid-template-columns: repeat(7, 1fr); } }
+        @media (max-width: 1300px) { .movie-grid { grid-template-columns: repeat(6, 1fr); } }
+        @media (max-width: 1000px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 700px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 450px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
 
         .small-actor-card {
             position: relative;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
             aspect-ratio: 2/3;
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
             cursor: pointer;
             border: 1px solid var(--border);
@@ -145,8 +170,29 @@
                 <i class="ph ph-moon fs-4" id="theme-icon"></i>
             </button>
             <div id="auth-section">
-                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
+            <script>
+                (function() {
+                    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+                    if (auth) {
+                        const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+                        const c = document.getElementById("auth-section");
+                        if (c) {
+                            c.innerHTML = `
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end d-none d-md-block">
+                                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                                            <div class="fw-bold small">${pseudo}</div>
+                                            <div class="x-small opacity-50">MON PROFIL</div>
+                                        </a>
+                                    </div>
+                                    <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                                </div>`;
+                        }
+                    }
+                })();
+            </script>
         </div>
     </div>
 </nav>
@@ -214,7 +260,7 @@
     <!-- Content Sections -->
     <section class="content-lane">
         <div class="lane-title">SAISONS</div>
-        <div id="serie-seasons" class="movie-scroller"></div>
+        <div id="serie-seasons" class="seasons-grid"></div>
     </section>
 
     <section class="content-lane pt-0">
@@ -267,7 +313,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="serie-details.js"></script>
+<script src="serie-details.js?v=2"></script>
 <script>
     window.onscroll = () => {
         const nav = document.querySelector('.navbar');

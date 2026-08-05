@@ -8,7 +8,6 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="cinema-premium.css">
-    <!-- On réutilise premium-home.css pour garantir l'identité avec index.html -->
     <link rel="stylesheet" href="premium-home.css">
     <style>
         /* Grille Verticale 6 colonnes */
@@ -48,7 +47,7 @@
             .movie-grid .collection-card { grid-column: span 2; }
         }
     </style>
-<link rel="stylesheet" href="theme-variables.css">
+    <link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
 
@@ -77,12 +76,33 @@
             <div id="auth-section">
                 <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
+            <script>
+                (function() {
+                    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+                    if (auth) {
+                        const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+                        const c = document.getElementById("auth-section");
+                        if (c) {
+                            c.innerHTML = `
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end d-none d-md-block">
+                                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                                            <div class="fw-bold small">${pseudo}</div>
+                                            <div class="x-small opacity-50">MON PROFIL</div>
+                                        </a>
+                                    </div>
+                                    <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                                </div>`;
+                        }
+                    }
+                })();
+            </script>
         </div>
     </div>
 </nav>
 
 <main>
-    <!-- Cinematic Hero - Identique à index.html -->
+    <!-- Cinematic Hero -->
     <section class="hero-slider" id="hero-showcase">
         <div class="hero-slide active">
             <img src="https://image.tmdb.org/t/p/original/5m0v89Yp9YmN4V1V19x0j91V19X.jpg" class="hero-backdrop" id="films-hero-img">
@@ -101,13 +121,13 @@
     <!-- Contenu Principal avec Lanes Netflix-style -->
     <section class="content-lane">
         <div class="d-flex flex-column align-items-center mb-5" style="margin-top: -50px; position: relative; z-index: 100;">
-            <!-- Search Bar - Identique à index.html -->
+            <!-- Search Bar -->
             <div class="search-hero mb-4">
                 <i class="ph ph-magnifying-glass text-muted fs-4"></i>
                 <input type="text" id="films-search" placeholder="Rechercher un titre, un genre...">
             </div>
             
-            <!-- Advanced Filter Panel - Design Glassmorphism -->
+            <!-- Advanced Filter Panel -->
             <div class="filter-panel shadow-lg">
                 <div class="filter-grid">
                     <div class="filter-group">
@@ -142,6 +162,8 @@
                         <select id="filter-sort" class="premium-select">
                             <option value="popularity.desc">Populaires</option>
                             <option value="vote_average.desc">Mieux notés</option>
+                            <option value="revenue.desc">Box-Office (Plus grand > Plus petit)</option>
+                            <option value="revenue.asc">Box-Office (Plus petit > Plus grand)</option>
                         </select>
                     </div>
                 </div>
@@ -173,6 +195,21 @@
         </div>
         <div id="now-playing-films" class="movie-grid mb-5"></div>
 
+        <!-- Box-Office Lane -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5 flex-wrap gap-3">
+            <div class="lane-title mb-0" id="boxoffice-lane-title">BOX-OFFICE MONDIAL</div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-primary btn-sm rounded-pill fw-bold active" id="btn-boxoffice-desc" onclick="toggleBoxOfficeOrder('revenue.desc')">
+                    <i class="ph ph-trend-up me-1"></i> PLUS GROS SUCCÈS
+                </button>
+                <button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold text-theme" id="btn-boxoffice-asc" onclick="toggleBoxOfficeOrder('revenue.asc')">
+                    <i class="ph ph-trend-down me-1"></i> MOINS GROS SUCCÈS
+                </button>
+                <button class="btn btn-link text-accent fw-bold text-decoration-none small ms-2" onclick="loadMore('boxoffice-films')">CHARGER PLUS <i class="ph ph-plus"></i></button>
+            </div>
+        </div>
+        <div id="boxoffice-films" class="movie-grid mb-5"></div>
+
         <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
             <div class="lane-title mb-0" id="category-lane-title">PAR CATÉGORIE : ACTION</div>
             <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('category-films')">CHARGER PLUS <i class="ph ph-plus"></i></button>
@@ -187,6 +224,7 @@
 
 <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const API_KEY = "04c35731a5ee918f014970082a0088b1";
     const BASE_URL = "https://api.themoviedb.org/3";
@@ -196,13 +234,11 @@
     const laneStates = {
         'top-rated-films': { page: 1, endpoint: '/movie/top_rated', params: '' },
         'now-playing-films': { page: 1, endpoint: '/movie/now_playing', params: '&region=BE' },
+        'boxoffice-films': { page: 1, endpoint: '/discover/movie', params: '&sort_by=revenue.desc' },
         'category-films': { page: 1, endpoint: '/discover/movie', params: '&with_genres=28' }
     };
 
     async function initFilmsPage() {
-        const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
-        renderAuth(auth);
-        
         try {
             await loadDefaultLanes();
             setupSearchAndFilters();
@@ -211,20 +247,45 @@
 
     async function loadDefaultLanes() {
         try {
-            const [topRated, nowPlaying, actionMovies] = await Promise.all([
+            const [topRated, nowPlaying, boxOffice, actionMovies] = await Promise.all([
                 fetch(`${BASE_URL}${laneStates['top-rated-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
                 fetch(`${BASE_URL}${laneStates['now-playing-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=BE&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['boxoffice-films'].endpoint}?api_key=${API_KEY}&language=fr-FR${laneStates['boxoffice-films'].params}&page=1`).then(r => r.json()),
                 fetch(`${BASE_URL}${laneStates['category-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&with_genres=28&page=1`).then(r => r.json())
             ]);
 
-            if(topRated.results[0]) {
+            if (topRated.results && topRated.results[0]) {
                 document.getElementById('films-hero-img').src = BACKDROP_URL + topRated.results[0].backdrop_path;
             }
 
             renderLane(topRated.results, 'top-rated-films');
             renderLane(nowPlaying.results, 'now-playing-films');
+            renderLane(boxOffice.results, 'boxoffice-films');
             renderLane(actionMovies.results, 'category-films');
             renderPopularCollections();
+        } catch(e) { console.error(e); }
+    }
+
+    async function toggleBoxOfficeOrder(orderSort) {
+        const btnDesc = document.getElementById('btn-boxoffice-desc');
+        const btnAsc = document.getElementById('btn-boxoffice-asc');
+        
+        if (orderSort === 'revenue.desc') {
+            if (btnDesc) { btnDesc.classList.add('active', 'btn-primary'); btnDesc.classList.remove('btn-outline-secondary'); }
+            if (btnAsc) { btnAsc.classList.remove('active', 'btn-primary'); btnAsc.classList.add('btn-outline-secondary'); }
+        } else {
+            if (btnAsc) { btnAsc.classList.add('active', 'btn-primary'); btnAsc.classList.remove('btn-outline-secondary'); }
+            if (btnDesc) { btnDesc.classList.remove('active', 'btn-primary'); btnDesc.classList.add('btn-outline-secondary'); }
+        }
+
+        laneStates['boxoffice-films'].params = `&sort_by=${orderSort}`;
+        laneStates['boxoffice-films'].page = 1;
+
+        try {
+            const res = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=fr-FR&sort_by=${orderSort}&page=1`).then(r => r.json());
+            if (res.results) {
+                renderLane(res.results, 'boxoffice-films');
+            }
         } catch(e) { console.error(e); }
     }
 
@@ -237,7 +298,6 @@
 
         state.loading = true;
         
-        // Find title button
         const titleBtns = document.querySelectorAll('button');
         let titleBtn = null;
         for (let b of titleBtns) {
@@ -247,7 +307,7 @@
             }
         }
 
-        if(titleBtn) {
+        if (titleBtn) {
             titleBtn.disabled = true;
             titleBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>...`;
         }
@@ -261,7 +321,9 @@
             if (res.results && res.results.length > 0) {
                 appendCards(res.results, laneId);
             } else {
-                if(titleBtn) titleBtn.style.display = 'none';
+                if (titleBtn) titleBtn.style.display = 'none';
+                const vCard = container.querySelector('.view-more-card');
+                if (vCard) vCard.remove();
                 notify("Fin de la liste", "info");
             }
         } catch(e) { 
@@ -270,7 +332,7 @@
             state.page--;
         } finally {
             state.loading = false;
-            if(titleBtn) {
+            if (titleBtn) {
                 titleBtn.disabled = false;
                 titleBtn.innerHTML = `CHARGER PLUS <i class="ph ph-plus"></i>`;
             }
@@ -280,6 +342,8 @@
     function appendCards(data, elementId) {
         const container = document.getElementById(elementId);
         if (!container) return;
+
+        const viewMoreCard = container.querySelector('.view-more-card');
 
         const html = data.map(item => `
             <div class="premium-card" onclick="window.location.href='movie-details.html?id=${item.id}'">
@@ -294,12 +358,16 @@
             </div>
         `).join('');
 
-        container.insertAdjacentHTML('beforeend', html);
+        if (viewMoreCard) {
+            viewMoreCard.insertAdjacentHTML('beforebegin', html);
+        } else {
+            container.insertAdjacentHTML('beforeend', html);
+        }
     }
 
     function notify(msg, type) {
         const c = document.getElementById("toast-container");
-        if(!c) return;
+        if (!c) return;
         const t = document.createElement("div");
         t.className = `toast show bg-${type} text-theme p-3 mb-2 rounded-4 shadow-lg`;
         t.style.minWidth = "250px";
@@ -311,6 +379,7 @@
     async function renderPopularCollections() {
         const ids = [10, 86311, 131230, 528, 1241, 119];
         const container = document.getElementById('popular-collections');
+        if (!container) return;
         try {
             const data = await Promise.all(ids.map(id => 
                 fetch(`${BASE_URL}/collection/${id}?api_key=${API_KEY}&language=fr-FR`).then(r => r.json())
@@ -322,7 +391,7 @@
                     <div class="collection-badge">SAGA</div>
                     <div class="card-details">
                         <div class="card-title">${c.name.toUpperCase()}</div>
-                        <div class="card-meta"><span class="rating-badge"><i class="ph ph-stack"></i> ${c.parts.length} FILMS</span></div>
+                        <div class="card-meta"><span class="rating-badge"><i class="ph ph-stack"></i> ${c.parts ? c.parts.length : 0} FILMS</span></div>
                     </div>
                 </div>
             `).join('');
@@ -399,7 +468,7 @@
 
         if (!isSearch && laneStates[elementId]) {
             html += `
-                <div class="premium-card d-flex align-items-center justify-content-center view-more-card" style="background: rgba(255,255,255,0.03); border: 2px dashed var(--border);" onclick="loadMore('${elementId}')">
+                <div class="premium-card d-flex align-items-center justify-content-center view-more-card" style="background: rgba(255,255,255,0.03); border: 2px dashed var(--border); cursor: pointer;" onclick="loadMore('${elementId}')">
                     <div class="text-center">
                         <i class="ph ph-plus-circle fs-1 mb-2 text-accent"></i>
                         <div class="fw-bold small">VOIR PLUS</div>
@@ -411,22 +480,17 @@
         container.innerHTML = html;
     }
 
-    function renderAuth(a) {
-        const c = document.getElementById("auth-section");
-        if (a) {
-            c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${a.username}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button></div>`;
-        } else {
-            c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>`;
-        }
-    }
-
     window.onscroll = () => {
         const nav = document.querySelector('.navbar');
         if (window.scrollY > 50) nav.classList.add('scrolled');
         else nav.classList.remove('scrolled');
     };
 
-    document.addEventListener('DOMContentLoaded', initFilmsPage);
+    if (document.readyState === "loading") {
+        document.addEventListener('DOMContentLoaded', initFilmsPage);
+    } else {
+        initFilmsPage();
+    }
 </script>
 <script src="../theme.js"></script>
 </body>

@@ -216,8 +216,29 @@
                 <i class="ph ph-moon fs-4" id="theme-icon"></i>
             </button>
             <div id="auth-section">
-                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
+            <script>
+                (function() {
+                    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+                    if (auth) {
+                        const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+                        const c = document.getElementById("auth-section");
+                        if (c) {
+                            c.innerHTML = `
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end d-none d-md-block">
+                                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                                            <div class="fw-bold small">${pseudo}</div>
+                                            <div class="x-small opacity-50">MON PROFIL</div>
+                                        </a>
+                                    </div>
+                                    <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.href='../connexion/connexion.html';" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button>
+                                </div>`;
+                        }
+                    }
+                })();
+            </script>
         </div>
     </div>
 </nav>

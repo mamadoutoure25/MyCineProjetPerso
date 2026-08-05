@@ -1,0 +1,223 @@
+const fs = require('fs');
+
+// --- 1. Rewrite collections-browse.html ---
+const collectionsHtml = `<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collections - MyCiné</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Unified Premium Styles -->
+    <link rel="stylesheet" href="premium-home.css">
+    <link rel="stylesheet" href="theme-variables.css">
+    <style>
+        .collections-hero {
+            padding: 140px 5% 60px;
+            background: linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .btn-outline-premium {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            transition: 0.3s;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+        .btn-outline-premium:hover, .btn-outline-premium.active { 
+            border-color: var(--accent); 
+            color: var(--accent); 
+            background: var(--glass);
+        }
+
+        .section-header-premium {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .section-wrapper { padding: 40px 5% 80px; }
+        
+        /* 6 Column Grid for premium cards */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (max-width: 1100px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 800px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
+    </style>
+</head>
+<body>
+
+<!-- Unified Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top px-5">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            MYCINÉ
+        </a>
+        <div class="collapse navbar-collapse justify-content-center">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold text-theme" href="collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="companies-browse.html">STUDIOS</a></li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
+                <i class="ph ph-moon fs-4" id="theme-icon"></i>
+            </button>
+            <div id="auth-section"></div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<header class="collections-hero">
+    <div class="container-fluid">
+        <h1 class="hero-title mb-2" style="font-size: 3.5rem;">COLLECTIONS DE FILMS</h1>
+        <p class="opacity-50 fs-5">Découvrez les franchises cinématographiques les plus populaires</p>
+    </div>
+</header>
+
+<main class="section-wrapper">
+    <div class="section-header-premium">
+        <div class="lane-title mb-0">EXPLORER LES COLLECTIONS</div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="small fw-bold opacity-50 me-2"><i class="ph ph-funnel me-1"></i>TRIER PAR :</span>
+            <button class="btn-outline-premium active sort-btn" data-sort="original" id="sort-original">Par défaut</button>
+            <button class="btn-outline-premium sort-btn" data-sort="name" id="sort-name">Nom (A-Z)</button>
+            <button class="btn-outline-premium sort-btn" data-sort="name-desc" id="sort-name-desc">Nom (Z-A)</button>
+            <button class="btn-outline-premium sort-btn" data-sort="movies-desc" id="sort-movies-desc">Films (Plus &gt; Moins)</button>
+            <button class="btn-outline-premium sort-btn" data-sort="movies-asc" id="sort-movies-asc">Films (Moins &gt; Plus)</button>
+        </div>
+    </div>
+
+    <div class="movie-grid" id="collections-grid">
+        <div class="text-center py-5 w-100" style="grid-column: 1 / -1;">
+            <div class="spinner-border text-theme" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="no-collections" class="text-center py-5" style="display: none; grid-column: 1 / -1;">
+        <i class="ph ph-warning-circle fs-1 mb-3 opacity-50"></i>
+        <h3 class="fw-bold">Aucune collection trouvée</h3>
+        <p class="opacity-50">Les collections apparaîtront à mesure que vous explorez les films.</p>
+        <a href="films.html" class="btn btn-primary rounded-pill px-4 fw-bold mt-3">EXPLORER LES FILMS</a>
+    </div>
+</main>
+
+<footer class="py-5 text-center border-top border-secondary mt-5 opacity-50">
+    <p class="small fw-bold">© 2026 MYCINÉ • EXPERIENCE PREMIUM</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="collections-browse.js"></script>
+<script>
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+    
+    // Auth section basic logic
+    const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+    const c = document.getElementById("auth-section");
+    if (auth) {
+        c.innerHTML = \`
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end d-none d-md-block">
+                    <a href="profilUser.html" class="text-decoration-none text-theme">
+                        <div class="fw-bold small">\${auth.username || auth.pseudo}</div>
+                        <div class="x-small opacity-50">MON PROFIL</div>
+                    </a>
+                </div>
+                <button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button>
+            </div>\`;
+    } else {
+        c.innerHTML = \`<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>\`;
+    }
+</script>
+<script src="../theme.js"></script>
+</body>
+</html>`;
+
+fs.writeFileSync('PROJET_TM/Films/collections-browse.html', collectionsHtml, 'utf8');
+console.log('collections-browse.html rewritten');
+
+// --- 2. Patch collections-browse.js to output premium-card HTML ---
+let jsPath = 'PROJET_TM/Films/collections-browse.js';
+if(fs.existsSync(jsPath)) {
+    let jsContent = fs.readFileSync(jsPath, 'utf8');
+    
+    // The current generateCardsHTML looks something like:
+    // .map(c => `
+    //     <a href="collection.html?id=${c.id}" class="collection-card-link">
+    //         <div class="collection-card-preview">
+    //             <img src="${...}" class="collection-card-image" alt="${...}">
+    //             <div class="collection-card-overlay"></div>
+    //             <div class="collection-card-info">
+    //                 <div class="collection-card-title">${c.name}</div>
+    //                 <div class="collection-card-meta">
+    //                     <span class="collection-card-badge">${count} film(s)</span>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     </a>
+    // `)
+    
+    // We will replace generateCardsHTML function body
+    const newGenerateCardsHtml = `function generateCardsHTML(collectionsData) {
+    if (!collectionsData || collectionsData.length === 0) return '';
+    return collectionsData.map(c => {
+        const count = collections[c.id] ? collections[c.id].parts.length : 0;
+        const imgUrl = c.poster_path ? \`\${IMG_URL}\${c.poster_path}\` : 'https://via.placeholder.com/220x330?text=No+Image';
+        return \`
+            <div class="premium-card" onclick="window.location.href='collection.html?id=\${c.id}'">
+                <img src="\${imgUrl}" loading="lazy" alt="\${c.name}">
+                <div class="card-details">
+                    <div class="card-title text-truncate">\${c.name}</div>
+                    <div class="card-meta">
+                        <span class="rating-badge"><i class="ph-fill ph-stack"></i> \${count} FILMS</span>
+                    </div>
+                </div>
+            </div>
+        \`;
+    }).join('');
+}`;
+
+    // Regex replace the old generateCardsHTML function
+    const funcRegex = /function\s+generateCardsHTML\s*\([^)]*\)\s*\{[\s\S]*?return[\s\S]*?\.join\(''\);\s*\}/;
+    if (funcRegex.test(jsContent)) {
+        jsContent = jsContent.replace(funcRegex, newGenerateCardsHtml);
+    } else {
+        // Fallback: Just append it and let it overwrite (in JS later defined overrides earlier)
+        jsContent += '\n\n' + newGenerateCardsHtml;
+    }
+    
+    // Also patch active class logic for sorting buttons
+    jsContent = jsContent.replace(/\.classList\.remove\('active'\)/g, ".classList.remove('active')");
+    
+    fs.writeFileSync(jsPath, jsContent, 'utf8');
+    console.log('collections-browse.js rewritten');
+}

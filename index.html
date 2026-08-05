@@ -57,6 +57,27 @@
             <div id="auth-section">
                 <a href="PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
+            <script>
+                (function() {
+                    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+                    if (auth) {
+                        const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+                        const c = document.getElementById("auth-section");
+                        if (c) {
+                            c.innerHTML = `
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end d-none d-md-block">
+                                        <a href="PROJET_TM/Films/profilUser.html" class="text-decoration-none text-theme">
+                                            <div class="fw-bold small">${pseudo}</div>
+                                            <div class="x-small opacity-50">MON PROFIL</div>
+                                        </a>
+                                    </div>
+                                    <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                                </div>`;
+                        }
+                    }
+                })();
+            </script>
         </div>
     </div>
 </nav>
@@ -178,7 +199,7 @@
     };
 
     async function loadPremiumHome() {
-        const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+        const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
         renderAuth(auth);
 
         try {
@@ -209,6 +230,10 @@
     async function loadMore(laneId) {
         const state = laneStates[laneId];
         if (!state || state.loading) return;
+
+        const container = document.getElementById(laneId);
+        if (!container) return;
+
         state.loading = true;
 
         const titleBtn = document.querySelector(`button[onclick="loadMore('${laneId}')"]`);
@@ -221,6 +246,8 @@
                 appendCards(res.results, laneId, state.type);
             } else {
                 if(titleBtn) titleBtn.style.display = 'none';
+                const vCard = container.querySelector('.view-more-card');
+                if (vCard) vCard.remove();
                 notify("Plus de résultats", "info");
             }
         } catch(e) { console.error(e); state.page--; }
@@ -233,13 +260,34 @@
     function renderLane(data, elementId, type) {
         const container = document.getElementById(elementId);
         if (!container) return;
-        container.innerHTML = generateCardsHTML(data, type);
+        let html = generateCardsHTML(data, type);
+
+        if (laneStates[elementId]) {
+            html += `
+                <div class="premium-card d-flex align-items-center justify-content-center view-more-card" style="background: rgba(255,255,255,0.03); border: 2px dashed var(--border); cursor: pointer;" onclick="loadMore('${elementId}')">
+                    <div class="text-center">
+                        <i class="ph ph-plus-circle fs-1 mb-2 text-accent"></i>
+                        <div class="fw-bold small">VOIR PLUS</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
     }
 
     function appendCards(data, elementId, type) {
         const container = document.getElementById(elementId);
         if (!container) return;
-        container.insertAdjacentHTML('beforeend', generateCardsHTML(data, type));
+
+        const viewMoreCard = container.querySelector('.view-more-card');
+        const html = generateCardsHTML(data, type);
+
+        if (viewMoreCard) {
+            viewMoreCard.insertAdjacentHTML('beforebegin', html);
+        } else {
+            container.insertAdjacentHTML('beforeend', html);
+        }
     }
 
     function generateCardsHTML(data, type) {
@@ -283,15 +331,16 @@
         const c = document.getElementById("auth-section");
         const pathPrefix = "PROJET_TM/Films/";
         if (a) {
+            const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
             c.innerHTML = `
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-end d-none d-md-block">
                         <a href="${pathPrefix}profilUser.html" class="text-decoration-none text-theme">
-                            <div class="fw-bold small">${a.username}</div>
+                            <div class="fw-bold small">${pseudo}</div>
                             <div class="x-small opacity-50">MON PROFIL</div>
                         </a>
                     </div>
-                    <button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                    <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
                 </div>`;
         } else {
             c.innerHTML = `<a href="PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>`;

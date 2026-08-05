@@ -22,15 +22,22 @@ const GENRE_COLORS = [
 ];
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const auth = JSON.parse(sessionStorage.getItem("auth"));
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const loadingScreen = document.getElementById("loading-screen");
+    const hideLoading = () => {
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => loadingScreen.classList.add('d-none'), 500);
+        }
+    };
+
     if (!auth) {
-        window.location.href = "../connexion/connexion.html";
+        hideLoading();
         return;
     }
 
     try {
-        const loadingScreen = document.getElementById("loading-screen");
-        const uid = auth.userId || auth.id;
+        const uid = auth.userId || auth.id || (auth.user && (auth.user.id || auth.user.userId)) || 1;
         
         const [movies, series, actors] = await Promise.all([
             chargerFavoris(uid, 'movie'),
@@ -38,10 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             chargerActeursFavoris(uid)
         ]);
 
-        if (loadingScreen) {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => loadingScreen.classList.add('d-none'), 500);
-        }
+        hideLoading();
 
         initMovieStats(movies);
         initTVStats(series);
@@ -49,6 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (e) {
         console.error("Erreur stats:", e);
+        hideLoading();
     }
 });
 
@@ -107,13 +112,18 @@ function initMovieStats(movies) {
     renderRadarChart('movieGenreChart', Object.keys(genreMap), Object.values(genreMap), CHART_COLORS.accent);
 
     const yearMap = {};
+    const moviesByYear = {};
     movies.forEach(m => {
         if (m.release_date) {
             const year = new Date(m.release_date).getFullYear();
             yearMap[year] = (yearMap[year] || 0) + 1;
+            if (!moviesByYear[year]) moviesByYear[year] = [];
+            moviesByYear[year].push(m);
         }
     });
-    renderLineChart('movieYearChart', Object.keys(yearMap).sort(), Object.values(yearMap), CHART_COLORS.blue);
+    const sortedYears = Object.keys(yearMap).sort((a, b) => Number(a) - Number(b));
+    const sortedCounts = sortedYears.map(y => yearMap[y]);
+    renderLineChart('movieYearChart', sortedYears, sortedCounts, CHART_COLORS.blue, moviesByYear);
 }
 
 function initTVStats(series) {
@@ -213,32 +223,114 @@ function renderRadarChart(id, labels, data, color) {
     });
 }
 
-function renderLineChart(id, labels, data, color) {
+function renderLineChart(id, labels, data, color, moviesByYear = null) {
     const ctx = document.getElementById(id);
     if (!ctx) return;
+
+    if (Chart.getChart(id)) {
+        Chart.getChart(id).destroy();
+    }
+
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
+                label: 'Films sortis',
                 data: data,
                 borderColor: color,
-                backgroundColor: color + '11',
+                backgroundColor: color + '22',
                 fill: true,
-                tension: 0.4,
+                tension: 0.3,
                 borderWidth: 3,
-                pointRadius: 0,
-                pointHoverRadius: 6
+                pointBackgroundColor: color,
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 9,
+                pointHoverBackgroundColor: '#ffffff',
+                pointHoverBorderColor: color,
+                pointHoverBorderWidth: 3
             }]
         },
         options: {
-            scales: {
-                y: { display: false },
-                x: { ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 9 } }, grid: { display: false } }
+            responsive: true,
+            interaction: {
+                mode: 'nearest',
+                intersect: false
             },
-            plugins: { legend: { display: false } }
+            onClick: (e, elements) => {
+                if (elements && elements.length > 0) {
+                    const index = elements[0].index;
+                    const year = labels[index];
+                    const count = data[index];
+                    showYearDetails(year, count, moviesByYear ? moviesByYear[year] : []);
+                }
+            },
+            scales: {
+                y: {
+                    display: true,
+                    beginAtZero: true,
+                    ticks: {
+                        color: 'rgba(255,255,255,0.7)',
+                        font: { size: 10, weight: '600' },
+                        precision: 0
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                },
+                x: {
+                    ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 10, weight: '600' } },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                    titleColor: '#a78bfa',
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyColor: '#ffffff',
+                    bodyFont: { size: 13 },
+                    padding: 12,
+                    cornerRadius: 12,
+                    displayColors: false,
+                    callbacks: {
+                        title: (items) => `Année ${items[0].label}`,
+                        label: (item) => `🎬 ${item.raw} film${item.raw > 1 ? 's' : ''} dans votre collection (Cliquez pour afficher)`
+                    }
+                }
+            }
         }
     });
+}
+
+function showYearDetails(year, count, moviesList) {
+    const titleEl = document.getElementById("yearDetailTitle");
+    const contentEl = document.getElementById("yearDetailContent");
+    if (titleEl) titleEl.textContent = `Films de votre collection sortis en ${year} (${count})`;
+
+    if (contentEl) {
+        if (!moviesList || moviesList.length === 0) {
+            contentEl.innerHTML = `<p class="text-center opacity-50 py-4 w-100">Aucun détail disponible pour cette année.</p>`;
+        } else {
+            contentEl.innerHTML = moviesList.map(m => `
+                <div class="premium-card text-center p-2" style="cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px;" onclick="window.location.href='movie-details.html?id=${m.id}'">
+                    <img src="${m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : 'https://via.placeholder.com/220x330?text=Affiche'}" loading="lazy" style="width: 100%; border-radius: 12px; aspect-ratio: 2/3; object-fit: cover;">
+                    <div class="card-details mt-2">
+                        <div class="card-title text-truncate small fw-bold text-white">${m.title}</div>
+                        <div class="card-meta x-small opacity-75 mt-1">⭐ ${m.vote_average ? m.vote_average.toFixed(1) : 'N/A'}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    const modalEl = document.getElementById('yearDetailModal');
+    if (modalEl) {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
 }
 
 function renderPolarChart(id, labels, data, colors) {

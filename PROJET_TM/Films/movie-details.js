@@ -17,9 +17,8 @@ const CONFIG = {
 const id = new URLSearchParams(window.location.search).get("id");
 let user = null;
 
-// Initialisation
-document.addEventListener("DOMContentLoaded", async () => {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+async function initPage() {
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
     user = auth ? (auth.userId || auth.id) : null;
     
     renderAuth(auth);
@@ -47,9 +46,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (e) {
         console.error(e);
-        notify("Erreur de chargement des détails", "danger");
+        notify("Erreur de chargement du film", "danger");
     }
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPage);
+} else {
+    initPage();
+}
 
 /**
  * Helpers
@@ -107,6 +112,24 @@ function renderHero(m) {
     const studio = m.production_companies?.[0];
     if (studioTag && studio) {
         studioTag.innerHTML = `<div class="studio-icon">${studio.logo_path ? `<img src="${CONFIG.W500}${studio.logo_path}">` : `<span>${studio.name[0]}</span>`}</div><span class="fw-bold">${studio.name.toUpperCase()}</span>`;
+    }
+
+    if (el("side-budget-item")) {
+        if (m.budget && m.budget > 0) {
+            el("movie-budget").textContent = m.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " $";
+            el("side-budget-item").classList.remove("d-none");
+        } else {
+            el("side-budget-item").classList.add("d-none");
+        }
+    }
+
+    if (el("side-revenue-item")) {
+        if (m.revenue && m.revenue > 0) {
+            el("movie-revenue").textContent = m.revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " $";
+            el("side-revenue-item").classList.remove("d-none");
+        } else {
+            el("side-revenue-item").classList.add("d-none");
+        }
     }
 
     const trailer = m.videos?.results?.find(v => v.type === "Trailer");
@@ -274,16 +297,45 @@ async function renderCollection(collectionId) {
     const wrapper = document.getElementById("collection-wrapper");
     const container = document.getElementById("movie-collection");
     const titleEl = document.getElementById("collection-name");
+    const collectionLink = document.getElementById("collection-link");
+    const sideItem = document.getElementById("side-collection-item");
+    const sideLink = document.getElementById("side-collection-link");
 
     try {
         const collection = await fetchData(`/collection/${collectionId}`);
         if (!collection || !collection.parts) return;
 
-        if (titleEl) titleEl.textContent = collection.name.toUpperCase();
+        const targetUrl = `collection.html?id=${collectionId}`;
+
+        if (titleEl) {
+            titleEl.innerHTML = `<a href="${targetUrl}" class="text-white text-decoration-none">${collection.name.toUpperCase()}</a>`;
+        }
+        if (collectionLink) {
+            collectionLink.href = targetUrl;
+            collectionLink.style.display = "inline-flex";
+        }
+        if (sideItem && sideLink) {
+            sideLink.href = targetUrl;
+            sideLink.textContent = collection.name;
+            sideItem.classList.remove("d-none");
+        }
         if (wrapper) wrapper.style.display = "block";
 
         if (container) {
-            container.innerHTML = collection.parts
+            const collectionCard = `
+                <div class="premium-card" style="border: 2px solid var(--accent);" onclick="window.location.href='${targetUrl}'">
+                    <img src="${collection.poster_path ? CONFIG.W500 + collection.poster_path : CONFIG.EMPTY_POSTER}" loading="lazy">
+                    <div class="card-details">
+                        <div class="card-title text-truncate text-accent fw-bold">${collection.name}</div>
+                        <div class="card-meta">
+                            <span class="rating-badge bg-primary text-white"><i class="ph-fill ph-stack"></i> SAGA (${collection.parts.length})</span>
+                            <span class="text-accent fw-bold small">VOIR <i class="ph ph-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const moviesCards = collection.parts
                 .sort((a, b) => new Date(a.release_date) - new Date(b.release_date))
                 .map(m => `
                     <div class="premium-card" onclick="window.location.href='movie-details.html?id=${m.id}'">
@@ -299,6 +351,8 @@ async function renderCollection(collectionId) {
                         </div>
                     </div>
                 `).join("");
+
+            container.innerHTML = collectionCard + moviesCards;
         }
     } catch (e) { console.error(e); }
 }
@@ -343,7 +397,8 @@ function renderAuth(a) {
     const c = document.getElementById("auth-section");
     if (!c) return;
     if (a) {
-        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-white text-decoration-none"><div class="fw-bold small">${a.username}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
+        const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
     } else {
         c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold">CONNEXION</a>`;
     }

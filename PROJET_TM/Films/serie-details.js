@@ -17,8 +17,8 @@ const CONFIG = {
 const id = new URLSearchParams(window.location.search).get("id");
 let user = null;
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+async function initPage() {
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
     user = auth ? (auth.userId || auth.id) : null;
     renderAuth(auth);
 
@@ -47,7 +47,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error(e);
         notify("Erreur de chargement de la série", "danger");
     }
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPage);
+} else {
+    initPage();
+}
 
 function renderHero(s) {
     document.getElementById("serie-title").textContent = s.name;
@@ -262,7 +268,8 @@ function renderAuth(a) {
     const c = document.getElementById("auth-section");
     if (!c) return;
     if (a) {
-        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-white text-decoration-none"><div class="fw-bold small">${a.username}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
+        const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
     } else {
         c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold">CONNEXION</a>`;
     }

@@ -64,22 +64,27 @@
         }
         .tech-col-title { font-size: 0.75rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
 
-        /* Distribution Verticale & Petites Cartes */
+        /* Distribution Grille 8 colonnes */
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 15px;
             padding: 20px 0;
         }
-        @media (max-width: 1400px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
-        @media (max-width: 1100px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 800px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 500px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        @media (max-width: 1600px) { .movie-grid { grid-template-columns: repeat(7, 1fr); } }
+        @media (max-width: 1300px) { .movie-grid { grid-template-columns: repeat(6, 1fr); } }
+        @media (max-width: 1000px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 700px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 450px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
 
         .small-actor-card {
             position: relative;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
             aspect-ratio: 2/3;
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
             cursor: pointer;
             border: 1px solid var(--border);
@@ -145,8 +150,29 @@
                 <i class="ph ph-moon fs-4" id="theme-icon"></i>
             </button>
             <div id="auth-section">
-                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
+            <script>
+                (function() {
+                    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+                    if (auth) {
+                        const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+                        const c = document.getElementById("auth-section");
+                        if (c) {
+                            c.innerHTML = `
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end d-none d-md-block">
+                                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                                            <div class="fw-bold small">${pseudo}</div>
+                                            <div class="x-small opacity-50">MON PROFIL</div>
+                                        </a>
+                                    </div>
+                                    <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                                </div>`;
+                        }
+                    }
+                })();
+            </script>
         </div>
     </div>
 </nav>
@@ -181,11 +207,23 @@
 
             <!-- Detail Side Panel -->
             <div class="side-panel">
+                <div class="side-item d-none" id="side-collection-item">
+                    <div class="side-label">Collection</div>
+                    <a id="side-collection-link" href="#" class="side-value text-accent text-decoration-none fw-bold small text-truncate d-block">...</a>
+                </div>
                 <div class="side-item">
                     <div class="side-label">Note Global</div>
                     <div id="star-rating" class="d-flex gap-1 text-warning mb-1"></div>
                     <div id="rating-feedback" class="x-small opacity-50 fw-bold"></div>
                     <button id="btn-clear-rating" class="btn btn-link text-danger p-0 x-small d-none" style="text-decoration:none">EFFACER</button>
+                </div>
+                <div class="side-item d-none" id="side-budget-item">
+                    <div class="side-label">Budget</div>
+                    <div id="movie-budget" class="side-value fw-bold">N/A</div>
+                </div>
+                <div class="side-item d-none" id="side-revenue-item">
+                    <div class="side-label">Recettes (Box-office)</div>
+                    <div id="movie-revenue" class="side-value text-accent fw-bold">N/A</div>
                 </div>
                 <div class="side-item">
                     <div class="side-label">Où regarder</div>
@@ -207,7 +245,10 @@
     </section>
 
     <section id="collection-wrapper" class="content-lane pt-0" style="display: none;">
-        <div class="lane-title" id="collection-name">SAGA & COLLECTION</div>
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0" id="collection-name">SAGA & COLLECTION</div>
+            <a id="collection-link" href="#" class="btn btn-link text-accent fw-bold text-decoration-none small">VOIR LA COLLECTION <i class="ph ph-arrow-right"></i></a>
+        </div>
         <div id="movie-collection" class="movie-scroller"></div>
     </section>
 
@@ -228,22 +269,18 @@
     <!-- Tech Specs Footer -->
     <footer class="tech-footer">
         <div class="tech-col">
-            <div class="tech-col-title">Finances</div>
-            <div class="mb-3"><div class="x-small opacity-50">Budget</div><div id="movie-budget" class="fw-bold fs-5">...</div></div>
-            <div><div class="x-small opacity-50">Recettes</div><div id="movie-revenue" class="fw-bold fs-5 text-accent">...</div></div>
+            <div class="tech-col-title">Fiche Technique</div>
+            <div class="mb-3"><div class="x-small opacity-50">Titre Original</div><div id="movie-original-title" class="fw-bold fs-5">...</div></div>
+            <div><div class="x-small opacity-50">Budget / Recettes</div><div id="movie-budget" class="fw-bold fs-5 text-accent">...</div></div>
         </div>
         <div class="tech-col">
             <div class="tech-col-title">Production</div>
             <div id="movie-production-companies" class="d-flex flex-column gap-3"></div>
         </div>
-        <div class="tech-col">
-            <div class="tech-col-title">Sorties</div>
-            <div id="movie-release-dates" class="d-flex flex-column gap-2"></div>
-        </div>
         <div class="tech-col ms-auto text-end">
             <div class="tech-col-title">Réseaux</div>
             <div id="external-links" class="d-flex gap-4 justify-content-end mb-4"></div>
-            <p class="x-small opacity-25">© 2026 MYCINÉ PREMIUM EXPERIENCE</p>
+            <p class="x-small opacity-25">© 2026 MYCINÉ PREMIUM CINEMA</p>
         </div>
     </footer>
 </main>
@@ -260,7 +297,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="movie-details.js"></script>
+<script src="movie-details.js?v=8"></script>
 <script>
     window.onscroll = () => {
         const nav = document.querySelector('.navbar');

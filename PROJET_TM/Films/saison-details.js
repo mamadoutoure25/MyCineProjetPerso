@@ -10,86 +10,183 @@ const CONFIG = {
     HD: "https://image.tmdb.org/t/p/w780",
     ORIG: "https://image.tmdb.org/t/p/original",
     ACTOR: "https://image.tmdb.org/t/p/h632",
-    EMPTY_POSTER: "https://via.placeholder.com/500x750?text=No+Poster"
+    EMPTY_POSTER: "https://via.placeholder.com/500x750?text=MYCINE",
+    EMPTY_THUMB: "https://via.placeholder.com/500x281?text=EPISODE"
 };
 
 const params = new URLSearchParams(window.location.search);
 const serieId = params.get("serieId");
 const seasonNum = params.get("season");
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+function formatDate(dStr) {
+    if (!dStr) return 'À venir';
+    try {
+        const d = new Date(dStr);
+        if (isNaN(d.getTime())) return dStr;
+        return d.toLocaleDateString('fr-FR');
+    } catch (e) {
+        return dStr;
+    }
+}
+
+function getYear(dStr) {
+    if (!dStr) return 'N/A';
+    try {
+        const d = new Date(dStr);
+        if (isNaN(d.getTime())) return 'N/A';
+        return d.getFullYear();
+    } catch (e) {
+        return 'N/A';
+    }
+}
+
+async function initPage() {
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
     renderAuth(auth);
 
     if (!serieId || !seasonNum) return (window.location.href = "../../series.html");
 
+    let serie = {};
+    let season = {};
+    let credits = { cast: [] };
+
     try {
-        const [serie, season, credits] = await Promise.all([
-            fetch(`${CONFIG.BASE}/tv/${serieId}?api_key=${CONFIG.KEY}&language=fr-FR`).then(r => r.json()),
+        const res = await Promise.allSettled([
+            fetch(`${CONFIG.BASE}/tv/${serieId}?api_key=${CONFIG.KEY}&language=fr-FR&append_to_response=credits,aggregate_credits`).then(r => r.json()),
             fetch(`${CONFIG.BASE}/tv/${serieId}/season/${seasonNum}?api_key=${CONFIG.KEY}&language=fr-FR`).then(r => r.json()),
             fetch(`${CONFIG.BASE}/tv/${serieId}/season/${seasonNum}/credits?api_key=${CONFIG.KEY}&language=fr-FR`).then(r => r.json())
         ]);
 
-        renderHeader(serie, season);
-        renderEpisodes(season.episodes);
-        renderCast(credits.cast);
+        if (res[0].status === 'fulfilled') serie = res[0].value || {};
+        if (res[1].status === 'fulfilled') season = res[1].value || {};
+        if (res[2].status === 'fulfilled') credits = res[2].value || { cast: [] };
 
     } catch (e) {
-        console.error(e);
+        console.error("Fetch error:", e);
     }
-});
+
+    try { renderHeader(serie, season); } catch (e) { console.error("renderHeader error:", e); }
+    try { renderEpisodes(season ? season.episodes : []); } catch (e) { console.error("renderEpisodes error:", e); }
+
+    const finalCast = (credits && Array.isArray(credits.cast) && credits.cast.length > 0)
+        ? credits.cast
+        : (serie.aggregate_credits?.cast || serie.credits?.cast || []);
+
+    try { renderCast(finalCast); } catch (e) { console.error("renderCast error:", e); }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPage);
+} else {
+    initPage();
+}
 
 function renderHeader(serie, s) {
-    document.getElementById("season-title").textContent = `${serie.name.toUpperCase()} - SAISON ${s.season_number}`;
-    document.getElementById("season-overview").textContent = s.overview || "Aucun synopsis pour cette saison.";
-    document.getElementById("hero-backdrop").src = CONFIG.ORIG + (s.backdrop_path || serie.backdrop_path);
-    document.getElementById("season-poster").src = s.poster_path ? CONFIG.W500 + s.poster_path : CONFIG.EMPTY_POSTER;
+    const sNum = (s && s.season_number !== undefined) ? s.season_number : seasonNum;
+    const serieName = (serie && serie.name) ? serie.name.toUpperCase() : "SÉRIE";
     
-    document.getElementById("back-to-serie").href = `serie-details.html?id=${serieId}`;
-    document.getElementById("season-tags").innerHTML = `<span>${s.air_date ? new Date(s.air_date).getFullYear() : 'N/A'}</span><div class="v-sep"></div><span>${s.episodes.length} Épisodes</span>`;
+    const titleEl = document.getElementById("season-title");
+    if (titleEl) titleEl.textContent = `${serieName} - SAISON ${sNum}`;
+    
+    const overviewEl = document.getElementById("season-overview");
+    if (overviewEl) overviewEl.textContent = (s && s.overview) || serie.overview || "Aucun synopsis disponible pour cette saison.";
+    
+    const backdropEl = document.getElementById("season-backdrop") || document.getElementById("hero-backdrop");
+    const bg = (s && s.backdrop_path) || serie.backdrop_path;
+    if (backdropEl) {
+        if (bg) {
+            backdropEl.src = CONFIG.ORIG + bg;
+            backdropEl.style.display = "";
+        } else {
+            backdropEl.style.display = "none";
+        }
+    }
+    
+    const posterEl = document.getElementById("season-poster");
+    if (posterEl) {
+        const p = (s && s.poster_path) || serie.poster_path;
+        posterEl.src = p ? CONFIG.W500 + p : CONFIG.EMPTY_POSTER;
+    }
+    
+    const serieLinkEl = document.getElementById("serie-link") || document.getElementById("back-to-serie");
+    if (serieLinkEl) {
+        serieLinkEl.href = `serie-details.html?id=${serieId}`;
+        serieLinkEl.textContent = serieName;
+    }
+
+    const breadcrumbSeason = document.getElementById("breadcrumb-season");
+    if (breadcrumbSeason) breadcrumbSeason.textContent = `SAISON ${sNum}`;
+    
+    const epCount = (s && s.episodes && Array.isArray(s.episodes)) ? s.episodes.length : 0;
+    const year = (s && s.air_date) ? getYear(s.air_date) : getYear(serie.first_air_date);
+    
+    const tagsEl = document.getElementById("season-tags");
+    if (tagsEl) tagsEl.innerHTML = `<span>${year}</span><div class="v-sep"></div><span>${epCount} Épisode${epCount > 1 ? 's' : ''}</span>`;
 }
 
 function renderEpisodes(eps) {
     const cont = document.getElementById("episodes-container");
-    cont.innerHTML = eps.map(e => `
-        <div class="ep-card-premium">
-            <div class="ep-thumb-wrap">
-                <img src="${e.still_path ? CONFIG.HD + e.still_path : 'https://via.placeholder.com/350x197?text=No+Image'}" loading="lazy">
-            </div>
-            <div class="ep-content">
-                <div class="ep-meta-top">ÉPISODE ${e.episode_number}</div>
-                <div class="ep-title-main">${e.name}</div>
-                <p class="ep-desc-main">${e.overview || "Pas de description."}</p>
-                <div class="ep-footer-meta">
-                    <span><i class="ph ph-calendar-blank me-2"></i>${e.air_date ? new Date(e.air_date).toLocaleDateString() : '?'}</span>
-                    <span><i class="ph ph-clock me-2"></i>${e.runtime || '?'} MIN</span>
+    if (!cont) return;
+
+    if (!eps || !Array.isArray(eps) || eps.length === 0) {
+        cont.innerHTML = "<p class='opacity-50 fs-6 py-4'>Aucun épisode répertorié pour cette saison pour le moment.</p>";
+        return;
+    }
+
+    try {
+        cont.innerHTML = eps.map(e => `
+            <div class="ep-card-premium">
+                <div class="ep-thumb-wrap">
+                    <img src="${e.still_path ? CONFIG.HD + e.still_path : CONFIG.EMPTY_THUMB}" loading="lazy" onerror="this.src='${CONFIG.EMPTY_THUMB}'">
+                </div>
+                <div class="ep-content">
+                    <div class="ep-meta-top">ÉPISODE ${e.episode_number}</div>
+                    <div class="ep-title-main">${e.name || ('Épisode ' + e.episode_number)}</div>
+                    <p class="ep-desc-main">${e.overview || "Pas de description disponible pour cet épisode."}</p>
+                    <div class="ep-footer-meta">
+                        <span><i class="ph ph-calendar-blank me-2"></i>${formatDate(e.air_date)}</span>
+                        <span><i class="ph ph-clock me-2"></i>${e.runtime ? e.runtime + ' MIN' : 'N/A'}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join("");
+        `).join("");
+    } catch (err) {
+        console.error("renderEpisodes error:", err);
+        cont.innerHTML = "<p class='opacity-50 fs-6 py-4'>Erreur lors du rendu des épisodes.</p>";
+    }
 }
 
 function renderCast(cast) {
     const cont = document.getElementById("season-cast");
-    if (!cast || cast.length === 0) {
-        cont.innerHTML = "<p class='opacity-50'>Aucune distribution pour cette saison.</p>";
+    if (!cont) return;
+
+    if (!cast || !Array.isArray(cast) || cast.length === 0) {
+        cont.innerHTML = "<p class='opacity-50 fs-6 py-4 w-100 text-center'>Aucun membre de la distribution répertorié pour cette saison.</p>";
         return;
     }
-    cont.innerHTML = cast.slice(0, 15).map(a => `
-        <div class="actor-circ" onclick="window.location.href='actor-details.html?id=${a.id}'">
-            <div class="actor-img-wrap">
-                <img src="${a.profile_path ? CONFIG.ACTOR + a.profile_path : 'https://via.placeholder.com/300x300?text=No+Photo'}" loading="lazy">
+
+    try {
+        cont.innerHTML = cast.slice(0, 24).map(a => `
+            <div class="actor-card small-actor-card" onclick="window.location.href='actor-details.html?id=${a.id}'">
+                <img src="${a.profile_path ? CONFIG.W500 + a.profile_path : CONFIG.EMPTY_POSTER}" loading="lazy" onerror="this.src='${CONFIG.EMPTY_POSTER}'">
+                <div class="actor-hover-overlay">
+                    <div class="actor-name text-truncate">${a.name || 'Acteur'}</div>
+                    <div class="actor-role text-truncate">${a.character || "N/A"}</div>
+                </div>
             </div>
-            <div class="actor-name text-truncate">${a.name}</div>
-            <div class="actor-role text-truncate">${a.character || "N/A"}</div>
-        </div>
-    `).join("");
+        `).join("");
+    } catch (err) {
+        console.error("renderCast error:", err);
+        cont.innerHTML = "<p class='opacity-50 fs-6 py-4 w-100 text-center'>Erreur lors du rendu de la distribution.</p>";
+    }
 }
 
 function renderAuth(a) {
     const c = document.getElementById("auth-section");
+    if (!c) return;
     if (a) {
-        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-white text-decoration-none"><div class="fw-bold small">${a.username}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
+        const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
     } else {
         c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold">CONNEXION</a>`;
     }

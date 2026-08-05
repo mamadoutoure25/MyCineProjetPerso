@@ -86,8 +86,17 @@ async function chargerCollection(id) {
     }
 
     collectionData = await response.json()
-    await fetchCastAndCrew()
+
+    const [imagesRes] = await Promise.allSettled([
+      fetch(`${CONFIG.BASE_URL}/collection/${id}/images?api_key=${CONFIG.API_KEY}`).then(r => r.json()),
+      fetchCastAndCrew()
+    ]);
+
     afficherCollection(collectionData)
+
+    if (imagesRes.status === "fulfilled" && imagesRes.value) {
+      afficherGallery(imagesRes.value)
+    }
   } catch (error) {
     console.error("Erreur lors du chargement de la collection:", error)
     afficherErreur("Erreur lors du chargement de la collection")
@@ -105,35 +114,40 @@ async function fetchCastAndCrew() {
     const crew = []
     let totalRevenue = 0
 
-    // Parcourir chaque film pour collecter les acteurs, l'équipe et le revenu
-    for (const movie of collectionData.parts) {
-      const response = await fetch(`${CONFIG.BASE_URL}/movie/${movie.id}?api_key=${CONFIG.API_KEY}&language=fr-FR&append_to_response=credits`)
-      if (response.ok) {
-        const movieData = await response.json()
-        totalRevenue += movieData.revenue || 0
-        // Collecter les 3 premiers acteurs
-        if (movieData.credits?.cast) {
-          movieData.credits.cast.slice(0, 80).forEach(actor => {
-            if (!castSet.has(actor.id)) {
-              castSet.add(actor.id)
-              cast.push(actor)
-            }
-          })
-        }
-        // Collecter les réalisateurs et scénaristes
-        if (movieData.credits?.crew) {
-          movieData.credits.crew.filter(member => member.job === "Director" || member.job === "Writer").slice(0, 3).forEach(member => {
-            if (!crewSet.has(member.id)) {
-              crewSet.add(member.id)
-              crew.push(member)
-            }
-          })
-        }
+    if (!collectionData || !collectionData.parts) return
+
+    const movieResults = await Promise.all(
+      collectionData.parts.map(movie =>
+        fetch(`${CONFIG.BASE_URL}/movie/${movie.id}?api_key=${CONFIG.API_KEY}&language=fr-FR&append_to_response=credits`)
+          .then(r => r.ok ? r.json() : null)
+          .catch(() => null)
+      )
+    )
+
+    for (const movieData of movieResults) {
+      if (!movieData) continue
+      totalRevenue += movieData.revenue || 0
+
+      if (movieData.credits?.cast) {
+        movieData.credits.cast.forEach(actor => {
+          if (!castSet.has(actor.id)) {
+            castSet.add(actor.id)
+            cast.push(actor)
+          }
+        })
+      }
+
+      if (movieData.credits?.crew) {
+        movieData.credits.crew.filter(member => member.job === "Director" || member.job === "Writer").slice(0, 3).forEach(member => {
+          if (!crewSet.has(member.id)) {
+            crewSet.add(member.id)
+            crew.push(member)
+          }
+        })
       }
     }
 
-    // Limiter à 10 acteurs et 10 membres d'équipe
-    collectionData.cast = cast.slice(0, 10)
+    collectionData.cast = cast.slice(0, 24)
     collectionData.crew = crew.slice(0, 10)
     collectionData.revenue = totalRevenue
   } catch (error) {
@@ -212,12 +226,7 @@ function getCollectionYears(movies) {
 
 // Formater le revenu total
 function getCollectionRevenue(revenue) {
-  return revenue ? new Intl.NumberFormat("fr-FR", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(revenue) : "Non divulgué"
+  return revenue && revenue > 0 ? revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " $" : "Non divulgué";
 }
 
 // Obtenir la classe CSS pour le badge de note
@@ -233,16 +242,18 @@ function getRatingBadgeClass(vote) {
 function afficherCast(cast) {
   const castContainer = document.getElementById("collection-cast")
   if (!cast || cast.length === 0) {
-    castContainer.innerHTML = '<p class="text-muted">Aucune information sur la distribution.</p>'
+    castContainer.innerHTML = '<p class="opacity-50 fs-6 py-4">Aucune information sur la distribution.</p>'
     return
   }
 
   castContainer.innerHTML = cast.map(actor => `
-    <div class="cast-card text-center" onclick="voirActeur(${actor.id})">
-      <img src="${actor.profile_path ? `${CONFIG.IMAGE_BASE_URL}/${CONFIG.PROFILE_SIZE}${actor.profile_path}` : 'https://via.placeholder.com/80x80?text=Acteur'}" 
-           alt="${actor.name}" class="rounded-circle">
-      <p class="mb-0">${actor.name}</p>
-      <small class="text-muted">${actor.character || "Rôle inconnu"}</small>
+    <div class="actor-card small-actor-card" onclick="voirActeur(${actor.id})">
+      <img src="${actor.profile_path ? `${CONFIG.IMAGE_BASE_URL}/w500${actor.profile_path}` : 'https://via.placeholder.com/300x450?text=Photo'}" 
+           alt="${actor.name}" loading="lazy">
+      <div class="actor-hover-overlay">
+        <div class="actor-name text-truncate">${actor.name}</div>
+        <div class="actor-role text-truncate">${actor.character || "N/A"}</div>
+      </div>
     </div>
   `).join("")
 }
@@ -395,6 +406,52 @@ function afficherErreur(message) {
   `
 }
 
+// Rendre la galerie de médias
+function afficherGallery(imgs) {
+  const renderGrid = (items, gridId, isPost = false) => {
+    const c = document.getElementById(gridId);
+    if (!c) return;
+    if (!items || !items.length) return (c.innerHTML = "<p class='p-4 opacity-50 text-center w-100'>Aucun média disponible.</p>");
+    c.innerHTML = items.slice(0, 18).map((im, i) => `
+      <div class="premium-card ${isPost ? '' : 'collection-card'}" style="width: 100% !important; min-width: 0 !important; max-width: none !important;">
+        <img src="${CONFIG.IMAGE_BASE_URL}/${isPost ? 'w500' : 'w780'}${im.file_path}" loading="lazy" style="border-radius: 12px; width: 100%; aspect-ratio: ${isPost ? '2/3' : '16/9'}; object-fit: cover;">
+        <div class="card-details mt-2 text-center">
+          <div class="d-flex gap-2 justify-content-center w-100">
+            <button class="btn btn-sm btn-dark rounded-circle" onclick="openModal('img', '${CONFIG.IMAGE_BASE_URL}/original${im.file_path}', 'Aperçu')"><i class="ph ph-magnifying-glass-plus"></i></button>
+            <button class="btn btn-sm btn-dark rounded-circle" onclick="downloadImg('${CONFIG.IMAGE_BASE_URL}/original${im.file_path}', 'img-${i}.jpg')"><i class="ph ph-download-simple"></i></button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+  };
+  renderGrid(imgs?.backdrops, "grid-backdrops");
+  renderGrid(imgs?.posters, "grid-posters", true);
+}
+
+function openModal(type, src, title) {
+  const cont = document.getElementById("mediaModalContent");
+  const titleEl = document.getElementById("mediaModalTitle");
+  if (titleEl) titleEl.textContent = title;
+  if (cont) {
+    cont.innerHTML = type === "video" ? `<div class="ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/${src}?autoplay=1" allowfullscreen></iframe></div>` : `<img src="${src}" class="img-fluid rounded-4 shadow-lg">`;
+  }
+  const modal = new bootstrap.Modal(document.getElementById('mediaModal'));
+  modal.show();
+}
+
+async function downloadImg(url, name) {
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = name;
+    link.click();
+  } catch (e) { window.open(url, '_blank'); }
+}
+
 // Rendre les fonctions accessibles globalement
-window.voirFilm = voirFilm
-window.voirActeur = voirActeur
+window.voirFilm = voirFilm;
+window.voirActeur = voirActeur;
+window.openModal = openModal;
+window.downloadImg = downloadImg;

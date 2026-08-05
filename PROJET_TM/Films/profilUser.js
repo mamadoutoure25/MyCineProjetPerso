@@ -33,16 +33,35 @@ const ETAT = {
 };
 
 async function initialiserProfil() {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
     if (!auth) {
         window.location.href = "../connexion/connexion.html";
         return;
     }
     ETAT.user = auth;
     
-    DOM.userPseudo.textContent = (auth.pseudo || auth.username || "Utilisateur").toUpperCase();
+    const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+    if (DOM.userPseudo) {
+        DOM.userPseudo.textContent = pseudo.toUpperCase();
+    }
     const avatar = document.getElementById("user-avatar");
-    if (avatar) avatar.textContent = (auth.pseudo || auth.username || "U").charAt(0).toUpperCase();
+    if (avatar) {
+        avatar.textContent = pseudo.charAt(0).toUpperCase();
+    }
+
+    const authSection = document.getElementById("auth-section");
+    if (authSection) {
+        authSection.innerHTML = `
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end d-none d-md-block">
+                    <a href="profilUser.html" class="text-decoration-none text-theme">
+                        <div class="fw-bold small">${pseudo}</div>
+                        <div class="x-small opacity-50">MON PROFIL</div>
+                    </a>
+                </div>
+                <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.href='../connexion/connexion.html';" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button>
+            </div>`;
+    }
 
     await chargerToutesLesListes();
 }
