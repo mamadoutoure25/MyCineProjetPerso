@@ -90,13 +90,15 @@
         }
 
         [data-theme="light"] .premium-company-card {
-            background: rgba(0, 0, 0, 0.03);
+            background: #ffffff;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .premium-company-card:hover {
             transform: scale(1.06) translateY(-10px);
             border-color: var(--accent);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(167, 139, 250, 0.2);
+            box-shadow: var(--shadow-lg);
         }
 
         .premium-company-card img {
@@ -164,7 +166,8 @@
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold active text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/distributors-browse.html">DISTRIBUTEURS</a></li>
             </ul>
         </div>
         <div class="d-flex align-items-center gap-3">
@@ -230,7 +233,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="companies-browse.js"></script>
+<script src="companies-browse.js?v=2"></script>
 <script>
     window.onscroll = () => {
         const nav = document.querySelector('.navbar');
