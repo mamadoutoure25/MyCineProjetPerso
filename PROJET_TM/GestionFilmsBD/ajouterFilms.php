@@ -2,19 +2,8 @@
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-// Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['errors' => ['Veuillez vous connecter pour accéder à cette fonctionnalité']]);
-    exit;
-}
-
-// Vérifier si l'utilisateur est admin
-if ($_SESSION['user_role'] !== 'admin') {
-    http_response_code(403);
-    echo json_encode(['errors' => ['Accès non autorisé : droits administratifs requis']]);
-    exit;
-}
+require_once __DIR__ . '/../connexion/auth_guard.php';
+$user = require_auth('admin');
 
 // Désactiver l'affichage des erreurs
 ini_set('display_errors', 0);
@@ -170,6 +159,6 @@ try {
     // Annuler la transaction en cas d'erreur
     $pdo->rollBack();
     error_log("Erreur dans ajouterFilms.php: " . $e->getMessage());
-    echo json_encode(['errors' => ['Erreur serveur: ' . $e->getMessage()]]);
+    echo json_encode(['errors' => ['Erreur serveur interne']]);
 }
 ?>

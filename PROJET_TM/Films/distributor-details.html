@@ -149,12 +149,21 @@
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
             <div id="distributor-partners" class="d-flex flex-wrap gap-2 align-items-center"></div>
 
-            <div class="d-flex gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="btn-group rounded-pill p-1 shadow-sm" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border);" id="media-type-toggle">
+                    <button id="btn-media-movie" class="btn btn-sm rounded-pill fw-bold active btn-primary px-3" onclick="setMediaType('movie')">
+                        <i class="ph ph-film-strip me-1"></i> FILMS
+                    </button>
+                    <button id="btn-media-tv" class="btn btn-sm rounded-pill fw-bold btn-outline-secondary text-theme px-3" onclick="setMediaType('tv')">
+                        <i class="ph ph-television me-1"></i> SÉRIES
+                    </button>
+                </div>
+
                 <div class="stat-badge-card">
                     <div class="stat-badge-val" id="stat-total-movies">0</div>
-                    <div class="stat-badge-lbl">Films Distribués</div>
+                    <div class="stat-badge-lbl" id="stat-label-count">Titres Distribués</div>
                 </div>
-                <div class="stat-badge-card">
+                <div class="stat-badge-card" id="stat-card-revenue">
                     <div class="stat-badge-val text-accent" id="stat-total-revenue">0 $</div>
                     <div class="stat-badge-lbl">Recettes Cumulées</div>
                 </div>
@@ -168,7 +177,7 @@
     <div class="card p-3 mb-4 border-0 shadow-sm" style="background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border) !important; border-radius: 20px;">
         <div class="row g-3 align-items-center">
             <div class="col-md-3">
-                <label class="x-small fw-extrabold text-accent uppercase mb-1 d-block"><i class="ph ph-mask-happy me-1"></i> GENRE DE FILM</label>
+                <label class="x-small fw-extrabold text-accent uppercase mb-1 d-block"><i class="ph ph-mask-happy me-1"></i> GENRE DE CONTENU</label>
                 <select id="filter-genre" class="form-select form-select-sm rounded-pill border-0 text-theme" style="background: rgba(255,255,255,0.08);" onchange="applyFilters()">
                     <option value="">Tous les genres</option>
                     <option value="28">Action</option>
@@ -203,7 +212,7 @@
                 <label class="x-small fw-extrabold text-accent uppercase mb-1 d-block"><i class="ph ph-sort-ascending me-1"></i> TRIER PAR</label>
                 <div class="d-flex align-items-center justify-content-md-end gap-2 flex-wrap">
                     <button class="btn btn-primary btn-sm rounded-pill fw-bold active sort-btn" data-sort="popularity.desc" onclick="setSort('popularity.desc')">Populaires</button>
-                    <button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold text-theme sort-btn" data-sort="revenue.desc" onclick="setSort('revenue.desc')">Box-Office</button>
+                    <button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold text-theme sort-btn" id="btn-sort-revenue" data-sort="revenue.desc" onclick="setSort('revenue.desc')">Box-Office</button>
                     <button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold text-theme sort-btn" data-sort="vote_average.desc" onclick="setSort('vote_average.desc')">Mieux Notés</button>
                     <button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold text-theme sort-btn" data-sort="primary_release_date.desc" onclick="setSort('primary_release_date.desc')">Plus Récents</button>
                 </div>

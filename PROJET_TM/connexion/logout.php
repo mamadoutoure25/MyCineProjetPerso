@@ -24,6 +24,10 @@ try {
         $stmt->execute([$_SESSION['user_id'], 'logout', 'Déconnexion réussie']);
     }
 
+    // Suppression des cookies JWT et CSRF
+    setcookie('jwt_token', '', ['expires' => time() - 3600, 'path' => '/']);
+    setcookie('csrf_token', '', ['expires' => time() - 3600, 'path' => '/']);
+
     // Détruire la session
     session_destroy();
 

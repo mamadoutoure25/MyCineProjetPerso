@@ -2,12 +2,8 @@
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-// Vérifier si l'utilisateur est admin
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    http_response_code(403);
-    echo json_encode(['error' => 'Accès non autorisé']);
-    exit;
-}
+require_once __DIR__ . '/../connexion/auth_guard.php';
+$user = require_auth('admin');
 
 // Configuration de la base de données
 $DB_HOST = 'mycinen620.mysql.db';
@@ -174,6 +170,6 @@ try {
 } catch (Exception $e) {
     error_log("Erreur dans modifierFilms.php: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Erreur serveur interne']);
 }
 ?>

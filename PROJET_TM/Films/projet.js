@@ -290,7 +290,7 @@ async function getImageGenre(genreId) {
 async function recupererSocietes() {
     // Liste des sociétés populaires
     const societesPopulaires = [
-        {id: 174, name: 'Warner Bros Pictures'},
+        {id: 174, name: 'Warner Bros. Discovery'},
         {id: 923, name: 'Legendary Pictures'},
         {id: 12, name: 'New Line Cinema'},
         {id: 184898, name: 'Dc Studios'},

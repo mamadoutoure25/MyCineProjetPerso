@@ -21,7 +21,7 @@ try {
 } catch (PDOException $e) {
     error_log("Erreur de connexion à la base de données: " . $e->getMessage());
     ob_end_clean();
-    echo json_encode(['errors' => ['Erreur de connexion à la base de données: ' . $e->getMessage()]]);
+    echo json_encode(['errors' => ['Erreur de connexion à la base de données']]);
     exit;
 }
 
@@ -62,6 +62,6 @@ try {
 } catch (Exception $e) {
     error_log("Erreur dans projetBD.php: " . $e->getMessage());
     ob_end_clean();
-    echo json_encode(['errors' => ['Erreur serveur: ' . $e->getMessage()]]);
+    echo json_encode(['errors' => ['Erreur serveur interne']]);
 }
 ?>

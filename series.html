@@ -118,13 +118,27 @@
                 <input type="text" id="series-search" placeholder="Rechercher une série...">
             </div>
             
-            <div class="d-flex gap-3 flex-wrap justify-content-center" id="series-genre-filters">
-                <a href="#" class="cat-tag active" data-genre="">TOUTES</a>
+            <div class="d-flex gap-3 flex-wrap justify-content-center mb-2" id="series-genre-filters">
+                <a href="#" class="cat-tag active" data-genre="">TOUS LES GENRES</a>
                 <a href="#" class="cat-tag" data-genre="10759">ACTION</a>
                 <a href="#" class="cat-tag" data-genre="18">DRAME</a>
                 <a href="#" class="cat-tag" data-genre="35">COMÉDIE</a>
                 <a href="#" class="cat-tag" data-genre="80">CRIME</a>
                 <a href="#" class="cat-tag" data-genre="10765">S-FICTION</a>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap justify-content-center align-items-center mt-2" id="series-platform-filters">
+                <span class="x-small fw-extrabold text-accent uppercase me-1"><i class="ph ph-broadcast me-1"></i> STREAMING & TV :</span>
+                <a href="#" class="cat-tag active" data-network="">TOUTES</a>
+                <a href="#" class="cat-tag" data-network="49|3186">🔴 HBO MAX</a>
+                <a href="#" class="cat-tag" data-network="213">🍿 NETFLIX</a>
+                <a href="#" class="cat-tag" data-network="1024">📦 PRIME VIDEO</a>
+                <a href="#" class="cat-tag" data-network="2552">🍏 APPLE TV+</a>
+                <a href="#" class="cat-tag" data-network="2739">✨ DISNEY+</a>
+                <a href="#" class="cat-tag" data-network="174">📺 AMC</a>
+                <a href="#" class="cat-tag" data-network="285">🛰️ CANAL+</a>
+                <a href="#" class="cat-tag" data-network="88">⚡ FX</a>
+                <a href="#" class="cat-tag" data-network="67|4330">🏔️ PARAMOUNT+</a>
             </div>
         </div>
 
@@ -300,6 +314,8 @@
             }, 500);
         });
 
+        const platformTags = document.querySelectorAll('#series-platform-filters .cat-tag');
+
         genreTags.forEach(tag => {
             tag.addEventListener('click', async (e) => {
                 e.preventDefault();
@@ -307,18 +323,48 @@
                 tag.classList.add('active');
 
                 const genreId = tag.dataset.genre;
+                const activePlatform = document.querySelector('#series-platform-filters .cat-tag.active')?.dataset?.network || '';
                 
-                laneStates['popular-series'].endpoint = genreId ? '/discover/tv' : '/tv/popular';
-                laneStates['popular-series'].params = genreId ? `&with_genres=${genreId}` : '';
+                let endpoint = (genreId || activePlatform) ? '/discover/tv' : '/tv/popular';
+                let params = '';
+                if (genreId) params += `&with_genres=${genreId}`;
+                if (activePlatform) params += `&with_networks=${activePlatform}`;
+
+                laneStates['popular-series'].endpoint = endpoint;
+                laneStates['popular-series'].params = params;
                 laneStates['popular-series'].page = 1;
 
-                const url = genreId 
-                    ? `${BASE_URL}/discover/tv?api_key=${API_KEY}&language=fr-FR&with_genres=${genreId}`
-                    : `${BASE_URL}/tv/popular?api_key=${API_KEY}&language=fr-FR`;
+                const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}&language=fr-FR${params}`;
 
                 const res = await fetch(url).then(r => r.json());
                 renderLane(res.results, 'popular-series');
-                document.querySelector('.lane-title').textContent = genreId ? `SÉRIES : ${tag.textContent}` : "SÉRIES LES PLUS POPULAIRES";
+                document.querySelector('.lane-title').textContent = (genreId || activePlatform) ? `SÉRIES : ${tag.textContent}` : "SÉRIES LES PLUS POPULAIRES";
+            });
+        });
+
+        platformTags.forEach(tag => {
+            tag.addEventListener('click', async (e) => {
+                e.preventDefault();
+                platformTags.forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+
+                const netId = tag.dataset.network;
+                const activeGenre = document.querySelector('#series-genre-filters .cat-tag.active')?.dataset?.genre || '';
+
+                let endpoint = (netId || activeGenre) ? '/discover/tv' : '/tv/popular';
+                let params = '';
+                if (netId) params += `&with_networks=${netId}`;
+                if (activeGenre) params += `&with_genres=${activeGenre}`;
+
+                laneStates['popular-series'].endpoint = endpoint;
+                laneStates['popular-series'].params = params;
+                laneStates['popular-series'].page = 1;
+
+                const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}&language=fr-FR${params}`;
+
+                const res = await fetch(url).then(r => r.json());
+                renderLane(res.results, 'popular-series');
+                document.querySelector('.lane-title').textContent = netId ? `SÉRIES : ${tag.textContent}` : "SÉRIES LES PLUS POPULAIRES";
             });
         });
     }

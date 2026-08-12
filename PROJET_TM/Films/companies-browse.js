@@ -30,7 +30,7 @@ const COMPANIES_LIST = [
     { id: 79, name: 'Village Roadshow Pictures' },
     { id: 102, name: 'Pathé' },
     { id: 104, name: 'Canal+' },
-    { id: 174, name: 'Warner Bros Pictures' },
+    { id: 174, name: 'Warner Bros. Discovery' },
     { id: 183, name: 'StudioCanal' },
     { id: 192, name: 'Shochiku' },
     { id: 420, name: 'Marvel Studios' },

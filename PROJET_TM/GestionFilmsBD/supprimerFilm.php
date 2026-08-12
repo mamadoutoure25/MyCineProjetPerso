@@ -1,7 +1,8 @@
 <?php
 ob_start();
 header('Content-Type: application/json; charset=utf-8');
-session_start();
+require_once __DIR__ . '/../connexion/auth_guard.php';
+$user = require_auth('admin');
 
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
@@ -61,6 +62,6 @@ try {
 } catch (PDOException $e) {
     error_log("Erreur lors de la suppression du film: " . $e->getMessage());
     ob_end_clean();
-    echo json_encode(['success' => false, 'message' => 'Erreur lors de la suppression du film: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Erreur lors de la suppression du film']);
 }
 ?>

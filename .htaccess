@@ -1,0 +1,48 @@
+# =====================================================================
+# SÉCURISATION DES CHEMINS ET URLS - MYCINE / PROJET TM
+# =====================================================================
+
+# 1. Désactiver le listage des répertoires (Indexation)
+Options -Indexes -MultiViews
+
+# 2. Protection des fichiers sensibles et de configuration
+<FilesMatch "^(config\.php|JWT\.php|JwtHandler\.php|auth_guard\.php|composer\.json|composer\.lock|\.env|\.gitignore|\.htaccess|.*\.log|.*\.sql)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Interdire l'accès au dossier /vendor et /.git
+RedirectMatch 404 (?i)/vendor(/.*)?$
+RedirectMatch 404 (?i)/\.git(/.*)?$
+
+# 3. En-têtes de Sécurité HTTP
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Content-Security-Policy "default-src 'self' http://localhost http://127.0.0.1; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://image.tmdb.org; connect-src 'self' http://localhost http://127.0.0.1 https://api.themoviedb.org"
+</IfModule>
+
+# 4. Réécriture d'URL Propres (Clean URLs) avec mod_rewrite
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /PROJET_TM_GRoupe_Local_2026/www/
+
+    # Rediriger HTTP vers HTTPS si HTTPS est actif sur le serveur (optionnel)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Alias URL courtois pour l'authentification et les pages protégées
+    RewriteRule ^connexion/?$ PROJET_TM/connexion/connexion.html [L]
+    RewriteRule ^inscription/?$ PROJET_TM/connexion/inscription.html [L]
+    RewriteRule ^profil/?$ PROJET_TM/Films/profilUser.html [L]
+    RewriteRule ^admin/ajouter/?$ PROJET_TM/GestionFilmsBD/ajouterFilms.html [L]
+    RewriteRule ^admin/modifier/?$ PROJET_TM/GestionFilmsBD/modifierFilms.html [L]
+    RewriteRule ^admin/supprimer/?$ PROJET_TM/GestionFilmsBD/supprimerFilms.html [L]
+</IfModule>

@@ -68,6 +68,6 @@ try {
     echo json_encode($data);
 } catch (Exception $e) {
     error_log("Erreur dans fetchTMDB.php: " . $e->getMessage());
-    echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Erreur serveur interne']);
 }
 ?>

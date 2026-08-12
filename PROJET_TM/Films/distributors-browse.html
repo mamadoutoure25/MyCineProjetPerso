@@ -160,48 +160,48 @@
 <!-- Hero Section -->
 <header class="distributors-hero">
     <div class="container-fluid">
-        <h1 class="hero-title mb-3" style="font-size: 3.5rem;">SOCIÉTÉS DE DISTRIBUTION</h1>
-        <p class="opacity-50 fs-5 mb-4">Comprendre comment les films passent des studios de production aux salles de cinéma du monde entier.</p>
+        <h1 class="hero-title mb-3" style="font-size: 3.5rem;">DISTRIBUTEURS & PLATEFORMES</h1>
+        <p class="opacity-50 fs-5 mb-4">Explorez les plus grands distributeurs de cinéma et les plateformes majeures de séries et streaming (HBO Max, Netflix, Prime Video, Apple TV+, Disney+, etc.).</p>
 
-        <!-- Explainer Card -->
+        <!-- Explainer Box -->
         <div class="explainer-box shadow-lg">
             <div class="d-flex align-items-center gap-3 mb-3">
                 <div style="background: var(--accent); color: #000; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center;" class="fs-4 fw-black">
                     <i class="ph-fill ph-film-strip"></i>
                 </div>
                 <div>
-                    <h4 class="fw-extrabold mb-0 text-theme">Production vs Distribution : Quelle est la différence ?</h4>
-                    <p class="small opacity-50 mb-0">Le studio produit le film (financement & création), le distributeur gère la sortie en salles, le marketing et la diffusion internationale.</p>
+                    <h4 class="fw-extrabold mb-0 text-theme">Cinéma & Streaming : Quelle est la différence ?</h4>
+                    <p class="small opacity-50 mb-0">Le studio produit les contenus. Les distributeurs de cinéma gèrent les sorties en salles, tandis que les plateformes de streaming & chaînes TV diffusent les séries et films à la télévision ou à la demande.</p>
                 </div>
             </div>
 
             <div class="row g-3 mt-2">
                 <div class="col-md-6 col-lg-3">
                     <div class="example-badge h-100">
-                        <div class="x-small fw-extrabold text-accent uppercase mb-1">PRODUIT PAR LEGENDARY</div>
-                        <div class="fw-bold text-theme">Dune: Deuxième Partie</div>
-                        <div class="small opacity-75 mt-1">🎬 Distribué par <strong>Warner Bros.</strong></div>
+                        <div class="x-small fw-extrabold text-accent uppercase mb-1">CINÉMA & HBO MAX</div>
+                        <div class="fw-bold text-theme">Dune & House of the Dragon</div>
+                        <div class="small opacity-75 mt-1">🎬 Distribué par <strong>Warner Bros. Discovery</strong></div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="example-badge h-100">
-                        <div class="x-small fw-extrabold text-accent uppercase mb-1">PRODUIT PAR APPLE ORIGINAL</div>
-                        <div class="fw-bold text-theme">F1 (Film 2025)</div>
-                        <div class="small opacity-75 mt-1">🏎️ Distribué en salles par <strong>Warner Bros.</strong></div>
+                        <div class="x-small fw-extrabold text-accent uppercase mb-1">STREAMING ÉVÉNEMENT</div>
+                        <div class="fw-bold text-theme">Stranger Things & Squid Game</div>
+                        <div class="small opacity-75 mt-1">🍿 Diffusé par <strong>Netflix</strong></div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="example-badge h-100">
-                        <div class="x-small fw-extrabold text-accent uppercase mb-1">PRODUIT PAR SYNCOPY</div>
-                        <div class="fw-bold text-theme">Oppenheimer</div>
-                        <div class="small opacity-75 mt-1">⚛️ Distribué par <strong>Universal Pictures</strong></div>
+                        <div class="x-small fw-extrabold text-accent uppercase mb-1">SÉRIES PRESTIGE</div>
+                        <div class="fw-bold text-theme">The Boys & Fallout</div>
+                        <div class="small opacity-75 mt-1">📦 Diffusé par <strong>Prime Video</strong></div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="example-badge h-100">
-                        <div class="x-small fw-extrabold text-accent uppercase mb-1">PRODUIT PAR MARVEL STUDIOS</div>
-                        <div class="fw-bold text-theme">Spider-Man: No Way Home</div>
-                        <div class="small opacity-75 mt-1">🕷️ Distribué par <strong>Sony Pictures</strong></div>
+                        <div class="x-small fw-extrabold text-accent uppercase mb-1">ORIGINALS ACCLAMÉS</div>
+                        <div class="fw-bold text-theme">Ted Lasso & Severance</div>
+                        <div class="small opacity-75 mt-1">🍏 Diffusé par <strong>Apple TV+</strong></div>
                     </div>
                 </div>
             </div>
@@ -210,7 +210,20 @@
 </header>
 
 <main class="section-wrapper">
-    <div class="lane-title mb-4">LES PLUS GRANDS DISTRIBUTEURS DE CINÉMA</div>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div class="lane-title mb-0">CATALOGUE DES DISTRIBUTEURS & PLATEFORMES</div>
+        <div class="d-flex gap-2 flex-wrap" id="distributor-filter-tabs">
+            <button class="btn btn-primary btn-sm rounded-pill fw-bold filter-dist-btn active" data-type="all" onclick="filtrerDistributeurs('all')">
+                <i class="ph ph-squares-four me-1"></i> TOUS
+            </button>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold text-theme filter-dist-btn" data-type="movie" onclick="filtrerDistributeurs('movie')">
+                <i class="ph ph-film-strip me-1"></i> CINÉMA
+            </button>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill fw-bold text-theme filter-dist-btn" data-type="tv" onclick="filtrerDistributeurs('tv')">
+                <i class="ph ph-television me-1"></i> SÉRIES & STREAMING
+            </button>
+        </div>
+    </div>
 
     <!-- Grille des distributeurs -->
     <div class="distributor-grid" id="distributors-container">

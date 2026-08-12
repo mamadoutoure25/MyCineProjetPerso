@@ -1,8 +1,11 @@
 <?php
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+$_allowedOrigins = ['http://localhost', 'http://127.0.0.1'];
+$_origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+header('Access-Control-Allow-Origin: ' . (in_array($_origin, $_allowedOrigins) ? $_origin : $_allowedOrigins[0]));
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -26,7 +29,7 @@ if (!file_exists($configFile)) {
     exit;
 }
 
-require $configFile;
+$config = require $configFile;
 
 // Vérifier que $config est défini et structuré correctement
 if (!isset($config['db']) || !is_array($config['db'])) {
@@ -56,9 +59,9 @@ try {
     );
     error_log('check_session.php: Connexion à la base de données réussie');
 } catch (PDOException $e) {
-    error_log('check_session.php: Erreur de connexion à la base de données: ' . $e->getMessage());
+    error_log('check_session.php: Erreur BDD: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur de connexion à la base de données: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Erreur de connexion à la base de données']);
     exit;
 }
 
@@ -74,72 +77,62 @@ if (empty($token)) {
     exit;
 }
 
-// Vérifier la session ou le token
-if (isset($_SESSION['user_id'])) {
-    error_log('check_session.php: Session utilisateur trouvée, user_id: ' . $_SESSION['user_id']);
-    try {
-        $stmt = $pdo->prepare("SELECT id, pseudo, role, token FROM Utilisateurs WHERE id = ? AND token = ?");
-        $stmt->execute([$_SESSION['user_id'], $token]);
-        $user = $stmt->fetch();
+require_once __DIR__ . '/JwtHandler.php';
+$jwtHandler = new JwtHandler($config['jwt'] ?? []);
+$decoded = $jwtHandler->decodeToken($token);
 
-        if ($user) {
-            error_log('check_session.php: Utilisateur trouvé, token valide pour user_id: ' . $user['id']);
-            $_SESSION['last_activity'] = time();
-            echo json_encode([
-                'success' => true,
-                'isLoggedIn' => true,
-                'user' => [
-                    'id' => $user['id'],
-                    'pseudo' => $user['pseudo'],
-                    'role' => $user['role']
-                ],
-                'token' => $user['token']
-            ]);
-        } else {
-            error_log('check_session.php: Token invalide ou utilisateur non trouvé pour user_id: ' . $_SESSION['user_id']);
-            http_response_code(401);
-            echo json_encode(['success' => false, 'isLoggedIn' => false, 'message' => 'Token invalide']);
-        }
-    } catch (PDOException $e) {
-        error_log('check_session.php: Erreur de base de données: ' . $e->getMessage());
-        http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Erreur de base de données']);
-    }
-} else {
-    error_log('check_session.php: Aucune session active, tentative de récupération par token');
-    try {
-        $stmt = $pdo->prepare("SELECT id, pseudo, role, token FROM Utilisateurs WHERE token = ?");
-        $stmt->execute([$token]);
-        $user = $stmt->fetch();
+if ($decoded && isset($decoded->data->id)) {
+    $userData = $decoded->data;
+    error_log('check_session.php: Token JWT valide pour user_id: ' . $userData->id);
+    
+    $_SESSION['user_id'] = $userData->id;
+    $_SESSION['user_pseudo'] = $userData->pseudo;
+    $_SESSION['user_role'] = $userData->role;
+    $_SESSION['last_activity'] = time();
 
-        if ($user) {
-            error_log('check_session.php: Utilisateur trouvé via token, user_id: ' . $user['id']);
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_pseudo'] = $user['pseudo'];
-            $_SESSION['user_role'] = $user['role'];
-            $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
-            $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-            $_SESSION['last_activity'] = time();
-
-            echo json_encode([
-                'success' => true,
-                'isLoggedIn' => true,
-                'user' => [
-                    'id' => $user['id'],
-                    'pseudo' => $user['pseudo'],
-                    'role' => $user['role']
-                ],
-                'token' => $user['token']
-            ]);
-        } else {
-            error_log('check_session.php: Aucun utilisateur trouvé pour le token');
-            http_response_code(401);
-            echo json_encode(['success' => false, 'isLoggedIn' => false, 'message' => 'Session ou token invalide']);
-        }
-    } catch (PDOException $e) {
-        error_log('check_session.php: Erreur de base de données: ' . $e->getMessage());
-        http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Erreur de base de données']);
-    }
+    echo json_encode([
+        'success' => true,
+        'isLoggedIn' => true,
+        'user' => [
+            'id' => $userData->id,
+            'pseudo' => $userData->pseudo,
+            'role' => $userData->role
+        ],
+        'token' => $token
+    ]);
+    exit;
 }
+
+// Fallback pour anciens tokens opaques stockés en BDD
+try {
+    $stmt = $pdo->prepare("SELECT id, pseudo, role, token FROM Utilisateurs WHERE token = ?");
+    $stmt->execute([$token]);
+    $user = $stmt->fetch();
+
+    if ($user) {
+        error_log('check_session.php: Utilisateur trouvé via token BDD (fallback)');
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_pseudo'] = $user['pseudo'];
+        $_SESSION['user_role'] = $user['role'];
+        $_SESSION['last_activity'] = time();
+
+        echo json_encode([
+            'success' => true,
+            'isLoggedIn' => true,
+            'user' => [
+                'id' => $user['id'],
+                'pseudo' => $user['pseudo'],
+                'role' => $user['role']
+            ],
+            'token' => $user['token']
+        ]);
+        exit;
+    }
+} catch (PDOException $e) {
+    error_log('check_session.php: Erreur de base de données: ' . $e->getMessage());
+}
+
+error_log('check_session.php: Token invalide ou expiré');
+http_response_code(401);
+echo json_encode(['success' => false, 'isLoggedIn' => false, 'message' => 'Token JWT invalide ou expiré']);
 ?>

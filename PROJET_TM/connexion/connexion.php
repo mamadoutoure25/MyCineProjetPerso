@@ -1,8 +1,9 @@
 <?php
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: ' . (in_array($_SERVER['HTTP_ORIGIN'] ?? '', ['http://localhost', 'http://127.0.0.1']) ? ($_SERVER['HTTP_ORIGIN'] ?? 'http://localhost') : 'http://localhost'));
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-CSRF-TOKEN');
+header('Access-Control-Allow-Credentials: true');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -10,46 +11,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Configurer la durée de vie de la session
-ini_set('session.gc_maxlifetime', 3600); // 1 heure
+ini_set('session.gc_maxlifetime', 3600);
 session_set_cookie_params(3600);
 session_start();
-
-// Journalisation pour débogage
-error_log('connexion.php: Début du processus de connexion');
 
 // Charger la configuration
 $configFile = __DIR__ . '/config.php';
 if (!file_exists($configFile)) {
-    error_log('connexion.php: Fichier de configuration manquant: ' . $configFile);
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Fichier de configuration manquant']);
+    echo json_encode(['success' => false, 'message' => 'Erreur de configuration serveur']);
     exit;
 }
 
 try {
     $config = require $configFile;
 } catch (Exception $e) {
-    error_log('connexion.php: Erreur lors du chargement de config.php: ' . $e->getMessage());
+    error_log('connexion.php: Erreur config: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur dans le fichier de configuration']);
+    echo json_encode(['success' => false, 'message' => 'Erreur de configuration serveur']);
     exit;
 }
 
-// Vérifier que $config est un tableau et contient 'db'
 if (!is_array($config) || !isset($config['db']) || !is_array($config['db'])) {
-    error_log('connexion.php: Configuration de la base de données invalide');
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Configuration de la base de données invalide']);
+    echo json_encode(['success' => false, 'message' => 'Erreur de configuration serveur']);
     exit;
 }
 
-// Vérifier les clés nécessaires
+// Validation des clés nécessaires
 $requiredKeys = ['host', 'dbname', 'username', 'password', 'charset', 'options'];
 foreach ($requiredKeys as $key) {
     if (!isset($config['db'][$key])) {
-        error_log('connexion.php: Clé de configuration manquante: db.' . $key);
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Clé de configuration manquante: ' . $key]);
+        echo json_encode(['success' => false, 'message' => 'Erreur de configuration serveur']);
         exit;
     }
 }
@@ -61,31 +55,47 @@ try {
         $config['db']['password'],
         $config['db']['options']
     );
-    error_log('connexion.php: Connexion à la base de données réussie');
 } catch (PDOException $e) {
-    error_log('connexion.php: Erreur de connexion à la base de données: ' . $e->getMessage());
+    error_log('connexion.php: Erreur BDD: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur de connexion à la base de données: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Erreur de connexion à la base de données']);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    error_log('connexion.php: Méthode non autorisée: ' . $_SERVER['REQUEST_METHOD']);
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
     exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-$pseudo = trim($data['pseudo'] ?? '');
+$data        = json_decode(file_get_contents('php://input'), true);
+$pseudo      = trim($data['pseudo'] ?? '');
 $mot_de_passe = $data['mot_de_passe'] ?? '';
 
-error_log('connexion.php: Données reçues: pseudo=' . $pseudo);
-
 if (empty($pseudo) || empty($mot_de_passe)) {
-    error_log('connexion.php: Champs manquants');
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Tous les champs sont obligatoires']);
+    exit;
+}
+
+// Protection brute-force : rate limiting par IP (5 tentatives / 15 min)
+$ip          = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+$rateLimitKey = 'login_attempts_' . md5($ip);
+$attempts     = (int) ($_SESSION[$rateLimitKey . '_count'] ?? 0);
+$lastAttempt  = (int) ($_SESSION[$rateLimitKey . '_time'] ?? 0);
+
+// Réinitialiser le compteur après 15 minutes
+if (time() - $lastAttempt > 900) {
+    $attempts = 0;
+}
+
+if ($attempts >= 5) {
+    $waitSeconds = 900 - (time() - $lastAttempt);
+    http_response_code(429);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Trop de tentatives. Réessayez dans ' . ceil($waitSeconds / 60) . ' minute(s).'
+    ]);
     exit;
 }
 
@@ -95,48 +105,94 @@ try {
     $user = $stmt->fetch();
 
     if ($user && password_verify($mot_de_passe, $user['mot_de_passe'])) {
-        $token = bin2hex(random_bytes(16));
-        error_log('connexion.php: Nouveau token généré: ' . $token);
+        // Réinitialiser le compteur d'échecs
+        unset($_SESSION[$rateLimitKey . '_count'], $_SESSION[$rateLimitKey . '_time']);
 
+        require_once __DIR__ . '/JWT.php';
+        $jwt    = new JWT();
+        $secret = $config['jwt']['secret'] ?? '';
+
+        if (empty($secret)) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erreur de configuration serveur']);
+            exit;
+        }
+
+        $header  = ['typ' => 'JWT', 'alg' => 'HS256'];
+        $payload = [
+            'user_id' => $user['id'],
+            'data'    => [
+                'id'     => $user['id'],
+                'pseudo' => $user['pseudo'],
+                'role'   => $user['role']
+            ]
+        ];
+
+        $token     = $jwt->generate($header, $payload, $secret, 3600);
+        $csrfToken = bin2hex(random_bytes(32));
+
+        // Mise à jour du token en BDD (pour la révocation côté serveur)
         $stmt = $pdo->prepare("UPDATE Utilisateurs SET token = ? WHERE id = ?");
         $stmt->execute([$token, $user['id']]);
+
+        // Cookies sécurisés
+        $isHttps    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['SERVER_PORT'] ?? 80) == 443;
+        $expireTime = time() + 3600;
+
+        setcookie('jwt_token', $token, [
+            'expires'  => $expireTime,
+            'path'     => '/',
+            'secure'   => $isHttps,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ]);
+        setcookie('csrf_token', $csrfToken, [
+            'expires'  => $expireTime,
+            'path'     => '/',
+            'secure'   => $isHttps,
+            'httponly' => false,
+            'samesite' => 'Strict'
+        ]);
 
         session_destroy();
         session_start();
         session_regenerate_id(true);
 
         $_SESSION = [
-            'user_id' => $user['id'],
+            'user_id'     => $user['id'],
             'user_pseudo' => $user['pseudo'],
-            'user_role' => $user['role'],
-            'ip' => $_SERVER['REMOTE_ADDR'],
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+            'user_role'   => $user['role'],
+            'csrf_token'  => $csrfToken,
+            'ip'          => $ip,
+            'user_agent'  => $_SERVER['HTTP_USER_AGENT'],
             'last_activity' => time()
         ];
-        error_log('connexion.php: Session initialisée pour user_id: ' . $user['id']);
 
         $stmt = $pdo->prepare("INSERT INTO Historique_Activite (utilisateur_id, type_activite, details) VALUES (?, ?, ?)");
         $stmt->execute([$user['id'], 'login', 'Connexion réussie']);
-        error_log('connexion.php: Activité de connexion enregistrée');
 
         echo json_encode([
-            'success' => true,
-            'user' => [
-                'id' => $user['id'],
+            'success'    => true,
+            'user'       => [
+                'id'     => $user['id'],
                 'pseudo' => $user['pseudo'],
-                'role' => $user['role']
+                'role'   => $user['role']
             ],
-            'token' => $token
+            'token'      => $token,
+            'csrfToken'  => $csrfToken
         ]);
-        error_log('connexion.php: Réponse envoyée avec succès');
+
     } else {
-        error_log('connexion.php: Échec de l\'authentification pour pseudo: ' . $pseudo);
+        // Incrémenter le compteur d'échecs
+        $_SESSION[$rateLimitKey . '_count'] = $attempts + 1;
+        $_SESSION[$rateLimitKey . '_time']  = time();
+
         http_response_code(401);
-        echo json_encode(['success' => false, 'message' => 'Pseudo, mot de passe ou rôle incorrect']);
+        // Message générique pour ne pas révéler si le pseudo existe ou non
+        echo json_encode(['success' => false, 'message' => 'Identifiants incorrects']);
     }
 } catch (PDOException $e) {
-    error_log('connexion.php: Erreur de base de données: ' . $e->getMessage());
+    error_log('connexion.php: Erreur BDD: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur de base de données']);
+    echo json_encode(['success' => false, 'message' => 'Erreur de connexion à la base de données']);
 }
-?>

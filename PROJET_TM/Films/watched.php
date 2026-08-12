@@ -1,84 +1,109 @@
 <?php
+/**
+ * Films vus utilisateur — API sécurisée
+ * Fix: IDOR supprimé (user_id extrait du JWT), CORS restreint, getMessage() supprimé
+ */
+require_once __DIR__ . '/../connexion/auth_guard.php';
+
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, DELETE');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Origin: ' . cors_allowed_origin());
+header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
 
-$host = 'localhost';
-$dbname = 'mycinen620';
-$username = 'root';
-$password = '';
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 
+// Authentification JWT — user_id extrait du token
+$authUser = require_auth();
+$userId   = (int) ($authUser['id'] ?? 0);
+
+if (!$userId) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Utilisateur non identifié']);
+    exit;
+}
+
+$config = require __DIR__ . '/../connexion/config.php';
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO(
+        "mysql:host={$config['db']['host']};dbname={$config['db']['dbname']};charset={$config['db']['charset']}",
+        $config['db']['username'],
+        $config['db']['password'],
+        $config['db']['options']
+    );
 } catch (PDOException $e) {
+    error_log('watched.php: Erreur BDD: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur de connexion: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Erreur serveur']);
     exit;
 }
 
 $method = $_SERVER['REQUEST_METHOD'];
-$input = json_decode(file_get_contents('php://input'), true) ?: [];
+$input  = json_decode(file_get_contents('php://input'), true) ?: [];
 
-switch ($method) {
-    case 'GET':
-        $userId = filter_var($_GET['user_id'] ?? 0, FILTER_VALIDATE_INT);
-        $mediaType = $_GET['media_type'] ?? 'movie';
-        
-        if (!$userId) {
-            echo json_encode(['success' => false, 'message' => 'user_id requis']);
-            exit;
-        }
+try {
+    switch ($method) {
+        case 'GET':
+            $mediaType = preg_replace('/[^a-z]/', '', $_GET['media_type'] ?? 'movie');
 
-        if (isset($_GET['film_id'])) {
-            $filmId = filter_var($_GET['film_id'], FILTER_VALIDATE_INT);
-            $stmt = $pdo->prepare('SELECT COUNT(*) FROM watched WHERE user_id = ? AND tmdb_id = ? AND media_type = ?');
+            if (isset($_GET['film_id'])) {
+                $filmId = filter_var($_GET['film_id'], FILTER_VALIDATE_INT);
+                if (!$filmId) {
+                    echo json_encode(['success' => false, 'message' => 'film_id invalide']);
+                    exit;
+                }
+                $stmt = $pdo->prepare('SELECT COUNT(*) FROM watched WHERE user_id = ? AND tmdb_id = ? AND media_type = ?');
+                $stmt->execute([$userId, $filmId, $mediaType]);
+                echo json_encode(['success' => true, 'is_watched' => $stmt->fetchColumn() > 0]);
+            } else {
+                $stmt = $pdo->prepare('SELECT tmdb_id, media_type FROM watched WHERE user_id = ? ORDER BY id DESC');
+                $stmt->execute([$userId]);
+                echo json_encode(['success' => true, 'watched' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+            }
+            break;
+
+        case 'POST':
+            $filmId    = filter_var($input['film_id'] ?? 0, FILTER_VALIDATE_INT);
+            $mediaType = preg_replace('/[^a-z]/', '', $input['media_type'] ?? 'movie');
+
+            if (!$filmId) {
+                echo json_encode(['success' => false, 'message' => 'film_id requis']);
+                exit;
+            }
+            $stmt = $pdo->prepare('INSERT IGNORE INTO watched (user_id, tmdb_id, media_type) VALUES (?, ?, ?)');
             $stmt->execute([$userId, $filmId, $mediaType]);
-            echo json_encode(['success' => true, 'is_watched' => $stmt->fetchColumn() > 0]);
-        } else {
-            $stmt = $pdo->prepare('SELECT tmdb_id, media_type FROM watched WHERE user_id = ? ORDER BY id DESC');
-            $stmt->execute([$userId]);
-            echo json_encode(['success' => true, 'watched' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
-        }
-        break;
+            echo json_encode(['success' => true, 'message' => 'Marqué comme vu']);
+            break;
 
-    case 'POST':
-        $userId = filter_var($input['user_id'] ?? 0, FILTER_VALIDATE_INT);
-        $filmId = filter_var($input['film_id'] ?? 0, FILTER_VALIDATE_INT);
-        $mediaType = $input['media_type'] ?? 'movie';
+        case 'DELETE':
+            $filmId    = filter_var($input['film_id'] ?? $_GET['film_id'] ?? 0, FILTER_VALIDATE_INT);
+            $mediaType = preg_replace('/[^a-z]/', '', $input['media_type'] ?? $_GET['media_type'] ?? 'movie');
+            $action    = preg_replace('/[^a-z]/', '', $_GET['action'] ?? '');
 
-        if (!$userId || !$filmId) {
-            echo json_encode(['success' => false, 'message' => 'user_id et film_id requis']);
-            exit;
-        }
+            if ($action === 'clear') {
+                $stmt = $pdo->prepare('DELETE FROM watched WHERE user_id = ?');
+                $stmt->execute([$userId]);
+                echo json_encode(['success' => true, 'message' => 'Liste des vus vidée']);
+                exit;
+            }
+            if (!$filmId) {
+                echo json_encode(['success' => false, 'message' => 'film_id requis']);
+                exit;
+            }
+            $stmt = $pdo->prepare('DELETE FROM watched WHERE user_id = ? AND tmdb_id = ? AND media_type = ?');
+            $stmt->execute([$userId, $filmId, $mediaType]);
+            echo json_encode(['success' => true, 'message' => 'Retiré des vus']);
+            break;
 
-        $stmt = $pdo->prepare('INSERT IGNORE INTO watched (user_id, tmdb_id, media_type) VALUES (?, ?, ?)');
-        $stmt->execute([$userId, $filmId, $mediaType]);
-        echo json_encode(['success' => true, 'message' => 'Marqué comme vu']);
-        break;
-
-    case 'DELETE':
-        $userId = filter_var($input['user_id'] ?? $_GET['user_id'] ?? 0, FILTER_VALIDATE_INT);
-        $filmId = filter_var($input['film_id'] ?? $_GET['film_id'] ?? 0, FILTER_VALIDATE_INT);
-        $mediaType = $input['media_type'] ?? $_GET['media_type'] ?? 'movie';
-        $action = $_GET['action'] ?? '';
-
-        if ($action === 'clear') {
-            $stmt = $pdo->prepare('DELETE FROM watched WHERE user_id = ?');
-            $stmt->execute([$userId]);
-            echo json_encode(['success' => true, 'message' => 'Liste des vus vidée']);
-            exit;
-        }
-
-        if (!$userId || !$filmId) {
-            echo json_encode(['success' => false, 'message' => 'user_id et film_id requis']);
-            exit;
-        }
-
-        $stmt = $pdo->prepare('DELETE FROM watched WHERE user_id = ? AND tmdb_id = ? AND media_type = ?');
-        $stmt->execute([$userId, $filmId, $mediaType]);
-        echo json_encode(['success' => true, 'message' => 'Retiré des vus']);
-        break;
+        default:
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
+    }
+} catch (PDOException $e) {
+    error_log('watched.php: Erreur BDD: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Erreur serveur']);
 }
-?>

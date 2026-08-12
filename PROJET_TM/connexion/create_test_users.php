@@ -1,4 +1,13 @@
 <?php
+// Sécurité : script réservé à l'accès local uniquement (CLI ou 127.0.0.1)
+if (php_sapi_name() !== 'cli') {
+    $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
+    if (!in_array($remoteIp, ['127.0.0.1', '::1'], true)) {
+        http_response_code(403);
+        die('Accès interdit. Ce script est réservé à l\'administrateur local.');
+    }
+}
+
 /**
  * Script de création d'utilisateurs de test
  * À exécuter une seule fois pour initialiser la base de données

@@ -225,7 +225,7 @@ async function recupererGenres() {
 
 async function recupererSocietes() {
     const societesPopulaires = [
-        { id: 174, name: "Warner Bros." },
+        { id: 174, name: "Warner Bros. Discovery" },
         { id: 12, name: "New Line Cinema" },
         { id: 429, name: "DC Films" },
         { id: 9993, name: "DC Comics" },
