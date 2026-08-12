@@ -64,19 +64,25 @@
         }
         .tech-col-title { font-size: 0.75rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
 
-        /* Distribution Grille 8 colonnes */
+        /* Distribution Grille Ultra-Responsive */
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(8, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 15px;
             padding: 20px 0;
+            width: 100%;
         }
 
-        @media (max-width: 1600px) { .movie-grid { grid-template-columns: repeat(7, 1fr); } }
-        @media (max-width: 1300px) { .movie-grid { grid-template-columns: repeat(6, 1fr); } }
-        @media (max-width: 1000px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 700px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 450px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+        @media (min-width: 2560px) { .movie-grid { grid-template-columns: repeat(12, 1fr); } }
+        @media (min-width: 2200px) and (max-width: 2559px) { .movie-grid { grid-template-columns: repeat(10, 1fr); } }
+        @media (min-width: 1920px) and (max-width: 2199px) { .movie-grid { grid-template-columns: repeat(9, 1fr); } }
+        @media (min-width: 1600px) and (max-width: 1919px) { .movie-grid { grid-template-columns: repeat(8, 1fr); } }
+        @media (min-width: 1300px) and (max-width: 1599px) { .movie-grid { grid-template-columns: repeat(7, 1fr); } }
+        @media (min-width: 1000px) and (max-width: 1299px) { .movie-grid { grid-template-columns: repeat(6, 1fr); } }
+        @media (min-width: 700px) and (max-width: 999px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 450px) and (max-width: 699px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 449px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
 
         .small-actor-card {
             position: relative;

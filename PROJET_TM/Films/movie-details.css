@@ -879,39 +879,24 @@ body {
     scrollbar-color: var(--primary) transparent;
 }
 
-/* Grille pour la distribution (5 par ligne) */
+/* Grille pour la distribution (Ultra-Responsive) */
 .cast-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
     gap: 1.5rem;
     padding: 1rem 0;
     width: 100%;
 }
 
-@media (max-width: 1200px) {
-    .cast-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
+@media (min-width: 2560px) { .cast-grid { grid-template-columns: repeat(10, 1fr); } }
+@media (min-width: 2200px) and (max-width: 2559px) { .cast-grid { grid-template-columns: repeat(9, 1fr); } }
+@media (min-width: 1920px) and (max-width: 2199px) { .cast-grid { grid-template-columns: repeat(8, 1fr); } }
+@media (min-width: 1600px) and (max-width: 1919px) { .cast-grid { grid-template-columns: repeat(7, 1fr); } }
+@media (min-width: 1300px) and (max-width: 1599px) { .cast-grid { grid-template-columns: repeat(6, 1fr); } }
+@media (min-width: 1000px) and (max-width: 1299px) { .cast-grid { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 768px) and (max-width: 999px) { .cast-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 767px) { .cast-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
 
-@media (max-width: 992px) {
-    .cast-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .cast-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 480px) {
-    .cast-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-}
 
 /* Style de la barre de défilement pour Chrome/Safari */
 .cast-carousel::-webkit-scrollbar, 

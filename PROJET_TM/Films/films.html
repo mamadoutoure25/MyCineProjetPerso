@@ -10,26 +10,25 @@
     <link rel="stylesheet" href="cinema-premium.css">
     <link rel="stylesheet" href="premium-home.css">
     <style>
-        /* Grille Verticale 6 colonnes */
+        /* Grille Ultra-Responsive */
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
             gap: 20px;
             padding: 20px 0;
+            width: 100%;
         }
 
-        @media (max-width: 1400px) {
-            .movie-grid { grid-template-columns: repeat(5, 1fr); }
-        }
-        @media (max-width: 1200px) {
-            .movie-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-        @media (max-width: 992px) {
-            .movie-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (max-width: 576px) {
-            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        }
+        @media (min-width: 2560px) { .movie-grid { grid-template-columns: repeat(10, 1fr); } }
+        @media (min-width: 2200px) and (max-width: 2559px) { .movie-grid { grid-template-columns: repeat(9, 1fr); } }
+        @media (min-width: 1920px) and (max-width: 2199px) { .movie-grid { grid-template-columns: repeat(8, 1fr); } }
+        @media (min-width: 1650px) and (max-width: 1919px) { .movie-grid { grid-template-columns: repeat(7, 1fr); } }
+        @media (min-width: 1400px) and (max-width: 1649px) { .movie-grid { grid-template-columns: repeat(6, 1fr); } }
+        @media (min-width: 1150px) and (max-width: 1399px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (min-width: 900px) and (max-width: 1149px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 650px) and (max-width: 899px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 649px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
 
         .movie-grid .premium-card {
             width: 100% !important;
