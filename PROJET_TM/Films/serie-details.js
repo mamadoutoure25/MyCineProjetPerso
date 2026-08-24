@@ -299,16 +299,36 @@ async function initLists() {
 }
 
 function initRating() {
-    const stars = document.querySelectorAll("#star-rating .star");
+    const ratingContainer = document.getElementById("star-rating");
+    if (!ratingContainer) return;
+
+    if (ratingContainer.querySelectorAll(".star").length === 0) {
+        let starsHtml = "";
+        for (let i = 1; i <= 10; i++) {
+            starsHtml += `<span class="star" data-value="${i}" title="${i}/10" style="cursor: pointer;"><i class="ph ph-star"></i></span>`;
+        }
+        ratingContainer.innerHTML = starsHtml;
+    }
+
+    const stars = ratingContainer.querySelectorAll(".star");
     const clear = document.getElementById("btn-clear-rating");
     const fb = document.getElementById("rating-feedback");
+    let currentRating = 0;
 
     const update = (v) => {
+        currentRating = parseInt(v, 10) || 0;
         stars.forEach(s => {
             const icon = s.querySelector("i");
-            if (icon) icon.className = s.dataset.value <= v ? "ph-fill ph-star text-warning" : "ph ph-star text-muted";
+            const val = parseInt(s.getAttribute("data-value") || s.dataset.value, 10);
+            if (icon) {
+                if (val <= currentRating) {
+                    icon.className = "ph-fill ph-star text-warning";
+                } else {
+                    icon.className = "ph ph-star star-empty";
+                }
+            }
         });
-        if (clear) clear.classList.toggle("d-none", v === 0);
+        if (clear) clear.classList.toggle("d-none", currentRating === 0);
     };
 
     if (user && id) {
@@ -317,11 +337,32 @@ function initRating() {
         }).catch(()=>{});
     }
 
-    stars.forEach(s => s.onclick = async () => {
-        if (!user) return notify("Connectez-vous pour noter", "warning");
-        const v = s.dataset.value;
-        const r = await (await fetch('./notes.php', { method: "POST", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id:user, film_id:id, media_type:'tv', note:v}) })).json();
-        if (r.success) { update(v); if (fb) fb.textContent = `Note: ${v}/10`; notify("Note enregistrée", "success"); }
+    stars.forEach(s => {
+        s.addEventListener("mouseenter", () => {
+            const hoverVal = parseInt(s.getAttribute("data-value") || s.dataset.value, 10);
+            stars.forEach(star => {
+                const icon = star.querySelector("i");
+                const starVal = parseInt(star.getAttribute("data-value") || star.dataset.value, 10);
+                if (icon) {
+                    if (starVal <= hoverVal) {
+                        icon.className = "ph-fill ph-star text-warning";
+                    } else {
+                        icon.className = "ph ph-star star-empty";
+                    }
+                }
+            });
+        });
+
+        s.addEventListener("mouseleave", () => {
+            update(currentRating);
+        });
+
+        s.onclick = async () => {
+            if (!user) return notify("Connectez-vous pour noter", "warning");
+            const v = parseInt(s.getAttribute("data-value") || s.dataset.value, 10);
+            const r = await (await fetch('./notes.php', { method: "POST", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id:user, film_id:id, media_type:'tv', note:v}) })).json();
+            if (r.success) { update(v); if (fb) fb.textContent = `Note: ${v}/10`; notify("Note enregistrée", "success"); }
+        };
     });
 
     if (clear) {

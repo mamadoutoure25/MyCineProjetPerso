@@ -84,7 +84,6 @@ let filteredCompanies = [];
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
     await chargerSocietes();
-    configurerTheme();
     configurerRecherche();
 });
 
@@ -223,39 +222,7 @@ function obtenirNomPays(countryCode) {
     return paysMap[countryCode?.toUpperCase()] || countryCode || 'Inconnue';
 }
 
-/**
- * Configurer le thème sombre/clair
- */
-function configurerTheme() {
-    const themeSauvegarde = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', themeSauvegarde);
-    mettreAJourIconeTheme(themeSauvegarde);
 
-    const toggleBtn = document.getElementById('theme-toggle');
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', basculerTheme);
-    }
-}
-
-function mettreAJourIconeTheme(theme) {
-    const icone = document.getElementById('theme-icon');
-    if (icone) {
-        if (theme === 'light') {
-            icone.className = 'ph ph-sun fs-4';
-        } else {
-            icone.className = 'ph ph-moon fs-4';
-        }
-    }
-}
-
-function basculerTheme() {
-    const themeActuel = document.documentElement.getAttribute('data-theme') || 'dark';
-    const nouveauTheme = themeActuel === 'dark' ? 'light' : 'dark';
-
-    document.documentElement.setAttribute('data-theme', nouveauTheme);
-    localStorage.setItem('theme', nouveauTheme);
-    mettreAJourIconeTheme(nouveauTheme);
-}
 
 
 

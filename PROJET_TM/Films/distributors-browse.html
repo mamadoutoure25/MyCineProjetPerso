@@ -45,7 +45,21 @@
         .distributor-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
+            gap: 30px;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        .movie-grid .premium-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
         }
 
         .distributor-card {
@@ -73,19 +87,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
+            background: #ffffff;
             border-radius: 16px;
             padding: 15px;
             margin-bottom: 20px;
-        }
-        [data-theme="light"] .distributor-logo-box {
-            background: #ffffff;
-            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
         .distributor-logo-box img {
             max-height: 100%;
             max-width: 80%;
             object-fit: contain;
+            filter: none !important;
         }
 
         .partner-chip {

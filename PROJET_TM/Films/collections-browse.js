@@ -105,8 +105,27 @@ const POPULAR_COLLECTIONS = [
   2282, // Benjamin Gates (National Treasure)
   2356, // Austin Powers
   91361, // Hôtel Transylvanie
-  302331, // Paddington
-  9735, // Scary Movie
+  468552, // Wonder Woman
+  573693, // Aquaman
+  386382, // La Reine des neiges (Frozen)
+  448150, // Deadpool
+  618529, // Doctor Strange
+  529892, // Black Panther
+  14740, // Madagascar
+  531330, // Top Gun
+  391860, // Kingsman
+  521226, // Sans un bruit (A Quiet Place)
+  1022790, // Vice-Versa (Inside Out)
+  724848, // Shazam!
+  1241984, // Vaiana / Moana
+  453993, // Wolverine
+  179919, // Percy Jackson
+  363369, // Pacific Rim
+  382685, // Insaisissables (Now You See Me)
+  523855, // Equalizer
+  945475, // Beetlejuice
+  63043, // TRON
+  14890, // Bad Boys
   310 // Planet of the Apes Classic
 ]
 
@@ -232,12 +251,14 @@ function renderCollections(collectionsToDisplay) {
   }
 
   grid.innerHTML = collectionsToDisplay.map(collection => {
+    const customPoster = localStorage.getItem(`custom_collection_poster_${collection.id}`);
+    const posterSrc = customPoster || (collection.poster_path ? `${COLLECTIONS_CONFIG.IMAGE_BASE_URL}/${COLLECTIONS_CONFIG.POSTER_SIZE}${collection.poster_path}` : 'https://via.placeholder.com/500x750?text=Affiche+indisponible');
     const revBadge = collection.totalRevenue && collection.totalRevenue > 0
       ? `<span class="rating-badge text-accent fw-bold"><i class="ph-fill ph-currency-dollar"></i> ${collection.totalRevenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} $</span>`
       : "";
     return `
         <div class="premium-card" onclick="window.location.href='collection.html?id=${collection.id}'">
-            <img src="${collection.poster_path ? `${COLLECTIONS_CONFIG.IMAGE_BASE_URL}/${COLLECTIONS_CONFIG.POSTER_SIZE}${collection.poster_path}` : 'https://via.placeholder.com/500x750?text=Affiche+indisponible'}" loading="lazy" alt="${collection.name}">
+            <img src="${posterSrc}" loading="lazy" alt="${collection.name}">
             <div class="card-details">
                 <div class="card-title text-truncate">${collection.name}</div>
                 <div class="card-meta">

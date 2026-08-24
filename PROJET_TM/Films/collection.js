@@ -11,6 +11,7 @@ const CONFIG = {
 // Variables globales
 let collectionId = null
 let collectionData = null
+let galleryImagesCache = null
 
 // Initialisation
 document.addEventListener("DOMContentLoaded", () => {
@@ -95,6 +96,7 @@ async function chargerCollection(id) {
     afficherCollection(collectionData)
 
     if (imagesRes.status === "fulfilled" && imagesRes.value) {
+      galleryImagesCache = imagesRes.value;
       afficherGallery(imagesRes.value)
     }
   } catch (error) {
@@ -165,9 +167,18 @@ function afficherCollection(collection) {
   }
 
   const poster = document.getElementById("collection-poster")
-  if (collection.poster_path) {
-    poster.src = `${CONFIG.IMAGE_BASE_URL}/${CONFIG.POSTER_SIZE}${collection.poster_path}`
-    poster.alt = collection.name
+  const customPoster = localStorage.getItem(`custom_collection_poster_${collection.id}`)
+  const resetBtn = document.getElementById("btn-reset-poster")
+
+  if (customPoster) {
+    if (poster) poster.src = customPoster
+    if (resetBtn) resetBtn.style.display = "inline-block"
+  } else if (collection.poster_path) {
+    if (poster) {
+      poster.src = `${CONFIG.IMAGE_BASE_URL}/${CONFIG.POSTER_SIZE}${collection.poster_path}`
+      poster.alt = collection.name
+    }
+    if (resetBtn) resetBtn.style.display = "none"
   }
 
   document.getElementById("collection-title").textContent = collection.name
@@ -242,12 +253,12 @@ function getRatingBadgeClass(vote) {
 function afficherCast(cast) {
   const castContainer = document.getElementById("collection-cast")
   if (!cast || cast.length === 0) {
-    castContainer.innerHTML = '<p class="opacity-50 fs-6 py-4">Aucune information sur la distribution.</p>'
+    castContainer.innerHTML = '<p class="opacity-50 fs-6 py-4 col-12">Aucune information sur la distribution.</p>'
     return
   }
 
   castContainer.innerHTML = cast.map(actor => `
-    <div class="actor-card small-actor-card" onclick="voirActeur(${actor.id})">
+    <div class="small-actor-card" onclick="voirActeur(${actor.id})">
       <img src="${actor.profile_path ? `${CONFIG.IMAGE_BASE_URL}/w500${actor.profile_path}` : 'https://via.placeholder.com/300x450?text=Photo'}" 
            alt="${actor.name}" loading="lazy">
       <div class="actor-hover-overlay">
@@ -262,14 +273,14 @@ function afficherCast(cast) {
 function afficherCrew(crew) {
   const crewContainer = document.getElementById("collection-crew")
   if (!crew || crew.length === 0) {
-    crewContainer.innerHTML = '<p class="text-muted">Aucune information sur l\'équipe.</p>'
+    crewContainer.innerHTML = '<p class="opacity-50 fs-6 py-4 col-12">Aucune information sur l\'équipe.</p>'
     return
   }
 
   crewContainer.innerHTML = crew.map(member => `
-    <div class="crew-card text-center">
-      <p class="mb-0">${member.name}</p>
-      <small class="text-muted">${member.job}</small>
+    <div class="crew-card">
+      <div class="fw-extrabold text-theme text-truncate mb-1" style="font-size: 0.9rem;">${member.name}</div>
+      <span class="badge rounded-pill bg-secondary x-small opacity-75">${member.job}</span>
     </div>
   `).join("")
 }
@@ -345,7 +356,7 @@ function afficherFilms(movies) {
 
   // Fonction pour rendre les films
   function renderMovies(moviesToRender) {
-    moviesGrid.className = "movie-grid"
+    moviesGrid.className = "movie-grid-6"
     moviesGrid.innerHTML = moviesToRender.map(movie => `
       <div class="premium-card" onclick="window.location.href='movie-details.html?id=${movie.id}'">
         <img src="${movie.poster_path ? `${CONFIG.IMAGE_BASE_URL}/${CONFIG.POSTER_SIZE}${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=Aucune+affiche'}" 
@@ -408,24 +419,117 @@ function afficherErreur(message) {
 
 // Rendre la galerie de médias
 function afficherGallery(imgs) {
+  if (imgs) galleryImagesCache = imgs;
+
+  // Récupérer le lien de l'affiche actuellement active (personnalisée ou par défaut)
+  const savedCustom = collectionId ? localStorage.getItem(`custom_collection_poster_${collectionId}`) : null;
+  const defaultPoster = collectionData && collectionData.poster_path ? `${CONFIG.IMAGE_BASE_URL}/${CONFIG.POSTER_SIZE}${collectionData.poster_path}` : '';
+  const currentActivePoster = savedCustom || defaultPoster;
+
   const renderGrid = (items, gridId, isPost = false) => {
     const c = document.getElementById(gridId);
     if (!c) return;
     if (!items || !items.length) return (c.innerHTML = "<p class='p-4 opacity-50 text-center w-100'>Aucun média disponible.</p>");
-    c.innerHTML = items.slice(0, 18).map((im, i) => `
-      <div class="premium-card ${isPost ? '' : 'collection-card'}" style="width: 100% !important; min-width: 0 !important; max-width: none !important;">
-        <img src="${CONFIG.IMAGE_BASE_URL}/${isPost ? 'w500' : 'w780'}${im.file_path}" loading="lazy" style="border-radius: 12px; width: 100%; aspect-ratio: ${isPost ? '2/3' : '16/9'}; object-fit: cover;">
-        <div class="card-details mt-2 text-center">
-          <div class="d-flex gap-2 justify-content-center w-100">
-            <button class="btn btn-sm btn-dark rounded-circle" onclick="openModal('img', '${CONFIG.IMAGE_BASE_URL}/original${im.file_path}', 'Aperçu')"><i class="ph ph-magnifying-glass-plus"></i></button>
-            <button class="btn btn-sm btn-dark rounded-circle" onclick="downloadImg('${CONFIG.IMAGE_BASE_URL}/original${im.file_path}', 'img-${i}.jpg')"><i class="ph ph-download-simple"></i></button>
+    
+    c.innerHTML = items.slice(0, 24).map((im, i) => {
+      const fullUrl = `${CONFIG.IMAGE_BASE_URL}/${isPost ? 'w500' : 'w780'}${im.file_path}`;
+      const originalUrl = `${CONFIG.IMAGE_BASE_URL}/original${im.file_path}`;
+      
+      // Vérifier si cette affiche est actuellement sélectionnée comme affiche principale
+      const isSelected = isPost && currentActivePoster && im.file_path && currentActivePoster.includes(im.file_path);
+
+      return `
+        <div class="premium-card ${isSelected ? 'border-success' : ''}" style="width: 100% !important; min-width: 0 !important; max-width: none !important; position: relative;">
+          <img src="${fullUrl}" loading="lazy" style="border-radius: 16px; width: 100%; aspect-ratio: ${isPost ? '2/3' : '16/9'}; object-fit: cover;">
+          ${isSelected ? `<div class="position-absolute top-0 start-0 m-2 badge bg-success rounded-pill px-3 py-1.5 fw-bold shadow"><i class="ph-fill ph-check-circle me-1"></i> Actuelle</div>` : ''}
+          <div class="card-details">
+            <div class="d-flex flex-column gap-2 justify-content-center align-items-center w-100 mt-auto">
+              ${isPost ? (
+                isSelected 
+                  ? `<span class="badge bg-success rounded-pill px-3 py-1.5 fw-bold mb-1"><i class="ph-fill ph-check-circle me-1"></i> Affiche Sélectionnée</span>`
+                  : `<button class="btn btn-sm btn-primary rounded-pill px-3 py-1.5 x-small fw-bold shadow-sm mb-1" onclick="changerAfficheCollection('${fullUrl}')" title="Définir comme affiche principale"><i class="ph ph-check me-1"></i> Choisir cette affiche</button>`
+              ) : ''}
+              <div class="d-flex gap-2 justify-content-center align-items-center mt-1">
+                <button class="btn btn-sm btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="openModal('img', '${originalUrl}', 'Aperçu HD')" title="Aperçu / Zoomer"><i class="ph ph-eye fs-5 text-dark"></i></button>
+                <button class="btn btn-sm btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="downloadImg('${originalUrl}', 'saga-media-${i + 1}.jpg')" title="Télécharger HD"><i class="ph ph-download-simple fs-5 text-dark"></i></button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    `).join("");
+      `;
+    }).join("");
   };
   renderGrid(imgs?.backdrops, "grid-backdrops");
   renderGrid(imgs?.posters, "grid-posters", true);
+}
+
+// Fonction pour changer l'affiche principale de la collection
+function changerAfficheCollection(posterUrl) {
+  if (!collectionId) return;
+  localStorage.setItem(`custom_collection_poster_${collectionId}`, posterUrl);
+  const posterEl = document.getElementById("collection-poster");
+  if (posterEl) posterEl.src = posterUrl;
+  
+  const resetBtn = document.getElementById("btn-reset-poster");
+  if (resetBtn) resetBtn.style.display = "inline-block";
+
+  afficherNotification("Affiche de la collection mise à jour avec succès !", "success");
+
+  // Mettre à jour l'affichage dynamique de la galerie
+  if (galleryImagesCache) {
+    afficherGallery(galleryImagesCache);
+  }
+  
+  // Remonter en douceur vers le hero
+  document.getElementById("collection-hero")?.scrollIntoView({ behavior: "smooth" });
+}
+
+// Réinitialiser l'affiche originale de la collection
+function resetAfficheCollection() {
+  if (!collectionId) return;
+  localStorage.removeItem(`custom_collection_poster_${collectionId}`);
+  const posterEl = document.getElementById("collection-poster");
+  if (posterEl && collectionData && collectionData.poster_path) {
+    posterEl.src = `${CONFIG.IMAGE_BASE_URL}/${CONFIG.POSTER_SIZE}${collectionData.poster_path}`;
+  }
+  const resetBtn = document.getElementById("btn-reset-poster");
+  if (resetBtn) resetBtn.style.display = "none";
+
+  afficherNotification("Affiche réinitialisée à l'originale", "info");
+
+  // Mettre à jour l'affichage dynamique de la galerie
+  if (galleryImagesCache) {
+    afficherGallery(galleryImagesCache);
+  }
+}
+
+// Ouvrir la galerie d'affiches
+function ouvrirModalSelectAffiche() {
+  const imagesSec = document.getElementById("images-section") || document.querySelector(".tab-content");
+  // Basculer vers l'onglet affiches
+  const postTabBtn = document.querySelector('button[data-bs-target="#tab-post"]');
+  if (postTabBtn) {
+    const tab = new bootstrap.Tab(postTabBtn);
+    tab.show();
+  }
+  if (imagesSec) {
+    imagesSec.scrollIntoView({ behavior: "smooth" });
+  }
+  afficherNotification("Sélectionnez 'Choisir' sur l'affiche de votre choix ci-dessous", "info");
+}
+
+// Toast notification helper
+function afficherNotification(message, type = "success") {
+  const toastContainer = document.getElementById("toast-notification");
+  const toastMsg = document.getElementById("toast-message");
+  if (toastContainer && toastMsg) {
+    const icon = type === "success" ? "ph-check-circle" : "ph-info";
+    toastMsg.innerHTML = `<i class="ph ${icon} fs-4"></i> ${message}`;
+    toastContainer.style.display = "block";
+    setTimeout(() => {
+      toastContainer.style.display = "none";
+    }, 4000);
+  }
 }
 
 function openModal(type, src, title) {
@@ -455,3 +559,6 @@ window.voirFilm = voirFilm;
 window.voirActeur = voirActeur;
 window.openModal = openModal;
 window.downloadImg = downloadImg;
+window.changerAfficheCollection = changerAfficheCollection;
+window.resetAfficheCollection = resetAfficheCollection;
+window.ouvrirModalSelectAffiche = ouvrirModalSelectAffiche;

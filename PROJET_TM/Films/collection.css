@@ -227,16 +227,20 @@ body {
     gap: 1rem;
 }
 
-#collection-cast {
+#collection-cast,
+#collection-crew,
+#movies-grid,
+#grid-backdrops,
+#grid-posters,
+.movie-grid-6 {
     display: grid !important;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(170px, 190px);
-    gap: 1rem;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 0.25rem 0.25rem 0.9rem;
-    scroll-snap-type: x mandatory;
-    align-items: stretch;
+    grid-template-columns: repeat(6, 1fr) !important;
+    grid-auto-flow: row !important;
+    gap: 20px !important;
+    padding: 15px 0 !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    width: 100% !important;
 }
 
 #collection-cast .cast-card {

@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         afficherErreur('Aucune société spécifiée');
     }
 
-    configurerTheme();
     configurerFiltres();
 });
 
@@ -77,49 +76,61 @@ function afficherDetailsCompagnie(company) {
     document.getElementById('company-name').textContent = company.name || 'Inconnue';
 
     // Logo
-    if (company.logo_path) {
-        document.getElementById('company-logo').src = IMG_BASE_URL + company.logo_path;
-    } else {
-        document.getElementById('company-logo').src = 'https://via.placeholder.com/500x300?text=' + encodeURIComponent(company.name || 'Pas de logo');
+    const logoEl = document.getElementById('company-logo');
+    if (logoEl) {
+        if (company.logo_path) {
+            logoEl.src = IMG_BASE_URL + company.logo_path;
+            logoEl.style.display = 'inline-block';
+        } else {
+            logoEl.style.display = 'none';
+        }
     }
 
     // Description
-    if (company.description && company.description.trim()) {
-        document.getElementById('company-description').textContent = company.description;
-        document.getElementById('company-description-container').style.display = 'block';
-    } else {
-        document.getElementById('company-description-container').style.display = 'none';
+    const descEl = document.getElementById('company-description');
+    const descContainer = document.getElementById('company-description-container');
+    if (descEl && descContainer) {
+        if (company.description && company.description.trim()) {
+            descEl.textContent = company.description;
+            descContainer.style.display = 'block';
+        } else {
+            descContainer.style.display = 'none';
+        }
     }
 
     // Pays d'origine
     const countryName = obtenirNomPays(company.origin_country);
-    document.getElementById('company-country').textContent = countryName;
+    if (document.getElementById('company-country')) {
+        document.getElementById('company-country').textContent = countryName;
+    }
 
     // Siège social
-    if (company.headquarters && company.headquarters.trim()) {
-        document.getElementById('company-headquarters').textContent = company.headquarters;
-    } else {
-        document.getElementById('company-headquarters').textContent = '--';
+    if (document.getElementById('company-headquarters')) {
+        document.getElementById('company-headquarters').textContent = (company.headquarters && company.headquarters.trim()) ? company.headquarters : '--';
     }
 
     // Site web
-    if (company.homepage && company.homepage.trim()) {
-        document.getElementById('company-homepage').href = company.homepage;
-        document.getElementById('homepage-container').style.display = 'block';
-
-        document.getElementById('company-website').href = company.homepage;
-        document.getElementById('website-container').style.display = 'flex';
-    } else {
-        document.getElementById('homepage-container').style.display = 'none';
-        document.getElementById('website-container').style.display = 'none';
+    const homepageContainer = document.getElementById('homepage-container');
+    const homepageLink = document.getElementById('company-homepage');
+    if (homepageContainer && homepageLink) {
+        if (company.homepage && company.homepage.trim()) {
+            homepageLink.href = company.homepage;
+            homepageContainer.style.display = 'inline-block';
+        } else {
+            homepageContainer.style.display = 'none';
+        }
     }
 
     // Société mère
-    if (company.parent_company) {
-        document.getElementById('parent-company-name').textContent = company.parent_company.name || 'Inconnue';
-        document.getElementById('parent-company-container').style.display = 'block';
-    } else {
-        document.getElementById('parent-company-container').style.display = 'none';
+    const parentContainer = document.getElementById('parent-company-container');
+    const parentName = document.getElementById('parent-company-name');
+    if (parentContainer && parentName) {
+        if (company.parent_company) {
+            parentName.textContent = company.parent_company.name || 'Inconnue';
+            parentContainer.style.display = 'inline-block';
+        } else {
+            parentContainer.style.display = 'none';
+        }
     }
 }
 
@@ -131,17 +142,15 @@ async function chargerFilmsCompagnie(companyId) {
         let allFilms = [];
         let totalResults = 0;
         let currentPage = 1;
-        const maxPages = 100; // Limite raisonnable de pages
+        const maxPages = 100;
 
-        // Afficher le chargement
         const loadingDiv = document.getElementById('films-loading');
         const containerDiv = document.getElementById('films-container');
         const countDiv = document.getElementById('films-count');
 
-        loadingDiv.style.display = 'block';
-        containerDiv.style.display = 'none';
+        if (loadingDiv) loadingDiv.style.display = 'block';
+        if (containerDiv) containerDiv.style.display = 'none';
 
-        // Charger la première page pour connaître le nombre total
         const urlFilms1 = `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=fr-FR&with_companies=${companyId}&sort_by=popularity.desc&page=1`;
         const dataFilms1 = await fetch(urlFilms1).then(r => r.json());
 
@@ -150,10 +159,8 @@ async function chargerFilmsCompagnie(companyId) {
             totalResults = dataFilms1.total_results;
             const totalPages = Math.min(dataFilms1.total_pages, maxPages);
 
-            // Mettre à jour le compteur pendant le chargement
-            countDiv.textContent = `Chargement... (${allFilms.length}/${totalResults})`;
+            if (countDiv) countDiv.textContent = `Chargement... (${allFilms.length}/${totalResults})`;
 
-            // Charger les pages suivantes
             for (currentPage = 2; currentPage <= totalPages; currentPage++) {
                 try {
                     const urlFilmsNext = `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=fr-FR&with_companies=${companyId}&sort_by=popularity.desc&page=${currentPage}`;
@@ -161,38 +168,30 @@ async function chargerFilmsCompagnie(companyId) {
 
                     if (dataFilmsNext.results && dataFilmsNext.results.length > 0) {
                         allFilms = [...allFilms, ...dataFilmsNext.results];
-                        // Mettre à jour le compteur en direct
-                        countDiv.textContent = `Chargement... (${allFilms.length}/${totalResults})`;
+                        if (countDiv) countDiv.textContent = `Chargement... (${allFilms.length}/${totalResults})`;
                     }
-
-                    // Petit délai pour ne pas surcharger l'API
-                    await new Promise(resolve => setTimeout(resolve, 50));
+                    await new Promise(resolve => setTimeout(resolve, 30));
                 } catch (error) {
                     console.error(`Erreur lors du chargement de la page ${currentPage}:`, error);
                 }
             }
 
             cache.films = allFilms;
-            afficherFilmsCompagnie(allFilms);
-            countDiv.textContent = `✅ ${totalResults} film(s) trouvé(s) (${allFilms.length} affichés)`;
-
-            // Stocker aussi dans allFilms pour les filtres
             cache.allFilms = allFilms;
+            afficherFilmsCompagnie(allFilms);
+            if (countDiv) countDiv.textContent = `✅ ${totalResults} film(s) disponible(s)`;
 
-            // Remplir les select des filtres
             remplirSelectFiltres(allFilms);
-
-            // Mettre à jour le titre de la page
-            document.title = `${cache.company.name} - ${allFilms.length} films - MyCiné`;
+            document.title = `${cache.company.name || 'Studio'} - ${allFilms.length} films - MyCiné`;
         } else {
-            document.getElementById('no-films').style.display = 'block';
-            loadingDiv.style.display = 'none';
-            countDiv.textContent = 'Aucun film trouvé';
+            if (document.getElementById('no-films')) document.getElementById('no-films').style.display = 'block';
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (countDiv) countDiv.textContent = 'Aucun film trouvé';
         }
     } catch (error) {
         console.error('Erreur lors du chargement des films:', error);
-        document.getElementById('no-films').style.display = 'block';
-        document.getElementById('films-loading').style.display = 'none';
+        if (document.getElementById('no-films')) document.getElementById('no-films').style.display = 'block';
+        if (document.getElementById('films-loading')) document.getElementById('films-loading').style.display = 'none';
     }
 }
 
@@ -206,37 +205,36 @@ function afficherFilmsCompagnie(films) {
     const summaryDiv = document.getElementById('films-summary');
 
     if (!films || films.length === 0) {
-        loadingDiv.style.display = 'none';
-        container.style.display = 'none';
-        noFilmsDiv.style.display = 'block';
-        summaryDiv.style.display = 'none';
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        if (container) container.style.display = 'none';
+        if (noFilmsDiv) noFilmsDiv.style.display = 'block';
         return;
     }
 
-    // Afficher les films
     container.innerHTML = films
-        .map(film => `
-            <div class="film-card" onclick="afficherDetailsFilm(${film.id})">
-                <div class="film-poster">
-                    <img src="${film.poster_path ? IMG_BASE_URL + film.poster_path : 'https://via.placeholder.com/300x450?text=Aucune+affiche'}" 
-                         alt="${film.title}"
-                         onerror="this.src='https://via.placeholder.com/300x450?text=Aucune+affiche'">
+        .map(film => {
+            const releaseYear = film.release_date ? new Date(film.release_date).getFullYear() : 'N/A';
+            const ratingVal = film.vote_average ? film.vote_average.toFixed(1) : '0.0';
+            return `
+                <div class="premium-card" onclick="afficherDetailsFilm(${film.id})" style="cursor: pointer;">
+                    <img src="${film.poster_path ? IMG_BASE_URL + film.poster_path : 'https://via.placeholder.com/210x315?text=Aucune+affiche'}" loading="lazy" alt="${film.title}">
+                    <div class="card-details">
+                        <div class="card-title text-truncate">${film.title}</div>
+                        <div class="card-meta">
+                            <span class="rating-badge"><i class="ph-fill ph-star text-warning"></i> ${ratingVal}</span>
+                            <span class="opacity-75 ms-auto">${releaseYear}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="film-info">
-                    <div class="film-title" title="${film.title}">${film.title}</div>
-                    <div class="film-year">${film.release_date ? film.release_date.split('-')[0] : 'N/A'}</div>
-                    ${film.vote_average ? `<div class="film-rating"><i class="ph ph-star-fill"></i> ${film.vote_average.toFixed(1)}/10</div>` : '<div class="film-rating">N/A</div>'}
-                </div>
-            </div>
-        `)
+            `;
+        })
         .join('');
 
-    // Calculer et afficher les statistiques
     const statsTotal = films.length;
     const statsRated = films.filter(f => f.vote_average).length;
     const statsAvgRating = statsRated > 0
         ? (films.filter(f => f.vote_average).reduce((sum, f) => sum + f.vote_average, 0) / statsRated).toFixed(1)
-        : '0';
+        : '0.0';
 
     const years = films
         .filter(f => f.release_date)
@@ -248,21 +246,15 @@ function afficherFilmsCompagnie(films) {
         ? `${Math.min(...years)} - ${Math.max(...years)}`
         : '--';
 
-    document.getElementById('stats-total').textContent = statsTotal;
-    document.getElementById('stats-rated').textContent = statsRated;
-    document.getElementById('stats-avg-rating').textContent = statsAvgRating;
-    document.getElementById('stats-year-range').textContent = statsYearRange;
+    if (document.getElementById('stats-total')) document.getElementById('stats-total').textContent = statsTotal;
+    if (document.getElementById('stats-rated')) document.getElementById('stats-rated').textContent = statsRated;
+    if (document.getElementById('stats-avg-rating')) document.getElementById('stats-avg-rating').textContent = `${statsAvgRating} / 10`;
+    if (document.getElementById('stats-year-range')) document.getElementById('stats-year-range').textContent = statsYearRange;
 
-    // Afficher/masquer les éléments
-    loadingDiv.style.display = 'none';
-    container.style.display = 'grid';
-    noFilmsDiv.style.display = 'none';
-    summaryDiv.style.display = 'block';
-
-    // Scroller vers les films
-    setTimeout(() => {
-        document.querySelector('.section-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    if (loadingDiv) loadingDiv.style.display = 'none';
+    if (container) container.style.display = 'grid';
+    if (noFilmsDiv) noFilmsDiv.style.display = 'none';
+    if (summaryDiv) summaryDiv.style.display = 'flex';
 }
 
 /**
@@ -275,11 +267,8 @@ async function chargerImagesCompagnie(companyId) {
 
         if (dataImages.logos && dataImages.logos.length > 0) {
             afficherImagesCompagnie(dataImages.logos);
-            document.getElementById('images-count').textContent = `${dataImages.logos.length} logo(s) trouvé(s)`;
-            document.getElementById('images-section').style.display = 'block';
-        } else {
-            document.getElementById('no-logos').style.display = 'block';
-            document.getElementById('images-section').style.display = 'block';
+            if (document.getElementById('images-count')) document.getElementById('images-count').textContent = `${dataImages.logos.length} logo(s) disponible(s)`;
+            if (document.getElementById('images-section')) document.getElementById('images-section').style.display = 'block';
         }
     } catch (error) {
         console.error('Erreur lors du chargement des images:', error);
@@ -294,40 +283,45 @@ function afficherImagesCompagnie(logos) {
     const noLogosDiv = document.getElementById('no-logos');
 
     if (!logos || logos.length === 0) {
-        container.innerHTML = '';
-        noLogosDiv.style.display = 'block';
+        if (container) container.innerHTML = '';
+        if (noLogosDiv) noLogosDiv.style.display = 'block';
         return;
     }
 
-    noLogosDiv.style.display = 'none';
+    if (noLogosDiv) noLogosDiv.style.display = 'none';
 
     container.innerHTML = logos
-        .map(logo => `
-            <div class="image-card">
-                <div class="image-container">
-                    <img src="${IMG_BASE_URL}${logo.file_path}" 
-                         alt="Logo"
-                         onerror="this.src='https://via.placeholder.com/300x200?text=Logo+non+disponible'">
-                </div>
-                <div class="image-info">
-                    <span class="image-type">${logo.file_type || '.png'}</span>
-                    <div class="image-stats">
-                        <div class="image-stat">
-                            <div class="image-stat-label">Aspect</div>
-                            <div class="image-stat-value">${logo.aspect_ratio.toFixed(2)}</div>
+        .map((logo, index) => {
+            const logoUrl = `${IMG_BASE_URL}${logo.file_path}`;
+            const fileType = (logo.file_type || '.png').toUpperCase().replace('.', '');
+            const dims = `${logo.width} × ${logo.height}`;
+            const aspect = logo.aspect_ratio ? logo.aspect_ratio.toFixed(2) : '1.0';
+
+            return `
+                <div class="logo-card-premium">
+                    <div class="logo-pod">
+                        <img src="${logoUrl}" loading="lazy" alt="Logo officiel ${index + 1}">
+                    </div>
+                    <div class="logo-card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="logo-badge-dim"><i class="ph ph-bounding-box me-1"></i> ${dims}</span>
+                            <span class="logo-badge-type">${fileType}</span>
                         </div>
-                        <div class="image-stat">
-                            <div class="image-stat-label">Dimensions</div>
-                            <div class="image-stat-value">${logo.width}x${logo.height}</div>
-                        </div>
-                        <div class="image-stat">
-                            <div class="image-stat-label">Note</div>
-                            <div class="image-stat-value">${logo.vote_average ? logo.vote_average.toFixed(1) : 'N/A'}</div>
+                        <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-secondary opacity-75">
+                            <span class="x-small text-theme opacity-75 fw-bold">Ratio ${aspect}</span>
+                            <div class="d-flex gap-2">
+                                <a href="${logoUrl}" target="_blank" class="btn-logo-action" title="Aperçu HD">
+                                    <i class="ph ph-eye"></i>
+                                </a>
+                                <a href="${logoUrl}" download="logo-${index + 1}.png" target="_blank" class="btn-logo-action primary" title="Télécharger">
+                                    <i class="ph ph-download-simple"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `)
+            `;
+        })
         .join('');
 }
 
@@ -403,12 +397,14 @@ function afficherErreur(message) {
     `;
 }
 
-/**
- * Configurer les filtres
- */
 function configurerFiltres() {
     // Écouter les clics sur le bouton Appliquer
     document.getElementById('apply-filters')?.addEventListener('click', appliquerFiltres);
+
+    // Écouter les changements directs sur les selects
+    document.getElementById('filter-year')?.addEventListener('change', appliquerFiltres);
+    document.getElementById('filter-rating')?.addEventListener('change', appliquerFiltres);
+    document.getElementById('filter-evaluated')?.addEventListener('change', appliquerFiltres);
 
     // Écouter les clics sur le bouton Effacer
     document.getElementById('clear-filters')?.addEventListener('click', effacerFiltres);
@@ -526,42 +522,7 @@ function effacerFiltres() {
     afficherFilmsCompagnie(cache.films);
 }
 
-/**
- * Configurer le thème sombre/clair
- */
-function configurerTheme() {
-    const themeSauvegarde = localStorage.getItem('theme');
-    const themeSysteme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const themeActuel = themeSauvegarde || themeSysteme;
 
-    document.documentElement.setAttribute('data-theme', themeActuel);
-    mettreAJourIconeTheme(themeActuel);
-
-    // Écouter les changements de thème
-    document.getElementById('theme-toggle')?.addEventListener('click', basculerTheme);
-}
-
-function mettreAJourIconeTheme(theme) {
-    const icone = document.getElementById('theme-icon');
-    if (icone) {
-        if (theme === 'dark') {
-            icone.classList.remove('ph-sun');
-            icone.classList.add('ph-moon');
-        } else {
-            icone.classList.remove('ph-moon');
-            icone.classList.add('ph-sun');
-        }
-    }
-}
-
-function basculerTheme() {
-    const themeActuel = document.documentElement.getAttribute('data-theme');
-    const nouveauTheme = themeActuel === 'dark' ? 'light' : 'dark';
-
-    document.documentElement.setAttribute('data-theme', nouveauTheme);
-    localStorage.setItem('theme', nouveauTheme);
-    mettreAJourIconeTheme(nouveauTheme);
-}
 
 // Export des fonctions globales
 window.afficherDetailsFilm = afficherDetailsFilm;

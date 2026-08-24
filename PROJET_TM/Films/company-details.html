@@ -3,322 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détails de la Société - MyCiné</title>
+    <title>Détails du Studio - MyCiné</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="projet.css" rel="stylesheet">
-    <link href="actor-details.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Unified Premium Styles -->
+    <link rel="stylesheet" href="premium-home.css">
+    <link rel="stylesheet" href="theme-variables.css">
     <style>
-        .company-hero-section {
-            padding-top: 120px;
-            padding-bottom: 60px;
-            min-height: 100vh;
-        }
-
-        .company-logo-container {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 350px;
+        .company-hero {
             position: relative;
+            min-height: 400px;
+            padding: 140px 5% 50px;
+            background: linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border);
             overflow: hidden;
         }
 
-        .company-logo-container img {
-            max-width: 100%;
-            max-height: 300px;
+        .company-logo-header {
+            max-height: 100px;
+            max-width: 260px;
             object-fit: contain;
-        }
-
-        .company-info {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 30px;
-        }
-
-        .company-stat {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: var(--glass-bg);
-            border-left: 4px solid var(--primary);
-            border-radius: 8px;
-        }
-
-        .company-stat i {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-right: 15px;
-        }
-
-        .company-stat-content h6 {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .company-stat-content p {
-            color: var(--text);
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .company-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--text-primary);
-            border-radius: 8px;
-            text-decoration: none;
-            transition: var(--transition);
-            margin-top: 15px;
-        }
-
-        .company-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
-            color: var(--text-primary);
-        }
-
-        .parent-company {
-            background: var(--glass-bg);
-            border: 2px solid var(--primary);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .parent-company h5 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .parent-company p {
-            margin: 0;
-            color: var(--text);
-        }
-
-        .films-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .film-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: var(--transition);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .film-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
-        }
-
-        .film-poster {
-            width: 100%;
-            height: 300px;
-            background: var(--glass-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .film-poster img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .film-card:hover .film-poster img {
-            transform: scale(1.05);
-        }
-
-        .film-info {
-            padding: 15px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .film-title {
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            line-height: 1.3;
-        }
-
-        .film-year {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-
-        .film-rating {
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #fbbf24;
-            font-weight: 600;
-        }
-
-        .images-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .image-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: var(--transition);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .image-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
-        }
-
-        .image-container {
-            width: 100%;
-            height: 200px;
-            background: var(--glass-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 15px;
-            transition: var(--transition);
-        }
-
-        .image-card:hover .image-container img {
-            transform: scale(1.05);
-        }
-
-        .image-info {
-            padding: 15px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .image-type {
+            background: #ffffff;
+            padding: 15px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: inline-block;
-            background: var(--glass-bg);
-            color: var(--text-secondary);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-bottom: 10px;
+        }
+
+        .stat-badge-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
             border: 1px solid var(--border);
-        }
-
-        .image-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: auto;
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
-        }
-
-        .image-stat {
+            padding: 18px 25px;
+            border-radius: 20px;
             text-align: center;
             flex: 1;
+            min-width: 140px;
+            transition: all 0.3s ease;
+        }
+        .stat-badge-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+        .stat-badge-val { font-size: 1.6rem; font-weight: 900; color: var(--text-primary); }
+        .stat-badge-lbl { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+            width: 100%;
+        }
+        .movie-grid .premium-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
         }
 
-        .image-stat-label {
+        @media (min-width: 2560px) { .movie-grid { grid-template-columns: repeat(10, 1fr); } }
+        @media (min-width: 2200px) and (max-width: 2559px) { .movie-grid { grid-template-columns: repeat(9, 1fr); } }
+        @media (min-width: 1920px) and (max-width: 2199px) { .movie-grid { grid-template-columns: repeat(8, 1fr); } }
+        @media (min-width: 1650px) and (max-width: 1919px) { .movie-grid { grid-template-columns: repeat(7, 1fr); } }
+        @media (min-width: 1400px) and (max-width: 1649px) { .movie-grid { grid-template-columns: repeat(6, 1fr); } }
+        @media (min-width: 1150px) and (max-width: 1399px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (min-width: 900px) and (max-width: 1149px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 650px) and (max-width: 899px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 649px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+        .section-wrapper { padding: 40px 5% 80px; }
+
+        /* --- Premium Logo Cards Gallery --- */
+        .logo-card-premium {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 18px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-card-premium:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 35px var(--accent-glow, rgba(167, 139, 250, 0.25));
+        }
+
+        .logo-pod {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 20px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            transition: transform 0.4s ease;
+        }
+
+        .logo-card-premium:hover .logo-pod {
+            transform: scale(1.04);
+        }
+
+        .logo-pod img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .logo-card-body {
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .logo-badge-dim {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 4px 12px;
             font-size: 0.75rem;
-            color: var(--text-muted);
+            font-weight: 700;
         }
 
-        .image-stat-value {
-            font-weight: 600;
-            color: var(--text);
-            margin-top: 4px;
-        }
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
-
-        .no-data i {
-            font-size: 3rem;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
+        .logo-badge-type {
+            background: linear-gradient(135deg, #a78bfa, #f472b6);
+            color: #ffffff;
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
 
-        .section-header {
-            margin-bottom: 30px;
+        .btn-logo-action {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .company-hero-section {
-                padding-top: 100px;
-                padding-bottom: 40px;
-            }
+        .btn-logo-action:hover {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
 
-            .company-logo-container {
-                min-height: 250px;
-            }
+        .btn-logo-action.primary {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
 
-            .films-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 1rem;
-            }
-
-            .company-info {
-                padding: 20px;
-            }
+        .btn-logo-action.primary:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 12px var(--accent-glow);
         }
     </style>
-<link rel="stylesheet" href="theme-variables.css">
 </head>
-<body class="company-details-page">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top px-5">
+<body>
+
+<!-- Unified Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
             <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
@@ -330,10 +193,11 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
             <ul class="navbar-nav gap-4">
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="films.html">FILMS</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold active text-theme" href="companies-browse.html">STUDIOS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="distributors-browse.html">DISTRIBUTEURS</a></li>
             </ul>
         </div>
         <div class="d-flex align-items-center gap-3">
@@ -341,287 +205,196 @@
                 <i class="ph ph-moon fs-4" id="theme-icon"></i>
             </button>
             <div id="auth-section">
-                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
+            <script>
+                (function() {
+                    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+                    if (auth) {
+                        const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+                        const c = document.getElementById("auth-section");
+                        if (c) {
+                            c.innerHTML = `
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end d-none d-md-block">
+                                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                                            <div class="fw-bold small">${pseudo}</div>
+                                            <div class="x-small opacity-50">MON PROFIL</div>
+                                        </a>
+                                    </div>
+                                    <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                                </div>`;
+                        }
+                    }
+                })();
+            </script>
         </div>
     </div>
 </nav>
 
-    <!-- Hero Société -->
-    <section class="content-section company-hero-section">
-        <div class="row g-4 align-items-start">
-            <!-- Logo -->
-            <div class="col-md-4">
-                <div class="company-logo-container">
-                    <img id="company-logo" src="https://via.placeholder.com/500x300?text=Logo" alt="Logo de la société" onerror="this.src='https://via.placeholder.com/500x300?text=Aucun+logo'">
-                </div>
+<!-- Hero Section -->
+<header class="company-hero">
+    <div class="container-fluid position-relative" style="z-index: 2;">
+        <div class="d-flex align-items-center gap-4 flex-wrap mb-4">
+            <div id="company-logo-wrapper">
+                <img id="company-logo" class="company-logo-header" src="" alt="Logo du Studio" style="display: none;">
             </div>
-
-            <!-- Infos -->
-            <div class="col-md-8">
-                <div class="company-info">
-                    <h1 id="company-name" class="section-title mb-4"></h1>
-
-                    <!-- Description -->
-                    <div id="company-description-container" class="mb-4">
-                        <p id="company-description" class="lead"></p>
-                    </div>
-
-                    <!-- Stats -->
-                    <div class="company-stats">
-                        <!-- Pays d'origine -->
-                        <div class="company-stat">
-                            <i class="ph ph-globe"></i>
-                            <div class="company-stat-content">
-                                <h6>Pays d'origine</h6>
-                                <p id="company-country">--</p>
-                            </div>
-                        </div>
-
-                        <!-- Siège social -->
-                        <div class="company-stat">
-                            <i class="ph ph-map-pin"></i>
-                            <div class="company-stat-content">
-                                <h6>Siège social</h6>
-                                <p id="company-headquarters">--</p>
-                            </div>
-                        </div>
-
-                        <!-- Website -->
-                        <div id="website-container" class="company-stat" style="display: none;">
-                            <i class="ph ph-link"></i>
-                            <div class="company-stat-content">
-                                <h6>Site web</h6>
-                                <p><a id="company-website" href="#" target="_blank" rel="noopener noreferrer" class="text-primary">Visiter le site</a></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Lien vers le site -->
-                    <div id="homepage-container" style="display: none;">
-                        <a id="company-homepage" href="#" target="_blank" rel="noopener noreferrer" class="company-link">
-                            <i class="ph ph-arrow-up-right"></i>
-                            <span>Visiter le site officiel</span>
-                        </a>
-                    </div>
-
-                    <!-- Société mère -->
-                    <div id="parent-company-container" style="display: none;">
-                        <div class="parent-company">
-                            <h5><i class="ph ph-tree"></i> Société mère</h5>
-                            <p id="parent-company-name"></p>
-                        </div>
-                    </div>
+            <div class="flex-grow-1">
+                <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                    <h1 class="hero-title mb-0" id="company-name" style="font-size: 3rem;">Société de Production</h1>
+                    <span class="badge bg-secondary rounded-pill px-3 py-1 x-small fw-bold ms-2">
+                        <i class="ph-fill ph-globe-hemisphere-west me-1"></i> <span id="company-country">--</span>
+                    </span>
+                    <span class="badge bg-secondary rounded-pill px-3 py-1 x-small fw-bold">
+                        <i class="ph ph-map-pin me-1"></i> <span id="company-headquarters">--</span>
+                    </span>
+                    <span id="parent-company-container" style="display: none;">
+                        <span class="badge bg-purple rounded-pill px-3 py-1 x-small fw-bold" style="background: linear-gradient(135deg, #a78bfa, #f472b6);">
+                            <i class="ph ph-tree me-1"></i> Filiale de <span id="parent-company-name">...</span>
+                        </span>
+                    </span>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Films de la société -->
-    <section class="content-section">
-        <div class="section-header">
-            <div>
-                <h2 class="section-title"><i class="ph ph-film-strip me-2"></i> Films produits</h2>
-                <p class="text-secondary" id="films-count" style="font-size: 1rem; margin-top: 0.5rem;"></p>
-            </div>
-        </div>
-
-        <!-- Filtres -->
-        <div class="filters-section" style="background: var(--glass-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 2rem;">
-            <div class="row g-3 align-items-end">
-                <!-- Filtre par année -->
-                <div class="col-md-3">
-                    <label for="filter-year" class="form-label">Année</label>
-                    <select id="filter-year" class="form-select" style="background: var(--card-bg); border: 1px solid var(--border); color: var(--text);">
-                        <option value="">Toutes les années</option>
-                    </select>
+                <div id="company-description-container" style="display: none;">
+                    <p class="opacity-75 fs-5 mb-3" id="company-description"></p>
                 </div>
-
-                <!-- Filtre par note minimale -->
-                <div class="col-md-3">
-                    <label for="filter-rating" class="form-label">Note minimale</label>
-                    <select id="filter-rating" class="form-select" style="background: var(--card-bg); border: 1px solid var(--border); color: var(--text);">
-                        <option value="">Toutes les notes</option>
-                        <option value="9">9.0+</option>
-                        <option value="8">8.0+</option>
-                        <option value="7">7.0+</option>
-                        <option value="6">6.0+</option>
-                        <option value="5">5.0+</option>
-                    </select>
-                </div>
-
-                <!-- Filtre par statut évaluation -->
-                <div class="col-md-3">
-                    <label for="filter-evaluated" class="form-label">Évaluation</label>
-                    <select id="filter-evaluated" class="form-select" style="background: var(--card-bg); border: 1px solid var(--border); color: var(--text);">
-                        <option value="">Tous les films</option>
-                        <option value="evaluated">Évalués</option>
-                        <option value="not-evaluated">Non évalués</option>
-                    </select>
-                </div>
-
-                <!-- Boutons d'action -->
-                <div class="col-md-3">
-                    <button id="apply-filters" class="btn btn-primary w-100" style="margin-bottom: 0;">
-                        <i class="ph ph-funnel me-2"></i> Appliquer
-                    </button>
-                </div>
-            </div>
-
-            <!-- Filtres actifs -->
-            <div id="active-filters" style="margin-top: 15px; display: none;">
-                <div class="d-flex gap-2 flex-wrap align-items-center">
-                    <small style="color: var(--text-secondary);">Filtres actifs:</small>
-                    <div id="filter-tags" class="d-flex gap-2 flex-wrap"></div>
-                    <button id="clear-filters" class="btn btn-sm btn-outline-danger">
-                        <i class="ph ph-x me-1"></i> Effacer
-                    </button>
+                <div id="homepage-container" class="mt-3" style="display: none;">
+                    <a id="company-homepage" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold">
+                        <i class="ph ph-arrow-square-out me-1"></i> Site Web Officiel
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Loading indicator -->
-        <div id="films-loading" style="text-align: center; padding: 40px 20px;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Chargement...</span>
+        <!-- Stats Bar -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4" id="films-summary">
+            <div class="stat-badge-card">
+                <div class="stat-badge-val" id="stats-total">0</div>
+                <div class="stat-badge-lbl">Films Produits</div>
             </div>
-            <p class="text-secondary mt-3">Chargement des films...</p>
-        </div>
-
-        <!-- Films grid -->
-        <div id="films-container" class="films-grid" style="display: none;"></div>
-
-        <!-- No films message -->
-        <div id="no-films" class="no-data" style="display: none;">
-            <i class="ph ph-film-strip"></i>
-            <p>Aucun film trouvé pour cette société</p>
-        </div>
-
-        <!-- Summary stats -->
-        <div id="films-summary" style="display: none; margin-top: 3rem; padding: 20px; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--border);">
-            <h5 class="mb-3">📊 Résumé des films</h5>
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <div class="text-center">
-                        <h3 class="text-primary mb-1" id="stats-total">0</h3>
-                        <p class="text-secondary">Films totaux</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="text-center">
-                        <h3 class="text-success mb-1" id="stats-rated">0</h3>
-                        <p class="text-secondary">Évalués</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="text-center">
-                        <h3 class="text-warning mb-1" id="stats-avg-rating">0</h3>
-                        <p class="text-secondary">Note moyenne</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="text-center">
-                        <h3 class="text-info mb-1" id="stats-year-range">--</h3>
-                        <p class="text-secondary">Années</p>
-                    </div>
-                </div>
+            <div class="stat-badge-card">
+                <div class="stat-badge-val" id="stats-rated">0</div>
+                <div class="stat-badge-lbl">Films Notés</div>
+            </div>
+            <div class="stat-badge-card">
+                <div class="stat-badge-val text-accent" id="stats-avg-rating">0.0 / 10</div>
+                <div class="stat-badge-lbl">Note Moyenne</div>
+            </div>
+            <div class="stat-badge-card">
+                <div class="stat-badge-val text-primary" id="stats-year-range">--</div>
+                <div class="stat-badge-lbl">Années d'Activité</div>
             </div>
         </div>
-    </section>
+    </div>
+</header>
 
-    <!-- Images/Logos de la société -->
-    <section class="content-section" id="images-section" style="display: none;">
-        <div class="section-header">
-            <h2 class="section-title"><i class="ph ph-image me-2"></i> Images et Logos</h2>
-            <p class="text-secondary" id="images-count" style="font-size: 1rem; margin-top: 0.5rem;"></p>
-        </div>
+<main class="section-wrapper">
+    <!-- Barre de Filtres & Tri -->
+    <div class="filter-panel mb-4" style="position: relative; z-index: 10;">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="filter-year" class="filter-label"><i class="ph ph-calendar me-1"></i> ANNÉE DE SORTIE</label>
+                <select id="filter-year" class="premium-select" style="cursor: pointer;">
+                    <option value="">Toutes les années</option>
+                </select>
+            </div>
 
-        <!-- Tabs pour filtrer les types d'images -->
-        <ul class="nav nav-tabs" id="imagesTabs" role="tablist" style="margin-bottom: 2rem; border-bottom: 2px solid var(--border);">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="logos-tab" data-bs-toggle="tab" data-bs-target="#logos" type="button" role="tab" style="color: var(--text); border: none;">
-                    <i class="ph ph-trademark me-2"></i>Logos
+            <div class="col-md-3">
+                <label for="filter-rating" class="filter-label"><i class="ph ph-star me-1"></i> NOTE MINIMALE</label>
+                <select id="filter-rating" class="premium-select" style="cursor: pointer;">
+                    <option value="">Toutes les notes</option>
+                    <option value="9">9.0+</option>
+                    <option value="8">8.0+</option>
+                    <option value="7">7.0+</option>
+                    <option value="6">6.0+</option>
+                    <option value="5">5.0+</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label for="filter-evaluated" class="filter-label"><i class="ph ph-check-circle me-1"></i> ÉVALUATION</label>
+                <select id="filter-evaluated" class="premium-select" style="cursor: pointer;">
+                    <option value="">Tous les films</option>
+                    <option value="evaluated">Évalués</option>
+                    <option value="not-evaluated">Non évalués</option>
+                </select>
+            </div>
+
+            <div class="col-md-3 text-end d-flex gap-2 align-items-end">
+                <button id="apply-filters" class="btn-apply-filters m-0" style="cursor: pointer;">
+                    <i class="ph ph-funnel me-1"></i> Filtrer
                 </button>
-            </li>
-        </ul>
-
-        <!-- Tab content -->
-        <div class="tab-content" id="imagesTabContent">
-            <div class="tab-pane fade show active" id="logos" role="tabpanel">
-                <div id="logos-container" class="images-grid"></div>
-                <div id="no-logos" class="no-data" style="display: none;">
-                    <i class="ph ph-image"></i>
-                    <p>Aucun logo trouvé pour cette société</p>
-                </div>
             </div>
         </div>
-    </section>
 
-    <!-- Sociétés parentes/filiales -->
-    <section class="content-section" id="related-companies-section" style="display: none;">
-        <div class="section-header">
-            <h2 class="section-title"><i class="ph ph-tree me-2"></i> Sociétés associées</h2>
-        </div>
-        <div id="related-companies-container"></div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="footer-brand">
-                        <div class="logo-container">
-                            <span class="logo-text">M</span>
-                        </div>
-                        <span class="brand-text ms-2">MyCiné</span>
-                    </div>
-                    <p class="footer-description">Votre destination pour découvrir les meilleurs films et où les regarder.</p>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="footer-title">Explorer</h5>
-                    <ul class="footer-links">
-                        <li><a href="films.html">Films</a></li>
-                        <li><a href="collections-browse.html">Collections</a></li>
-                        <li><a href="cine_map/cine_map.html">CineMap</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="footer-title">Liens utiles</h5>
-                    <ul class="footer-links">
-                        <li><a href="#">À propos</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Conditions d'utilisation</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="footer-title">Mon compte</h5>
-                    <ul class="footer-links">
-                        <li><a href="../connexion/connexion.html">Se connecter</a></li>
-                        <li><a href="#">Ma watchlist</a></li>
-                        <li><a href="#">Films vus</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="footer-title">Suivez-nous</h5>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="ph ph-facebook-logo"></i></a>
-                        <a href="#" class="social-link"><i class="ph ph-twitter-logo"></i></a>
-                        <a href="#" class="social-link"><i class="ph ph-instagram-logo"></i></a>
-                    </div>
-                </div>
+        <!-- Filtres actifs -->
+        <div id="active-filters" class="mt-3 pt-3 border-top border-secondary" style="display: none;">
+            <div class="d-flex gap-2 flex-wrap align-items-center">
+                <span class="x-small fw-extrabold text-accent uppercase me-2">FILTRES ACTIFS :</span>
+                <div id="filter-tags" class="d-flex gap-2 flex-wrap"></div>
+                <button id="clear-filters" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 x-small fw-bold ms-auto" style="cursor: pointer;">
+                    <i class="ph ph-x me-1"></i> EFFACER
+                </button>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <!-- Container pour les notifications -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+    <!-- En-tête de section -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div class="lane-title mb-0">CATALOGUE DU STUDIO</div>
+        <div class="fw-bold opacity-75 small text-theme" id="films-count">Chargement des films...</div>
+    </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="sombre_clair.js"></script>
-    <script src="company-details.js"></script>
+    <!-- Loading Indicator -->
+    <div id="films-loading" class="text-center py-5 w-100">
+        <div class="spinner-border text-theme" role="status">
+            <span class="visually-hidden">Chargement des films...</span>
+        </div>
+        <p class="text-theme opacity-50 mt-3 small fw-bold">Chargement des œuvres produites...</p>
+    </div>
+
+    <!-- Grille des films -->
+    <div id="films-container" class="movie-grid" style="display: none;"></div>
+
+    <!-- Aucune donnée -->
+    <div id="no-films" class="text-center py-5 opacity-50" style="display: none;">
+        <i class="ph ph-film-strip fs-1 mb-2"></i>
+        <h4 class="fw-bold">Aucun film trouvé</h4>
+        <p class="small">Aucun film ne correspond à vos critères de recherche.</p>
+    </div>
+
+    <!-- Section Images & Logos du Studio -->
+    <section id="images-section" class="mt-5 pt-5 border-top border-secondary" style="display: none;">
+        <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(167, 139, 250, 0.3);">
+                <i class="ph ph-trademark fs-4 text-white"></i>
+            </div>
+            <div>
+                <h3 class="fw-extrabold mb-0 text-theme" style="letter-spacing: -0.5px;">CHARTE VISUELLE & LOGOS OFFICIELS</h3>
+                <p class="opacity-50 small mb-0">Ressources haute définition et logos officiels du studio</p>
+            </div>
+            <div class="ms-auto badge bg-secondary rounded-pill px-3 py-2 fw-bold" id="images-count"></div>
+        </div>
+        <div id="logos-container" class="movie-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;"></div>
+        <div id="no-logos" class="text-center py-5 opacity-50" style="display: none;">
+            <i class="ph ph-image fs-1 mb-2"></i>
+            <p class="small fw-bold">Aucun logo supplémentaire disponible.</p>
+        </div>
+    </section>
+</main>
+
+<footer class="py-5 text-center border-top border-secondary mt-5 opacity-50">
+    <p class="small fw-bold">© 2026 MYCINÉ • EXPERIENCE PREMIUM</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="company-details.js?v=6"></script>
+<script>
+    window.onscroll = () => {
+        const nav = document.querySelector('.navbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    };
+</script>
 <script src="../theme.js"></script>
 </body>
 </html>
-
