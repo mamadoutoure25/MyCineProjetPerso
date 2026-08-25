@@ -35,19 +35,31 @@
         }
         .text-accent { color: #a78bfa !important; }
         .cat-tag {
-            padding: 10px 25px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 20px;
+            background: var(--card-bg, rgba(255,255,255,0.08));
+            border: 1px solid var(--border, rgba(255,255,255,0.15));
             border-radius: 50px;
-            color: #fff;
-            text-decoration: none;
+            color: var(--text-primary, #ffffff) !important;
+            text-decoration: none !important;
             font-weight: 700;
             font-size: 0.8rem;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .cat-tag.active, .cat-tag:hover {
-            background: #a78bfa;
-            color: #000;
+
+        .cat-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent) !important;
+            transform: translateY(-2px);
+        }
+
+        .cat-tag.active {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6) !important;
+            color: #ffffff !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.45);
         }
     </style>
     <link rel="stylesheet" href="PROJET_TM/Films/theme-variables.css">
@@ -137,15 +149,27 @@
             <div class="d-flex gap-2 flex-wrap justify-content-center align-items-center mt-2" id="series-platform-filters">
                 <span class="x-small fw-extrabold text-accent uppercase me-1"><i class="ph ph-broadcast me-1"></i> STREAMING & TV :</span>
                 <a href="#" class="cat-tag active" data-network="">TOUTES</a>
-                <a href="#" class="cat-tag" data-network="49|3186">🔴 HBO MAX</a>
-                <a href="#" class="cat-tag" data-network="213">🍿 NETFLIX</a>
-                <a href="#" class="cat-tag" data-network="1024">📦 PRIME VIDEO</a>
-                <a href="#" class="cat-tag" data-network="2552">🍏 APPLE TV+</a>
-                <a href="#" class="cat-tag" data-network="2739">✨ DISNEY+</a>
-                <a href="#" class="cat-tag" data-network="174">📺 AMC</a>
-                <a href="#" class="cat-tag" data-network="285">🛰️ CANAL+</a>
-                <a href="#" class="cat-tag" data-network="88">⚡ FX</a>
-                <a href="#" class="cat-tag" data-network="67|4330">🏔️ PARAMOUNT+</a>
+                <a href="#" class="cat-tag" data-network="49|3186">HBO MAX</a>
+                <a href="#" class="cat-tag" data-network="213">NETFLIX</a>
+                <a href="#" class="cat-tag" data-network="1024">PRIME VIDEO</a>
+                <a href="#" class="cat-tag" data-network="2552">APPLE TV+</a>
+                <a href="#" class="cat-tag" data-network="2739">DISNEY+</a>
+                <a href="#" class="cat-tag" data-network="174">AMC</a>
+                <a href="#" class="cat-tag" data-network="285">CANAL+</a>
+                <a href="#" class="cat-tag" data-network="88">FX</a>
+                <a href="#" class="cat-tag" data-network="67|4330">PARAMOUNT+</a>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap justify-content-center align-items-center mt-2" id="series-year-filters">
+                <span class="x-small fw-extrabold text-accent uppercase me-1"><i class="ph ph-calendar-blank me-1"></i> ANNÉE :</span>
+                <a href="#" class="cat-tag active" data-year="">TOUTES</a>
+                <a href="#" class="cat-tag" data-year="2026">2026</a>
+                <a href="#" class="cat-tag" data-year="2025">2025</a>
+                <a href="#" class="cat-tag" data-year="2024">2024</a>
+                <a href="#" class="cat-tag" data-year="2023">2023</a>
+                <a href="#" class="cat-tag" data-year="2020-2026">2020s</a>
+                <a href="#" class="cat-tag" data-year="2010-2019">2010s</a>
+                <a href="#" class="cat-tag" data-year="2000-2009">2000s</a>
             </div>
         </div>
 
@@ -322,58 +346,56 @@
         });
 
         const platformTags = document.querySelectorAll('#series-platform-filters .cat-tag');
+        const yearTags = document.querySelectorAll('#series-year-filters .cat-tag');
 
-        genreTags.forEach(tag => {
-            tag.addEventListener('click', async (e) => {
-                e.preventDefault();
-                genreTags.forEach(t => t.classList.remove('active'));
-                tag.classList.add('active');
+        const applySeriesFilters = async () => {
+            const activeGenre = document.querySelector('#series-genre-filters .cat-tag.active')?.dataset?.genre || '';
+            const activePlatform = document.querySelector('#series-platform-filters .cat-tag.active')?.dataset?.network || '';
+            const activeYear = document.querySelector('#series-year-filters .cat-tag.active')?.dataset?.year || '';
 
-                const genreId = tag.dataset.genre;
-                const activePlatform = document.querySelector('#series-platform-filters .cat-tag.active')?.dataset?.network || '';
-                
-                let endpoint = (genreId || activePlatform) ? '/discover/tv' : '/tv/popular';
-                let params = '';
-                if (genreId) params += `&with_genres=${genreId}`;
-                if (activePlatform) params += `&with_networks=${activePlatform}`;
+            let endpoint = (activeGenre || activePlatform || activeYear) ? '/discover/tv' : '/tv/popular';
+            let params = '';
+            if (activeGenre) params += `&with_genres=${activeGenre}`;
+            if (activePlatform) params += `&with_networks=${activePlatform}`;
+            if (activeYear) {
+                if (activeYear.includes('-')) {
+                    const [startYear, endYear] = activeYear.split('-');
+                    params += `&first_air_date.gte=${startYear}-01-01&first_air_date.lte=${endYear}-12-31`;
+                } else {
+                    params += `&first_air_date_year=${activeYear}`;
+                }
+            }
 
-                laneStates['popular-series'].endpoint = endpoint;
-                laneStates['popular-series'].params = params;
-                laneStates['popular-series'].page = 1;
+            laneStates['popular-series'].endpoint = endpoint;
+            laneStates['popular-series'].params = params;
+            laneStates['popular-series'].page = 1;
 
-                const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}&language=fr-FR${params}`;
+            const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}&language=fr-FR${params}`;
 
+            try {
                 const res = await fetch(url).then(r => r.json());
                 renderLane(res.results, 'popular-series');
-                document.querySelector('.lane-title').textContent = (genreId || activePlatform) ? `SÉRIES : ${tag.textContent}` : "SÉRIES LES PLUS POPULAIRES";
+                const titleEl = document.querySelector('.lane-title');
+                if (titleEl) {
+                    titleEl.textContent = (activeGenre || activePlatform || activeYear) ? `SÉRIES FILTRÉES` : "SÉRIES LES PLUS POPULAIRES";
+                }
+            } catch(e) { console.error(e); }
+        };
+
+        const bindTagGroup = (tags) => {
+            tags.forEach(tag => {
+                tag.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    tags.forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    applySeriesFilters();
+                });
             });
-        });
+        };
 
-        platformTags.forEach(tag => {
-            tag.addEventListener('click', async (e) => {
-                e.preventDefault();
-                platformTags.forEach(t => t.classList.remove('active'));
-                tag.classList.add('active');
-
-                const netId = tag.dataset.network;
-                const activeGenre = document.querySelector('#series-genre-filters .cat-tag.active')?.dataset?.genre || '';
-
-                let endpoint = (netId || activeGenre) ? '/discover/tv' : '/tv/popular';
-                let params = '';
-                if (netId) params += `&with_networks=${netId}`;
-                if (activeGenre) params += `&with_genres=${activeGenre}`;
-
-                laneStates['popular-series'].endpoint = endpoint;
-                laneStates['popular-series'].params = params;
-                laneStates['popular-series'].page = 1;
-
-                const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}&language=fr-FR${params}`;
-
-                const res = await fetch(url).then(r => r.json());
-                renderLane(res.results, 'popular-series');
-                document.querySelector('.lane-title').textContent = netId ? `SÉRIES : ${tag.textContent}` : "SÉRIES LES PLUS POPULAIRES";
-            });
-        });
+        bindTagGroup(genreTags);
+        bindTagGroup(platformTags);
+        bindTagGroup(yearTags);
     }
 
     function notify(msg, type) {

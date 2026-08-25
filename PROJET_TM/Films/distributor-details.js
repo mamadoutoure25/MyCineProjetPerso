@@ -362,15 +362,18 @@ async function loadMovies(reset = false) {
                 }
 
                 const html = res.results.map(m => {
-                    const isTv = currentMediaType === 'tv';
+                    const itemType = m.media_type || (m.title ? 'movie' : 'tv');
+                    const isTv = itemType === 'tv';
                     const targetUrl = isTv ? `serie-details.html?id=${m.id}` : `movie-details.html?id=${m.id}`;
                     const titleText = m.title || m.name;
                     const releaseDate = isTv ? m.first_air_date : m.release_date;
                     const yearText = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
+                    const defaultImg = m.poster_path ? IMG_BASE_URL + m.poster_path : 'https://via.placeholder.com/210x315';
+                    const posterSrc = isTv ? defaultImg : (window.getCustomPoster ? window.getCustomPoster(m.id, defaultImg, 'movie') : (localStorage.getItem(`custom_movie_poster_${m.id}`) || defaultImg));
 
                     return `
                         <div class="premium-card" onclick="window.location.href='${targetUrl}'" style="cursor: pointer;">
-                            <img src="${m.poster_path ? IMG_BASE_URL + m.poster_path : 'https://via.placeholder.com/210x315'}" loading="lazy">
+                            <img data-movie-id="${m.id}" src="${posterSrc}" loading="lazy">
                             <div class="card-details">
                                 <div class="card-title text-truncate">${titleText}</div>
                                 <div class="card-meta">

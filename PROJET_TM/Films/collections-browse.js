@@ -137,38 +137,16 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // Gestion du thème clair/sombre
+// Gestion du thème clair/sombre
 function initTheme() {
   const root = document.documentElement
   const toggleButton = document.getElementById("theme-toggle")
   const themeIcon = document.getElementById("theme-icon")
 
-  const savedTheme = localStorage.getItem("theme")
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-  const systemTheme = mediaQuery.matches ? "dark" : "light"
-  const currentTheme = savedTheme || systemTheme
-
-  root.setAttribute("data-theme", currentTheme)
-  updateThemeIcon(currentTheme, themeIcon)
-  updateThemeButtonLabel(currentTheme, toggleButton)
-
-  if (toggleButton) {
-    toggleButton.addEventListener("click", () => {
-      const activeTheme = root.getAttribute("data-theme") || "dark"
-      const nextTheme = activeTheme === "dark" ? "light" : "dark"
-      root.setAttribute("data-theme", nextTheme)
-      localStorage.setItem("theme", nextTheme)
-      updateThemeIcon(nextTheme, themeIcon)
-      updateThemeButtonLabel(nextTheme, toggleButton)
-    })
-  }
-
-  mediaQuery.addEventListener("change", event => {
-    if (localStorage.getItem("theme")) return
-    const autoTheme = event.matches ? "dark" : "light"
-    root.setAttribute("data-theme", autoTheme)
-    updateThemeIcon(autoTheme, themeIcon)
-    updateThemeButtonLabel(autoTheme, toggleButton)
-  })
+  const savedTheme = localStorage.getItem("theme") || "dark"
+  root.setAttribute("data-theme", savedTheme)
+  updateThemeIcon(savedTheme, themeIcon)
+  updateThemeButtonLabel(savedTheme, toggleButton)
 }
 
 function updateThemeIcon(theme, iconElement) {

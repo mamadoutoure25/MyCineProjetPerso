@@ -16,6 +16,45 @@ const CONFIG = {
 
 const id = new URLSearchParams(window.location.search).get("id");
 let user = null;
+let currentMovieData = null;
+let customMoviePoster = null;
+
+function getAuthHeaders() {
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const headers = { 'Content-Type': 'application/json' };
+    if (auth && auth.token) {
+        headers['Authorization'] = `Bearer ${auth.token}`;
+    }
+    return headers;
+}
+
+async function loadUserCustomPoster() {
+    if (!id) return;
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    user = auth ? (auth.userId || auth.id) : null;
+
+    if (user || (auth && auth.token)) {
+        try {
+            const res = await fetch(`./user_posters.php?user_id=${user || ''}&tmdb_id=${id}&media_type=movie`, {
+                headers: getAuthHeaders()
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.success && data.poster_path) {
+                    customMoviePoster = data.poster_path;
+                    localStorage.setItem(`custom_movie_poster_${id}`, customMoviePoster);
+                } else if (data.success && data.poster_path === null) {
+                    localStorage.removeItem(`custom_movie_poster_${id}`);
+                    customMoviePoster = null;
+                }
+            }
+        } catch (e) {
+            console.warn("Erreur chargement affiche personnalisée API:", e);
+        }
+    } else {
+        customMoviePoster = localStorage.getItem(`custom_movie_poster_${id}`);
+    }
+}
 
 async function initPage() {
     const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
@@ -26,11 +65,14 @@ async function initPage() {
     if (!id) return (window.location.href = "../../index.html");
 
     try {
+        await loadUserCustomPoster();
         const movie = await fetchData(`/movie/${id}`, "append_to_response=credits,release_dates,watch/providers,videos,images,external_ids");
         if (!movie) throw new Error("Film introuvable");
+        currentMovieData = movie;
 
         renderHero(movie);
         renderCast(movie.credits?.cast);
+        renderSoundtrack(movie);
         renderVideos(movie.videos?.results);
         renderGallery(movie.images);
         renderProviders(movie["watch/providers"]?.results);
@@ -86,6 +128,12 @@ function renderHero(m) {
     if (el("movie-overview")) el("movie-overview").textContent = m.overview || "Pas de synopsis.";
     if (el("hero-backdrop") && m.backdrop_path) el("hero-backdrop").src = CONFIG.ORIG + m.backdrop_path;
 
+    const defaultPoster = m.poster_path ? CONFIG.W500 + m.poster_path : CONFIG.EMPTY_POSTER;
+    const activePoster = customMoviePoster || defaultPoster;
+    if (el("movie-poster-img")) el("movie-poster-img").src = activePoster;
+    if (el("side-poster-item")) el("side-poster-item").classList.remove("d-none");
+    if (el("btn-reset-poster-side")) el("btn-reset-poster-side").style.display = customMoviePoster ? "inline-block" : "none";
+
     const year = m.release_date ? new Date(m.release_date).getFullYear() : "";
     const runtime = m.runtime ? `${m.runtime} min` : "";
     const genres = m.genres?.slice(0,3).map(g => g.name).join(", ") || "";
@@ -111,7 +159,7 @@ function renderHero(m) {
     const studioTag = el("studio-tag");
     const studio = m.production_companies?.[0];
     if (studioTag && studio) {
-        studioTag.innerHTML = `<div class="studio-icon">${studio.logo_path ? `<img src="${CONFIG.W500}${studio.logo_path}">` : `<span>${studio.name[0]}</span>`}</div><span class="fw-bold">${studio.name.toUpperCase()}</span>`;
+        studioTag.innerHTML = `<div class="studio-icon">${studio.logo_path ? `<img src="${CONFIG.W500}${studio.logo_path}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span>${studio.name[0]}</span>`}</div><span class="fw-bold">${studio.name.toUpperCase()}</span>`;
     }
 
     if (el("side-budget-item")) {
@@ -162,6 +210,95 @@ function renderCast(cast) {
     `).join("");
 }
 
+function renderSoundtrack(m) {
+    const wrapper = document.getElementById("soundtrack-wrapper");
+    const composersCont = document.getElementById("movie-composers");
+    const platformsCont = document.getElementById("music-platforms");
+    const videosCont = document.getElementById("soundtrack-videos");
+    const videosWrapper = document.getElementById("soundtrack-videos-container");
+
+    if (!wrapper || !m) return;
+
+    // Détection des compositeurs de la musique originale dans crew
+    const crew = m.credits?.crew || [];
+    let composers = crew.filter(c => c.job === "Original Music Composer" || c.job === "Music");
+    
+    if (composers.length === 0) {
+        composers = crew.filter(c => c.department === "Sound" && (c.job.includes("Composer") || c.job.includes("Music")));
+    }
+
+    const uniqueComposers = [];
+    const seenIds = new Set();
+    composers.forEach(c => {
+        if (!seenIds.has(c.id)) {
+            seenIds.add(c.id);
+            uniqueComposers.push(c);
+        }
+    });
+
+    if (uniqueComposers.length > 0 && composersCont) {
+        composersCont.innerHTML = uniqueComposers.map(c => `
+            <div class="composer-card" onclick="window.location.href='actor-details.html?id=${c.id}'">
+                <img class="composer-avatar" src="${c.profile_path ? CONFIG.W500 + c.profile_path : CONFIG.EMPTY_ACTOR}" alt="${c.name}">
+                <div>
+                    <div class="fw-bold text-theme">${c.name}</div>
+                    <div class="x-small text-accent fw-bold"><i class="ph-fill ph-music-notes me-1"></i> ${c.job || 'Compositeur Musique Originale'}</div>
+                </div>
+            </div>
+        `).join("");
+    } else if (composersCont) {
+        composersCont.innerHTML = `<div class="x-small opacity-50 p-2">Non renseigné</div>`;
+    }
+
+    // Raccourcis de recherche sur les plateformes de streaming musical
+    if (platformsCont) {
+        const searchTitle = encodeURIComponent((m.title || m.original_title) + " Original Soundtrack");
+        platformsCont.innerHTML = `
+            <a href="https://open.spotify.com/search/${searchTitle}" target="_blank" class="music-btn music-btn-spotify">
+                <i class="ph-fill ph-spotify-logo fs-4"></i> Spotify
+            </a>
+            <a href="https://music.youtube.com/search?q=${searchTitle}" target="_blank" class="music-btn music-btn-youtube">
+                <i class="ph-fill ph-youtube-logo fs-4"></i> YouTube Music
+            </a>
+            <a href="https://music.apple.com/fr/search?term=${searchTitle}" target="_blank" class="music-btn music-btn-apple">
+                <i class="ph-fill ph-apple-logo fs-4"></i> Apple Music
+            </a>
+            <a href="https://www.deezer.com/search/${searchTitle}" target="_blank" class="music-btn music-btn-deezer">
+                <i class="ph-fill ph-music-note fs-4"></i> Deezer
+            </a>
+        `;
+    }
+
+    // Extraits et clips vidéo musicaux
+    const musicVids = (m.videos?.results || []).filter(v => 
+        v.site === "YouTube" && (
+            v.type === "Music Video" || 
+            v.name.toLowerCase().includes("music") || 
+            v.name.toLowerCase().includes("soundtrack") || 
+            v.name.toLowerCase().includes("theme") ||
+            v.name.toLowerCase().includes("b.o")
+        )
+    );
+
+    if (musicVids.length > 0 && videosCont && videosWrapper) {
+        videosWrapper.style.display = "block";
+        videosCont.innerHTML = musicVids.map(v => `
+            <div class="premium-card collection-card" onclick="openModal('video', '${v.key}', '${v.name.replace(/'/g, "\\'")}')">
+                <img src="https://img.youtube.com/vi/${v.key}/maxresdefault.jpg" loading="lazy">
+                <div class="play-overlay"><i class="ph-fill ph-play-circle"></i></div>
+                <div class="card-details">
+                    <div class="card-title">${v.name}</div>
+                    <div class="card-meta">BANDE ORIGINALE</div>
+                </div>
+            </div>
+        `).join("");
+    } else if (videosWrapper) {
+        videosWrapper.style.display = "none";
+    }
+
+    wrapper.style.display = "block";
+}
+
 function renderVideos(vids) {
     const cont = document.getElementById("movie-videos");
     if (!cont) return;
@@ -183,17 +320,34 @@ function renderGallery(imgs) {
         const c = document.getElementById(gridId);
         if (!c) return;
         if (!items?.length) return (c.innerHTML = "<p class='p-5 opacity-50 text-center w-100'>Aucun média disponible.</p>");
-        c.innerHTML = items.slice(0, 12).map((im, i) => `
-            <div class="premium-card ${isPost ? '' : 'collection-card'}">
-                <img src="${CONFIG.HD}${im.file_path}" loading="lazy">
-                <div class="card-details">
-                     <div class="d-flex gap-3 justify-content-center w-100 mb-3">
-                        <button class="btn-circle" onclick="openModal('img', '${CONFIG.ORIG}${im.file_path}', 'Aperçu')"><i class="ph ph-magnifying-glass-plus"></i></button>
-                        <button class="btn-circle" onclick="downloadImg('${CONFIG.ORIG}${im.file_path}', 'img-${i}.jpg')"><i class="ph ph-download-simple"></i></button>
+
+        const currentActivePoster = customMoviePoster || (currentMovieData?.poster_path ? CONFIG.W500 + currentMovieData.poster_path : '');
+
+        c.innerHTML = items.slice(0, 18).map((im, i) => {
+            const fullUrl = `${CONFIG.HD}${im.file_path}`;
+            const originalUrl = `${CONFIG.ORIG}${im.file_path}`;
+            const isSelected = isPost && currentActivePoster && im.file_path && currentActivePoster.includes(im.file_path);
+
+            return `
+                <div class="premium-card ${isSelected ? 'border-primary' : ''} ${isPost ? '' : 'collection-card'}" style="position: relative;">
+                    <img src="${fullUrl}" loading="lazy" style="border-radius: 16px; width: 100%; aspect-ratio: ${isPost ? '2/3' : '16/9'}; object-fit: cover;">
+                    ${isSelected ? `<div class="position-absolute top-0 start-0 m-2 badge bg-primary rounded-pill px-3 py-1.5 fw-bold shadow"><i class="ph-fill ph-check-circle me-1"></i> Actuelle</div>` : ''}
+                    <div class="card-details">
+                        <div class="d-flex flex-column gap-2 justify-content-center align-items-center w-100 mt-auto">
+                            ${isPost ? (
+                                isSelected 
+                                    ? `<span class="badge bg-primary rounded-pill px-3 py-1.5 fw-bold mb-1"><i class="ph-fill ph-check-circle me-1"></i> Affiche Sélectionnée</span>`
+                                    : `<button class="btn btn-sm btn-primary rounded-pill px-3 py-1.5 x-small fw-bold shadow-sm mb-1" onclick="changerAfficheFilm('${originalUrl}')" title="Définir comme affiche principale"><i class="ph ph-check me-1"></i> Choisir cette affiche</button>`
+                            ) : ''}
+                            <div class="d-flex gap-2 justify-content-center align-items-center mt-1">
+                                <button class="btn btn-sm btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="openModal('img', '${originalUrl}', 'Aperçu HD')" title="Aperçu / Zoomer"><i class="ph ph-eye fs-5 text-dark"></i></button>
+                                <button class="btn btn-sm btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="downloadImg('${originalUrl}', 'film-media-${i + 1}.jpg')" title="Télécharger HD"><i class="ph ph-download-simple fs-5 text-dark"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join("");
+            `;
+        }).join("");
     };
     renderGrid(imgs?.backdrops, "grid-backdrops");
     renderGrid(imgs?.posters, "grid-posters", true);
@@ -254,19 +408,23 @@ function renderTechnical(m) {
     const fmt = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
     const budgetEl = document.getElementById("movie-budget");
     const revenueEl = document.getElementById("movie-revenue");
-    if (budgetEl) budgetEl.textContent = m.budget > 0 ? fmt.format(m.budget) : "N/A";
-    if (revenueEl) revenueEl.textContent = m.revenue > 0 ? fmt.format(m.revenue) : "N/A";
+    if (budgetEl) budgetEl.textContent = m.budget > 0 ? fmt.format(m.budget) : "Non communiqué";
+    if (revenueEl) revenueEl.textContent = m.revenue > 0 ? fmt.format(m.revenue) : "Non communiqué";
 
     const studioCont = document.getElementById("movie-production-companies");
     if (studioCont) {
-        studioCont.innerHTML = m.production_companies.slice(0, 3).map(c => `
-            <div class="d-flex align-items-center gap-3">
-                <div style="background:#fff; width:30px; height:30px; border-radius:6px; padding:5px; display:flex; align-items:center; justify-content:center;">
-                    ${c.logo_path ? `<img src="${CONFIG.W500}${c.logo_path}" style="max-width:100%; max-height:100%;">` : `<span class="text-dark fw-bold" style="font-size:0.7rem;">${c.name[0]}</span>`}
-                </div>
-                <span class="small fw-bold">${c.name}</span>
-            </div>
-        `).join("");
+        if (m.production_companies && m.production_companies.length > 0) {
+            studioCont.innerHTML = m.production_companies.slice(0, 4).map(c => `
+                <a href="company-details.html?id=${c.id}" class="studio-item-card" title="Voir les films de ${c.name}">
+                    <div class="studio-logo-box">
+                        ${c.logo_path ? `<img src="${CONFIG.W500}${c.logo_path}" alt="${c.name}">` : `<span class="text-dark fw-black" style="font-size:0.8rem;">${c.name.charAt(0)}</span>`}
+                    </div>
+                    <span class="studio-name">${c.name}</span>
+                </a>
+            `).join("");
+        } else {
+            studioCont.innerHTML = `<div class="x-small text-muted p-2">Non communiqué</div>`;
+        }
     }
 
     const releaseCont = document.getElementById("movie-release-dates");
@@ -276,9 +434,9 @@ function renderTechnical(m) {
             .filter(r => target.includes(r.iso_3166_1))
             .slice(0, 3)
             .map(r => `
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="opacity-50 small fw-bold">${r.iso_3166_1}</span>
-                    <span class="fw-bold small text-primary">${new Date(r.release_dates[0].release_date).toLocaleDateString()}</span>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="tech-label">${r.iso_3166_1}</span>
+                    <span class="fw-bold small text-accent">${new Date(r.release_dates[0].release_date).toLocaleDateString()}</span>
                 </div>
             `).join("");
     }
@@ -287,9 +445,22 @@ function renderTechnical(m) {
     if (idsCont && m.external_ids) {
         const ids = m.external_ids;
         let html = "";
-        if (ids.imdb_id) html += `<a href="https://imdb.com/title/${ids.imdb_id}" target="_blank" class="text-white opacity-50"><i class="ph ph-imdb-logo fs-2"></i></a>`;
-        if (ids.facebook_id) html += `<a href="https://facebook.com/${ids.facebook_id}" target="_blank" class="text-white opacity-50"><i class="ph ph-facebook-logo fs-2"></i></a>`;
+        if (ids.imdb_id) html += `<a href="https://imdb.com/title/${ids.imdb_id}" target="_blank" class="social-link-btn" title="Fiche IMDb"><i class="ph-fill ph-film-strip"></i></a>`;
+        if (ids.facebook_id) html += `<a href="https://facebook.com/${ids.facebook_id}" target="_blank" class="social-link-btn" title="Facebook"><i class="ph-fill ph-facebook-logo"></i></a>`;
+        if (ids.instagram_id) html += `<a href="https://instagram.com/${ids.instagram_id}" target="_blank" class="social-link-btn" title="Instagram"><i class="ph-fill ph-instagram-logo"></i></a>`;
+        if (ids.twitter_id) html += `<a href="https://twitter.com/${ids.twitter_id}" target="_blank" class="social-link-btn" title="Twitter / X"><i class="ph-fill ph-twitter-logo"></i></a>`;
+        if (m.homepage) html += `<a href="${m.homepage}" target="_blank" class="social-link-btn" title="Site Officiel"><i class="ph-fill ph-globe"></i></a>`;
         idsCont.innerHTML = html;
+    }
+
+    const crew = m.credits?.crew || [];
+    const comp = crew.find(c => c.job === "Original Music Composer" || c.job === "Music");
+    const origTitleEl = document.getElementById("movie-original-title");
+    if (origTitleEl) {
+        origTitleEl.innerHTML = `
+            <div class="tech-value">${m.original_title || m.title}</div>
+            ${comp ? `<div class="mt-2 text-accent fw-bold small"><i class="ph-fill ph-music-notes me-1"></i> Musique : <a href="actor-details.html?id=${comp.id}" class="text-accent text-decoration-none border-bottom border-accent">${comp.name}</a></div>` : ''}
+        `;
     }
 }
 
@@ -339,20 +510,24 @@ async function renderCollection(collectionId) {
 
             const moviesCards = collection.parts
                 .sort((a, b) => new Date(a.release_date) - new Date(b.release_date))
-                .map(m => `
-                    <div class="premium-card" onclick="window.location.href='movie-details.html?id=${m.id}'">
-                        <img src="${m.poster_path ? CONFIG.W500 + m.poster_path : CONFIG.EMPTY_POSTER}" loading="lazy">
-                        <div class="card-details">
-                            <div class="card-title text-truncate">${m.title}</div>
-                            <div class="card-meta">
-                                <span class="rating-badge">
-                                    <i class="ph-fill ph-star"></i> ${m.vote_average ? m.vote_average.toFixed(1) : '0.0'}
-                                </span>
-                                <span class="opacity-75">${m.release_date ? new Date(m.release_date).getFullYear() : 'N/A'}</span>
+                .map(m => {
+                    const defaultPoster = m.poster_path ? CONFIG.W500 + m.poster_path : CONFIG.EMPTY_POSTER;
+                    const posterSrc = window.getCustomPoster ? window.getCustomPoster(m.id, defaultPoster, 'movie') : (localStorage.getItem(`custom_movie_poster_${m.id}`) || defaultPoster);
+                    return `
+                        <div class="premium-card" onclick="window.location.href='movie-details.html?id=${m.id}'">
+                            <img data-movie-id="${m.id}" src="${posterSrc}" loading="lazy">
+                            <div class="card-details">
+                                <div class="card-title text-truncate">${m.title}</div>
+                                <div class="card-meta">
+                                    <span class="rating-badge">
+                                        <i class="ph-fill ph-star"></i> ${m.vote_average ? m.vote_average.toFixed(1) : '0.0'}
+                                    </span>
+                                    <span class="opacity-75">${m.release_date ? new Date(m.release_date).getFullYear() : 'N/A'}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join("");
+                    `;
+                }).join("");
 
             container.innerHTML = collectionCard + moviesCards;
         }
@@ -513,5 +688,146 @@ function initRating() {
     }
 }
 
+/**
+ * Fonctions de gestion de l'affiche du film
+ */
+function ouvrirModalPoster() {
+    const modalEl = document.getElementById("posterModal");
+    if (!modalEl) return;
+
+    const grid = document.getElementById("modal-posters-grid");
+    if (grid && currentMovieData && currentMovieData.images?.posters?.length > 0) {
+        grid.innerHTML = currentMovieData.images.posters.slice(0, 18).map(p => {
+            const url = CONFIG.W500 + p.file_path;
+            const fullUrl = CONFIG.ORIG + p.file_path;
+            const isSelected = (customMoviePoster === fullUrl || customMoviePoster === url);
+            return `
+                <div class="premium-card position-relative p-1" style="cursor: pointer; border: ${isSelected ? '3px solid var(--accent)' : '1px solid var(--border)'}; border-radius: 16px;" onclick="changerAfficheFilm('${fullUrl}')">
+                    <img src="${url}" loading="lazy" style="aspect-ratio: 2/3; object-fit: cover; border-radius: 12px; width: 100%;">
+                    ${isSelected ? `<span class="badge bg-primary position-absolute top-0 end-0 m-2 shadow"><i class="ph ph-check"></i> Actuelle</span>` : ''}
+                </div>
+            `;
+        }).join("");
+    } else if (grid) {
+        grid.innerHTML = "<p class='text-center opacity-50 py-4 w-100'>Aucune affiche alternative trouvée dans la galerie.</p>";
+    }
+
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+}
+
+function ouvrirModalSelectAffiche() {
+  const postTabBtn = document.querySelector('button[data-bs-target="#tab-post"]');
+  if (postTabBtn) {
+    const tab = new bootstrap.Tab(postTabBtn);
+    tab.show();
+  }
+  const tabSection = document.getElementById("tab-post") || document.querySelector('.tab-content');
+  if (tabSection) {
+    tabSection.scrollIntoView({ behavior: "smooth" });
+  }
+  notify("Sélectionnez 'Choisir cette affiche' sur l'affiche de votre choix ci-dessous", "info");
+}
+
+async function changerAfficheFilm(posterUrl) {
+    if (!id || !posterUrl) return;
+    customMoviePoster = posterUrl;
+    localStorage.setItem(`custom_movie_poster_${id}`, posterUrl);
+
+    const imgEl = document.getElementById("movie-poster-img");
+    if (imgEl) imgEl.src = posterUrl;
+
+    const resetBtn = document.getElementById("btn-reset-poster-side");
+    if (resetBtn) resetBtn.style.display = "inline-block";
+
+    // Fermer la modale si ouverte
+    const modalEl = document.getElementById("posterModal");
+    if (modalEl) {
+        const bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
+    }
+
+    notify("Affiche du film mise à jour avec succès !", "success");
+
+    // Sauvegarde en base de données si l'utilisateur est authentifié
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const uid = auth ? (auth.userId || auth.id) : user;
+    if (uid || (auth && auth.token)) {
+        try {
+            await fetch('./user_posters.php', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    user_id: uid,
+                    tmdb_id: parseInt(id),
+                    media_type: 'movie',
+                    poster_path: posterUrl
+                })
+            });
+        } catch (e) {
+            console.error("Erreur d'enregistrement de l'affiche:", e);
+        }
+    }
+
+    if (currentMovieData?.images) {
+        renderGallery(currentMovieData.images);
+    }
+
+    // Remonter en douceur vers le haut de la page
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function resetAfficheFilm() {
+    if (!id) return;
+    customMoviePoster = null;
+    localStorage.removeItem(`custom_movie_poster_${id}`);
+
+    const defaultPoster = currentMovieData?.poster_path ? CONFIG.W500 + currentMovieData.poster_path : CONFIG.EMPTY_POSTER;
+    const imgEl = document.getElementById("movie-poster-img");
+    if (imgEl) imgEl.src = defaultPoster;
+
+    const resetBtn = document.getElementById("btn-reset-poster-side");
+    if (resetBtn) resetBtn.style.display = "none";
+
+    const modalEl = document.getElementById("posterModal");
+    if (modalEl) {
+        const bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
+    }
+
+    notify("Affiche réinitialisée à l'originale", "info");
+
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const uid = auth ? (auth.userId || auth.id) : user;
+    if (uid || (auth && auth.token)) {
+        try {
+            await fetch(`./user_posters.php?user_id=${uid || ''}&tmdb_id=${id}&media_type=movie`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+        } catch (e) {
+            console.error("Erreur de réinitialisation:", e);
+        }
+    }
+
+    if (currentMovieData?.images) {
+        renderGallery(currentMovieData.images);
+    }
+}
+
+function soumettreAfficheCustomUrl() {
+    const input = document.getElementById("custom-poster-input");
+    if (!input || !input.value.trim()) {
+        return notify("Veuillez saisir une URL valide", "warning");
+    }
+    changerAfficheFilm(input.value.trim());
+    input.value = "";
+}
+
 window.downloadImg = downloadImg;
 window.openModal = openModal;
+window.ouvrirModalPoster = ouvrirModalPoster;
+window.ouvrirModalSelectAffiche = ouvrirModalSelectAffiche;
+window.changerAfficheFilm = changerAfficheFilm;
+window.resetAfficheFilm = resetAfficheFilm;
+window.soumettreAfficheCustomUrl = soumettreAfficheCustomUrl;

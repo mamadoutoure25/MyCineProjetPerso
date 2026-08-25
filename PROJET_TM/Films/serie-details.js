@@ -35,6 +35,7 @@ async function initPage() {
         renderHero(serie);
         renderSeasons(serie.seasons);
         renderCast(serie.credits?.cast);
+        renderSoundtrack(serie);
         renderVideos(serie.videos?.results);
         renderGallery(serie.images);
         renderProviders(serie["watch/providers"]?.results?.BE);
@@ -82,7 +83,7 @@ function renderHero(s) {
 
     const studio = s.production_companies?.[0];
     if (studio) {
-        document.getElementById("studio-tag").innerHTML = `<div class="studio-icon">${studio.logo_path ? `<img src="${CONFIG.W500}${studio.logo_path}">` : `<span>${studio.name[0]}</span>`}</div><span class="fw-bold">${studio.name.toUpperCase()}</span>`;
+        document.getElementById("studio-tag").innerHTML = `<div class="studio-icon">${studio.logo_path ? `<img src="${CONFIG.W500}${studio.logo_path}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span>${studio.name[0]}</span>`}</div><span class="fw-bold">${studio.name.toUpperCase()}</span>`;
     }
 
     const trailer = s.videos?.results?.find(v => v.type === "Trailer");
@@ -122,6 +123,76 @@ function renderCast(cast) {
             </div>
         </div>
     `).join("");
+}
+
+function renderSoundtrack(s) {
+    const wrapper = document.getElementById("soundtrack-wrapper");
+    const composersCont = document.getElementById("serie-composers");
+    const platformsCont = document.getElementById("music-platforms");
+
+    if (!wrapper || !s) return;
+
+    const crew = s.credits?.crew || [];
+    let composers = crew.filter(c => c.job === "Original Music Composer" || c.job === "Music");
+    
+    if (composers.length === 0) {
+        composers = crew.filter(c => c.department === "Sound" && (c.job.includes("Composer") || c.job.includes("Music")));
+    }
+
+    const uniqueComposers = [];
+    const seenIds = new Set();
+    composers.forEach(c => {
+        if (!seenIds.has(c.id)) {
+            seenIds.add(c.id);
+            uniqueComposers.push(c);
+        }
+    });
+
+    if (uniqueComposers.length > 0 && composersCont) {
+        composersCont.innerHTML = uniqueComposers.map(c => `
+            <div class="composer-card" onclick="window.location.href='actor-details.html?id=${c.id}'">
+                <img class="composer-avatar" src="${c.profile_path ? CONFIG.W500 + c.profile_path : CONFIG.EMPTY_ACTOR}" alt="${c.name}">
+                <div>
+                    <div class="fw-bold text-theme">${c.name}</div>
+                    <div class="x-small text-accent fw-bold"><i class="ph-fill ph-music-notes me-1"></i> ${c.job || 'Musique Originale'}</div>
+                </div>
+            </div>
+        `).join("");
+    } else if (composersCont) {
+        if (s.created_by && s.created_by.length > 0) {
+            composersCont.innerHTML = s.created_by.map(c => `
+                <div class="composer-card" onclick="window.location.href='actor-details.html?id=${c.id}'">
+                    <img class="composer-avatar" src="${c.profile_path ? CONFIG.W500 + c.profile_path : CONFIG.EMPTY_ACTOR}" alt="${c.name}">
+                    <div>
+                        <div class="fw-bold text-theme">${c.name}</div>
+                        <div class="x-small text-accent fw-bold"><i class="ph-fill ph-user me-1"></i> Créateur / Musique</div>
+                    </div>
+                </div>
+            `).join("");
+        } else {
+            composersCont.innerHTML = `<div class="x-small opacity-50 p-2">Non renseigné</div>`;
+        }
+    }
+
+    if (platformsCont) {
+        const searchTitle = encodeURIComponent((s.name || s.original_name) + " Soundtrack");
+        platformsCont.innerHTML = `
+            <a href="https://open.spotify.com/search/${searchTitle}" target="_blank" class="music-btn music-btn-spotify">
+                <i class="ph-fill ph-spotify-logo fs-4"></i> Spotify
+            </a>
+            <a href="https://music.youtube.com/search?q=${searchTitle}" target="_blank" class="music-btn music-btn-youtube">
+                <i class="ph-fill ph-youtube-logo fs-4"></i> YouTube Music
+            </a>
+            <a href="https://music.apple.com/fr/search?term=${searchTitle}" target="_blank" class="music-btn music-btn-apple">
+                <i class="ph-fill ph-apple-logo fs-4"></i> Apple Music
+            </a>
+            <a href="https://www.deezer.com/search/${searchTitle}" target="_blank" class="music-btn music-btn-deezer">
+                <i class="ph-fill ph-music-note fs-4"></i> Deezer
+            </a>
+        `;
+    }
+
+    wrapper.style.display = "block";
 }
 
 function renderVideos(vids) {
@@ -212,25 +283,46 @@ function renderProviders(providerResults) {
 }
 
 function renderTechnical(s) {
-    document.getElementById("serie-first-air").textContent = s.first_air_date ? new Date(s.first_air_date).toLocaleDateString() : "N/A";
-    document.getElementById("serie-last-air").textContent = s.last_air_date ? new Date(s.last_air_date).toLocaleDateString() : "N/A";
+    const firstAirEl = document.getElementById("serie-first-air");
+    const lastAirEl = document.getElementById("serie-last-air");
 
-    document.getElementById("serie-production-companies").innerHTML = s.production_companies.slice(0, 3).map(c => `
-        <div class="d-flex align-items-center gap-3">
-            <div style="background:#fff; width:30px; height:30px; border-radius:6px; padding:5px; display:flex; align-items:center; justify-content:center;">
-                ${c.logo_path ? `<img src="${CONFIG.W500}${c.logo_path}" style="max-width:100%; max-height:100%;">` : `<span class="text-dark fw-bold" style="font-size:0.7rem;">${c.name[0]}</span>`}
-            </div>
-            <span class="small fw-bold">${c.name}</span>
-        </div>
-    `).join("");
+    if (firstAirEl) {
+        firstAirEl.textContent = s.first_air_date ? new Date(s.first_air_date).toLocaleDateString() : "Non communiquée";
+    }
+    if (lastAirEl) {
+        const lastDate = s.last_air_date ? new Date(s.last_air_date).toLocaleDateString() : "En cours";
+        const statusStr = s.status ? ` (${s.status})` : "";
+        lastAirEl.textContent = lastDate + statusStr;
+    }
+
+    const studioCont = document.getElementById("serie-production-companies");
+    if (studioCont) {
+        if (s.production_companies && s.production_companies.length > 0) {
+            studioCont.innerHTML = s.production_companies.slice(0, 4).map(c => `
+                <a href="company-details.html?id=${c.id}" class="studio-item-card" title="Voir les productions de ${c.name}">
+                    <div class="studio-logo-box">
+                        ${c.logo_path ? `<img src="${CONFIG.W500}${c.logo_path}" alt="${c.name}">` : `<span class="text-dark fw-black" style="font-size:0.8rem;">${c.name.charAt(0)}</span>`}
+                    </div>
+                    <span class="studio-name">${c.name}</span>
+                </a>
+            `).join("");
+        } else {
+            studioCont.innerHTML = `<div class="x-small text-muted p-2">Non communiquée</div>`;
+        }
+    }
 
     const ids = s.external_ids;
     if (ids) {
         const cont = document.getElementById("external-links");
-        let html = "";
-        if (ids.imdb_id) html += `<a href="https://imdb.com/title/${ids.imdb_id}" target="_blank" class="text-white opacity-50"><i class="ph ph-imdb-logo fs-2"></i></a>`;
-        if (ids.facebook_id) html += `<a href="https://facebook.com/${ids.facebook_id}" target="_blank" class="text-white opacity-50"><i class="ph ph-facebook-logo fs-2"></i></a>`;
-        cont.innerHTML = html;
+        if (cont) {
+            let html = "";
+            if (ids.imdb_id) html += `<a href="https://imdb.com/title/${ids.imdb_id}" target="_blank" class="social-link-btn" title="Fiche IMDb"><i class="ph-fill ph-film-strip"></i></a>`;
+            if (ids.facebook_id) html += `<a href="https://facebook.com/${ids.facebook_id}" target="_blank" class="social-link-btn" title="Facebook"><i class="ph-fill ph-facebook-logo"></i></a>`;
+            if (ids.instagram_id) html += `<a href="https://instagram.com/${ids.instagram_id}" target="_blank" class="social-link-btn" title="Instagram"><i class="ph-fill ph-instagram-logo"></i></a>`;
+            if (ids.twitter_id) html += `<a href="https://twitter.com/${ids.twitter_id}" target="_blank" class="social-link-btn" title="Twitter / X"><i class="ph-fill ph-twitter-logo"></i></a>`;
+            if (s.homepage) html += `<a href="${s.homepage}" target="_blank" class="social-link-btn" title="Site Officiel"><i class="ph-fill ph-globe"></i></a>`;
+            cont.innerHTML = html;
+        }
     }
 }
 

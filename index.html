@@ -187,6 +187,7 @@
 
 <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
 
+<script src="PROJET_TM/Films/posterSync.js"></script>
 <script>
     const API_KEY = "04c35731a5ee918f014970082a0088b1";
     const BASE_URL = "https://api.themoviedb.org/3";
@@ -202,6 +203,10 @@
     async function loadPremiumHome() {
         const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
         renderAuth(auth);
+
+        if (window.syncAllUserPosters) {
+            await window.syncAllUserPosters();
+        }
 
         try {
             await loadDefaultLanes();
@@ -308,14 +313,17 @@
                 page = itemType === 'movie' ? `${pathPrefix}movie-details.html` : `${pathPrefix}serie-details.html`;
                 title = item.title || item.name;
                 date = (item.release_date || item.first_air_date || "").substring(0, 4) || 'N/A';
-                img = item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/220x330?text=No+Image';
+                const defaultImg = item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/220x330?text=No+Image';
+                img = itemType === 'movie' ? (window.getCustomPoster ? window.getCustomPoster(item.id, defaultImg, 'movie') : (localStorage.getItem(`custom_movie_poster_${item.id}`) || defaultImg)) : defaultImg;
                 vote = item.vote_average ? item.vote_average.toFixed(1) : '0.0';
                 badge = `<i class="ph-fill ph-star"></i>`;
             }
 
+            const dataAttr = itemType === 'movie' ? ` data-movie-id="${item.id}"` : '';
+
             return `
                 <div class="premium-card" onclick="window.location.href='${page}?id=${item.id}'">
-                    <img src="${img}" loading="lazy">
+                    <img src="${img}" loading="lazy"${dataAttr}>
                     <div class="card-details">
                         <div class="card-title text-truncate">${title}</div>
                         <div class="card-meta">

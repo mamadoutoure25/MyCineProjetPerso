@@ -19,14 +19,37 @@
         .side-panel {
             position: absolute;
             right: 5%;
-            bottom: 10%;
+            top: 105px;
+            max-height: calc(88vh - 105px);
             width: 320px;
             background: var(--glass);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             border-radius: 24px;
-            padding: 25px;
+            padding: 20px;
             z-index: 20;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
+        }
+
+        .side-panel::-webkit-scrollbar {
+            width: 5px;
+        }
+        .side-panel::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 991px) {
+            .side-panel {
+                position: relative;
+                right: auto;
+                top: auto;
+                width: 100%;
+                max-height: none;
+                margin-top: 30px;
+            }
         }
 
         .side-item { margin-bottom: 20px; }
@@ -51,18 +74,160 @@
         .btn-circle.active { background: var(--accent); color: #000; }
 
         /* Scroller fixes */
-        .movie-scroller { padding: 20px 0; }
-        
-        /* Footer Specific */
-        .tech-footer {
-            padding: 60px 5%;
-            background: #000;
-            border-top: 1px solid var(--border);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 50px;
+        .movie-scroller {
+            padding: 10px 0 25px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(167, 139, 250, 0.5) rgba(255, 255, 255, 0.05);
         }
-        .tech-col-title { font-size: 0.75rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
+        .movie-scroller::-webkit-scrollbar {
+            height: 8px;
+            display: block !important;
+        }
+        .movie-scroller::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .movie-scroller::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #a78bfa, #f472b6);
+            border-radius: 10px;
+        }
+        
+        /* --- Premium Tech Footer Redesign --- */
+        .tech-footer {
+            padding: 50px 6%;
+            background: var(--bg-card, rgba(18, 18, 24, 0.85));
+            backdrop-filter: blur(25px);
+            border-top: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tech-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tech-col-title {
+            font-size: 0.8rem;
+            font-weight: 900;
+            color: var(--accent, #a78bfa);
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted, rgba(255, 255, 255, 0.6)) !important;
+            margin-bottom: 4px;
+        }
+
+        .tech-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary, #ffffff) !important;
+            line-height: 1.3;
+        }
+
+        .tech-card-box {
+            background: var(--glass, rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+            border-radius: 16px;
+            padding: 16px 20px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tech-card-box:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            background: var(--glass-hover, rgba(255, 255, 255, 0.07));
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .studio-item-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 16px;
+            background: var(--glass, rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+            border-radius: 14px;
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+        }
+
+        .studio-item-card:hover {
+            border-color: var(--accent);
+            background: rgba(167, 139, 250, 0.1);
+            transform: translateX(4px);
+        }
+
+        .studio-logo-box {
+            background: #ffffff !important;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        .studio-logo-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: none !important;
+        }
+
+        .studio-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary, #ffffff) !important;
+        }
+
+        .social-link-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--glass, rgba(255, 255, 255, 0.05));
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.15));
+            color: var(--text-primary, #ffffff) !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none !important;
+        }
+
+        .social-link-btn:hover {
+            background: var(--accent);
+            color: #ffffff !important;
+            border-color: var(--accent);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4);
+        }
+
+        .footer-copyright {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
+        }
 
         /* Distribution Grille Ultra-Responsive */
         .movie-grid {
@@ -128,7 +293,152 @@
 
         .actor-name { font-size: 0.85rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; line-height: 1.2; }
         .actor-role { font-size: 0.75rem; color: var(--accent); font-weight: 600; opacity: 0.9; }
+
+        /* Section Musique Originale & B.O. Premium */
+        #soundtrack-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(15px);
+        }
+
+        .music-platforms-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .music-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            padding: 12px 24px !important;
+            border-radius: 50px !important;
+            font-weight: 800 !important;
+            font-size: 0.85rem !important;
+            text-decoration: none !important;
+            letter-spacing: 0.5px !important;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+            cursor: pointer !important;
+        }
+
+        .music-btn:hover {
+            transform: translateY(-3px) scale(1.05) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+
+        .music-btn-spotify {
+            background: linear-gradient(135deg, #1ed760, #1db954) !important;
+        }
+        .music-btn-spotify:hover {
+            box-shadow: 0 10px 30px rgba(30, 215, 96, 0.4) !important;
+        }
+
+        .music-btn-youtube {
+            background: linear-gradient(135deg, #ff4e45, #cc0000) !important;
+        }
+        .music-btn-youtube:hover {
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4) !important;
+        }
+
+        .music-btn-apple {
+            background: linear-gradient(135deg, #fb5c74, #fa243c) !important;
+        }
+        .music-btn-apple:hover {
+            box-shadow: 0 10px 30px rgba(250, 36, 60, 0.4) !important;
+        }
+
+        .music-btn-deezer {
+            background: linear-gradient(135deg, #ef5466, #b01b68) !important;
+        }
+        .music-btn-deezer:hover {
+            box-shadow: 0 10px 30px rgba(239, 84, 102, 0.4) !important;
+        }
+
+        .composer-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 14px 22px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 420px;
+            width: fit-content;
+        }
+
+        .composer-card:hover {
+            background: rgba(167, 139, 250, 0.15);
+            border-color: var(--accent);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .composer-avatar {
+            width: 70px !important;
+            height: 70px !important;
+            min-width: 70px !important;
+            min-height: 70px !important;
+            max-width: 70px !important;
+            max-height: 70px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            border: 2px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Fix dimensions logos studios de production */
+        #studio-tag img,
+        .studio-icon img,
+        div.studio-icon img {
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            max-width: 36px !important;
+            max-height: 36px !important;
+            object-fit: contain !important;
+            border-radius: 6px !important;
+            background: #ffffff !important;
+            padding: 2px !important;
+            filter: none !important;
+            display: inline-block !important;
+        }
+
+        .studio-icon {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            max-width: 36px !important;
+            max-height: 36px !important;
+            background: #ffffff !important;
+            border-radius: 8px !important;
+            padding: 3px !important;
+            overflow: hidden !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+        }
+
+        .studio-icon span {
+            color: #000000 !important;
+            font-weight: 900 !important;
+            font-size: 0.9rem !important;
+        }
     </style>
+<link rel="stylesheet" href="movie-details.css">
 <link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
@@ -205,14 +515,28 @@
                 
                 <div class="d-flex align-items-center gap-3">
                     <a id="watch-trailer" href="#" class="btn btn-light rounded-pill px-5 py-3 fw-black"><i class="ph-fill ph-play me-2"></i> BANDE-ANNONCE</a>
-                    <button id="add-to-favorites" class="btn-circle"><i class="ph ph-heart"></i></button>
-                    <button id="add-to-watchlist" class="btn-circle"><i class="ph ph-plus"></i></button>
-                    <button id="mark-as-watched" class="btn-circle"><i class="ph ph-eye"></i></button>
+                    <button id="add-to-favorites" class="btn-circle" title="Ajouter aux favoris"><i class="ph ph-heart"></i></button>
+                    <button id="add-to-watchlist" class="btn-circle" title="Ajouter à la liste de lecture"><i class="ph ph-plus"></i></button>
+                    <button id="mark-as-watched" class="btn-circle" title="Marquer comme vu"><i class="ph ph-eye"></i></button>
+                    <button id="change-poster-btn" class="btn-circle" title="Changer l'affiche du film" onclick="ouvrirModalSelectAffiche()"><i class="ph ph-image"></i></button>
                 </div>
             </div>
 
             <!-- Detail Side Panel -->
             <div class="side-panel">
+                <div class="side-item text-center mb-3 d-none" id="side-poster-item">
+                    <div class="d-flex flex-column align-items-center">
+                        <img id="movie-poster-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 3'%3E%3C/svg%3E" alt="Affiche du film" class="img-fluid rounded-4 shadow-lg" style="width: 170px; aspect-ratio: 2/3; object-fit: cover; border: 1px solid var(--border);" onerror="this.onerror=null; this.src='https://via.placeholder.com/500x750?text=No+Poster';">
+                        <div class="mt-2 text-center d-flex align-items-center justify-content-center gap-2">
+                            <button id="btn-change-poster-side" class="btn btn-sm btn-outline-light rounded-pill px-3 py-1.5 x-small fw-bold shadow-sm" onclick="ouvrirModalSelectAffiche()">
+                                <i class="ph ph-image-square me-1"></i> Changer d'affiche
+                            </button>
+                            <button id="btn-reset-poster-side" class="btn btn-sm btn-link text-danger text-decoration-none x-small" onclick="resetAfficheFilm()" style="display: none;">
+                                Réinitialiser
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="side-item d-none" id="side-collection-item">
                     <div class="side-label">Collection</div>
                     <a id="side-collection-link" href="#" class="side-value text-accent text-decoration-none fw-bold small text-truncate d-block">...</a>
@@ -262,11 +586,36 @@
     </section>
 
     <section id="collection-wrapper" class="content-lane pt-0" style="display: none;">
-        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5 flex-wrap gap-2">
             <div class="lane-title mb-0" id="collection-name">SAGA & COLLECTION</div>
-            <a id="collection-link" href="#" class="btn btn-link text-accent fw-bold text-decoration-none small">VOIR LA COLLECTION <i class="ph ph-arrow-right"></i></a>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fw-bold text-theme shadow-sm" onclick="document.getElementById('movie-collection').scrollBy({left: -600, behavior: 'smooth'})" title="Défiler vers la gauche"><i class="ph ph-caret-left me-1"></i> Précédent</button>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fw-bold text-theme shadow-sm" onclick="document.getElementById('movie-collection').scrollBy({left: 600, behavior: 'smooth'})" title="Défiler vers la droite">Suivant <i class="ph ph-caret-right ms-1"></i></button>
+                <a id="collection-link" href="#" class="btn btn-link text-accent fw-bold text-decoration-none small ms-2">VOIR LA COLLECTION <i class="ph ph-arrow-right"></i></a>
+            </div>
         </div>
         <div id="movie-collection" class="movie-scroller"></div>
+    </section>
+
+    <!-- Bande Originale & Musique Section -->
+    <section id="soundtrack-wrapper" class="content-lane pt-0" style="display: none;">
+        <div class="lane-title d-flex align-items-center gap-2">
+            <i class="ph-fill ph-music-notes text-accent"></i> BANDE ORIGINALE & MUSIQUE
+        </div>
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="fw-bold small opacity-75 mb-3 text-uppercase" style="letter-spacing: 1px;">Musique Originale créée par</div>
+                <div id="movie-composers" class="d-flex flex-column gap-3"></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="fw-bold small opacity-75 mb-3 text-uppercase" style="letter-spacing: 1px;">Écouter la bande originale sur</div>
+                <div id="music-platforms" class="music-platforms-grid"></div>
+            </div>
+        </div>
+        <div id="soundtrack-videos-container" style="display: none;">
+            <div class="fw-bold small opacity-75 mb-3 text-uppercase" style="letter-spacing: 1px;">Thèmes et Clips Musicaux</div>
+            <div id="soundtrack-videos" class="movie-scroller mb-4"></div>
+        </div>
     </section>
 
     <section class="content-lane pt-0">
@@ -286,18 +635,33 @@
     <!-- Tech Specs Footer -->
     <footer class="tech-footer">
         <div class="tech-col">
-            <div class="tech-col-title">Fiche Technique</div>
-            <div class="mb-3"><div class="x-small opacity-50">Titre Original</div><div id="movie-original-title" class="fw-bold fs-5">...</div></div>
-            <div><div class="x-small opacity-50">Budget / Recettes</div><div id="movie-budget" class="fw-bold fs-5 text-accent">...</div></div>
+            <div class="tech-col-title"><i class="ph-fill ph-info me-1"></i> Fiche Technique</div>
+            <div class="tech-card-box mb-3">
+                <div class="tech-label">Titre Original & Musique</div>
+                <div id="movie-original-title">...</div>
+            </div>
+            <div class="tech-card-box">
+                <div class="tech-label">Budget & Recettes</div>
+                <div class="d-flex flex-column gap-2 mt-2">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="x-small text-muted"><i class="ph-fill ph-currency-dollar me-1 text-success"></i> Budget :</span>
+                        <span id="movie-budget" class="fw-bold text-theme">...</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="x-small text-muted"><i class="ph-fill ph-trend-up me-1 text-accent"></i> Recettes :</span>
+                        <span id="movie-revenue" class="fw-bold text-accent">...</span>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="tech-col">
-            <div class="tech-col-title">Production</div>
-            <div id="movie-production-companies" class="d-flex flex-column gap-3"></div>
+            <div class="tech-col-title"><i class="ph-fill ph-buildings me-1"></i> Production & Studios</div>
+            <div id="movie-production-companies" class="d-flex flex-column gap-2"></div>
         </div>
-        <div class="tech-col ms-auto text-end">
-            <div class="tech-col-title">Réseaux</div>
-            <div id="external-links" class="d-flex gap-4 justify-content-end mb-4"></div>
-            <p class="x-small opacity-25">© 2026 MYCINÉ PREMIUM CINEMA</p>
+        <div class="tech-col text-md-end">
+            <div class="tech-col-title justify-content-md-end"><i class="ph-fill ph-share-network me-1"></i> Réseaux & Médias</div>
+            <div id="external-links" class="d-flex gap-3 justify-content-md-end flex-wrap mb-4"></div>
+            <p class="footer-copyright">© 2026 MYCINÉ • CINÉMA & DÉCOUVERTES</p>
         </div>
     </footer>
 </main>
@@ -313,7 +677,35 @@
     </div>
 </div>
 
+<!-- Modal de personnalisation d'affiche -->
+<div class="modal fade" id="posterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="background: #121216; color: #fff; border-radius: 24px; border: 1px solid var(--border);">
+            <div class="modal-header border-0 px-4 pt-4 pb-0">
+                <h5 class="modal-title fw-bold text-accent"><i class="ph ph-image me-2"></i> Changer l'affiche du film</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="small opacity-75 mb-3">Choisissez une affiche parmi celles proposées ci-dessous ou indiquez l'URL d'une image web.</p>
+                <div class="mb-4">
+                    <label for="custom-poster-input" class="form-label small fw-bold text-uppercase opacity-75">URL d'image personnalisée</label>
+                    <div class="input-group">
+                        <input type="url" id="custom-poster-input" class="form-control bg-dark text-light border-secondary" placeholder="https://exemple.com/mon-affiche.jpg">
+                        <button class="btn btn-primary fw-bold px-4" onclick="soumettreAfficheCustomUrl()"><i class="ph ph-check me-1"></i> Appliquer</button>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="small fw-bold text-uppercase opacity-75">Affiches de la galerie</span>
+                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 text-decoration-none x-small fw-bold" onclick="resetAfficheFilm()"><i class="ph ph-arrow-counter-clockwise me-1"></i> Réinitialiser</button>
+                </div>
+                <div id="modal-posters-grid" class="movie-grid" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="posterSync.js"></script>
 <script src="movie-details.js?v=11"></script>
 <script>
     window.onscroll = () => {

@@ -97,6 +97,16 @@ CREATE TABLE favorite_actors (
                                  FOREIGN KEY (user_id) REFERENCES Utilisateurs(id) ON DELETE CASCADE,
                                  FOREIGN KEY (acteur_id) REFERENCES Acteurs(id) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE user_posters (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    tmdb_id INT NOT NULL,
+    media_type VARCHAR(20) NOT NULL DEFAULT 'movie',
+    poster_path VARCHAR(500) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY user_media_unique (user_id, tmdb_id, media_type),
+    FOREIGN KEY (user_id) REFERENCES Utilisateurs(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- Table Notes
 CREATE TABLE Notes (
                        utilisateur_id INT NOT NULL,

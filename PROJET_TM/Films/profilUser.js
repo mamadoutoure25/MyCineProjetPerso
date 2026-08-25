@@ -110,15 +110,25 @@ function renderListeType(type) {
 function renderItems(items, selector, typeListe, mediaType) {
     const container = document.querySelector(selector);
     if (!container) return;
+
+    const prefix = typeListe === 'favorites' ? 'fav' : (typeListe === 'watchlist' ? 'watch' : 'watched');
+    const badgeId = `${prefix}-${mediaType === 'movie' ? 'movies' : 'series'}-count`;
+    const countBadge = document.getElementById(badgeId);
+    if (countBadge) {
+        countBadge.textContent = items.length;
+    }
+
     if (!items.length) {
-        container.innerHTML = ""; // Clear if empty
+        const label = mediaType === 'movie' ? 'film' : 'série';
+        container.innerHTML = `<div class="p-3 opacity-50 x-small text-center border border-secondary border-opacity-25 rounded-4 bg-theme my-1" style="grid-column: 1 / -1;">Aucun ${label} dans cette liste.</div>`;
         return;
     }
 
     container.innerHTML = items.map(item => {
         const title = item.title || item.name;
         const date = (item.release_date || item.first_air_date || "").substring(0, 4) || "N/A";
-        const img = item.poster_path ? CONFIG.URL_IMAGE + item.poster_path : CONFIG.AFFICHE_PAR_DEFAUT;
+        const customPoster = mediaType === 'movie' ? localStorage.getItem(`custom_movie_poster_${item.id}`) : null;
+        const img = customPoster || (item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : CONFIG.URL_IMAGE + item.poster_path) : CONFIG.AFFICHE_PAR_DEFAUT);
         const page = mediaType === 'movie' ? 'movie-details.html' : 'serie-details.html';
         const rating = item.vote_average ? item.vote_average.toFixed(1) : '0.0';
 
@@ -280,6 +290,30 @@ function notify(msg, type) {
     setTimeout(() => t.remove(), 4000);
 }
 
+function filtrerMediaType(type, media, btn) {
+    const parentGroup = btn.parentElement;
+    if (parentGroup) {
+        parentGroup.querySelectorAll('button').forEach(b => {
+            b.classList.remove('btn-accent', 'active');
+            b.classList.add('btn-outline-secondary', 'text-theme');
+        });
+        btn.classList.remove('btn-outline-secondary', 'text-theme');
+        btn.classList.add('btn-accent', 'active');
+    }
+
+    const prefix = type === 'favorites' ? 'favorites' : (type === 'watchlist' ? 'watchlist' : 'watched');
+    const moviesWrapper = document.getElementById(`${prefix}-movies-wrapper`);
+    const seriesWrapper = document.getElementById(`${prefix}-series-wrapper`);
+
+    if (moviesWrapper) {
+        moviesWrapper.classList.toggle('d-none', media === 'tv');
+    }
+    if (seriesWrapper) {
+        seriesWrapper.classList.toggle('d-none', media === 'movie');
+    }
+}
+
+window.filtrerMediaType = filtrerMediaType;
 window.appliquerFiltresActeurs = appliquerFiltresActeurs;
 window.appliquerFiltres = appliquerFiltres;
 document.addEventListener("DOMContentLoaded", initialiserProfil);

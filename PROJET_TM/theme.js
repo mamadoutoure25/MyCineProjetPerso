@@ -1,8 +1,6 @@
 // Theme Logic
 document.addEventListener('DOMContentLoaded', () => {
     const htmlElement = document.documentElement;
-    
-    // Check if toggle exists, if not, wait or it might be missing
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
 
@@ -12,12 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (themeIcon) {
             if (theme === 'light') {
-                themeIcon.classList.remove('ph-moon');
-                themeIcon.classList.add('ph-sun');
+                themeIcon.className = 'ph ph-sun fs-4';
             } else {
-                themeIcon.classList.remove('ph-sun');
-                themeIcon.classList.add('ph-moon');
+                themeIcon.className = 'ph ph-moon fs-4';
             }
+        }
+        if (themeToggle) {
+            const label = theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre';
+            themeToggle.setAttribute('aria-label', label);
+            themeToggle.setAttribute('title', label);
         }
     }
 
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            const currentTheme = htmlElement.getAttribute('data-theme');
+            const currentTheme = htmlElement.getAttribute('data-theme') || 'dark';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             setTheme(newTheme);
         });

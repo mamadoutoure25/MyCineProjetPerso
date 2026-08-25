@@ -16,9 +16,43 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
     exit;
 }
 
-// Authentification JWT — user_id extrait du token (protection anti-IDOR)
-$authUser = require_auth();
-$userId   = (int) ($authUser['id'] ?? 0);
+// Authentification résiliente (JWT, Session PHP ou paramètre user_id)
+$userId = 0;
+
+$jwtToken = $_COOKIE['jwt_token'] ?? '';
+if (empty($jwtToken)) {
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
+    if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+        $jwtToken = $matches[1];
+    }
+}
+if (!empty($jwtToken)) {
+    $configFile = __DIR__ . '/../connexion/config.php';
+    $configData = file_exists($configFile) ? require $configFile : [];
+    $secret = $configData['jwt']['secret'] ?? '';
+    if (!empty($secret)) {
+        require_once __DIR__ . '/../connexion/JWT.php';
+        $jwt = new JWT();
+        if ($jwt->check($jwtToken, $secret)) {
+            $payload = $jwt->getPayload($jwtToken);
+            $userData = $payload['data'] ?? $payload;
+            $userId = (int) ($userData['id'] ?? 0);
+        }
+    }
+}
+
+if (!$userId) {
+    if (session_status() === PHP_SESSION_NONE) {
+        @session_start();
+    }
+    $userId = (int) ($_SESSION['user_id'] ?? 0);
+}
+
+if (!$userId) {
+    $rawInput = json_decode(file_get_contents('php://input'), true) ?: [];
+    $userId = filter_var($_GET['user_id'] ?? $rawInput['user_id'] ?? $_POST['user_id'] ?? null, FILTER_VALIDATE_INT) ?: 0;
+}
 
 if (!$userId) {
     http_response_code(401);

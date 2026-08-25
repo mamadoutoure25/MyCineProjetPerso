@@ -409,23 +409,36 @@ body {
 #star-rating, .star-rating {
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: space-between;
+    gap: 3px;
     margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    max-width: 100%;
+    width: 100%;
 }
 
 #star-rating .star, .star-rating .star {
     cursor: pointer;
     transition: transform 0.2s ease, color 0.2s ease;
-    font-size: 1.4rem;
+    font-size: 1.15rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     user-select: none;
-    padding: 2px;
+    padding: 2px 1px;
+    width: auto;
+    height: auto;
+    flex: 0 0 auto;
+}
+
+#star-rating .star i, .star-rating .star i {
+    font-size: 1.15rem;
+    pointer-events: none;
+    display: block;
 }
 
 #star-rating .star:hover, .star-rating .star:hover {
-    transform: scale(1.25);
+    transform: scale(1.2);
 }
 
 /* Filled stars */
@@ -445,6 +458,19 @@ body {
 .star-rating .star i.ph-star:not(.ph-fill),
 .star-rating .star i.text-muted,
 .star-rating .star i.star-empty {
+    color: rgba(255, 255, 255, 0.65) !important;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+    opacity: 1 !important;
+}
+
+[data-theme="light"] #star-rating .star i.ph-star:not(.ph-fill),
+[data-theme="light"] #star-rating .star i.text-muted,
+[data-theme="light"] #star-rating .star i.star-empty,
+[data-theme="light"] .star-rating .star i.ph-star:not(.ph-fill),
+[data-theme="light"] .star-rating .star i.text-muted,
+[data-theme="light"] .star-rating .star i.star-empty {
+    color: rgba(0, 0, 0, 0.45) !important;
+}
 .search-hero {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -604,23 +630,36 @@ body {
 #star-rating, .star-rating {
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: space-between;
+    gap: 3px;
     margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    max-width: 100%;
+    width: 100%;
 }
 
 #star-rating .star, .star-rating .star {
     cursor: pointer;
     transition: transform 0.2s ease, color 0.2s ease;
-    font-size: 1.4rem;
+    font-size: 1.15rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     user-select: none;
-    padding: 2px;
+    padding: 2px 1px;
+    width: auto;
+    height: auto;
+    flex: 0 0 auto;
+}
+
+#star-rating .star i, .star-rating .star i {
+    font-size: 1.15rem;
+    pointer-events: none;
+    display: block;
 }
 
 #star-rating .star:hover, .star-rating .star:hover {
-    transform: scale(1.25);
+    transform: scale(1.2);
 }
 
 /* Filled stars */
@@ -670,4 +709,15 @@ body {
 .studio-icon img {
     filter: none !important;
     transition: transform 0.3s ease;
+}
+
+/* Button Accent Utility */
+.btn-accent,
+.btn-group .btn.active {
+    background: linear-gradient(135deg, #a78bfa, #8b5cf6) !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.45) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }

@@ -33,33 +33,23 @@ function initTheme() {
   const toggleButton = document.getElementById("theme-toggle")
   const themeIcon = document.getElementById("theme-icon")
 
-  const savedTheme = localStorage.getItem("theme")
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-  const systemTheme = mediaQuery.matches ? "dark" : "light"
-  const currentTheme = savedTheme || systemTheme
+  const savedTheme = localStorage.getItem("theme") || "dark"
+  root.setAttribute("data-theme", savedTheme)
+  updateThemeIcon(savedTheme, themeIcon)
+  updateThemeButtonLabel(savedTheme, toggleButton)
+}
 
-  root.setAttribute("data-theme", currentTheme)
-  updateThemeIcon(currentTheme, themeIcon)
-  updateThemeButtonLabel(currentTheme, toggleButton)
+function updateThemeIcon(theme, iconElement) {
+  if (!iconElement) return
+  iconElement.className = theme === "dark" ? "ph ph-moon fs-4" : "ph ph-sun fs-4"
+}
 
-  if (toggleButton) {
-    toggleButton.addEventListener("click", () => {
-      const activeTheme = root.getAttribute("data-theme") || "dark"
-      const nextTheme = activeTheme === "dark" ? "light" : "dark"
-      root.setAttribute("data-theme", nextTheme)
-      localStorage.setItem("theme", nextTheme)
-      updateThemeIcon(nextTheme, themeIcon)
-      updateThemeButtonLabel(nextTheme, toggleButton)
-    })
-  }
-
-  mediaQuery.addEventListener("change", event => {
-    if (localStorage.getItem("theme")) return
-    const autoTheme = event.matches ? "dark" : "light"
-    root.setAttribute("data-theme", autoTheme)
-    updateThemeIcon(autoTheme, themeIcon)
-    updateThemeButtonLabel(autoTheme, toggleButton)
-  })
+function updateThemeButtonLabel(theme, button) {
+  if (!button) return
+  const nextThemeLabel = theme === "dark" ? "clair" : "sombre"
+  const label = `Passer en mode ${nextThemeLabel}`
+  button.setAttribute("aria-label", label)
+  button.setAttribute("title", label)
 }
 
 function updateThemeIcon(theme, iconElement) {
@@ -93,6 +83,7 @@ async function chargerCollection(id) {
       fetchCastAndCrew()
     ]);
 
+    await syncCollectionPoster(id);
     afficherCollection(collectionData)
 
     if (imagesRes.status === "fulfilled" && imagesRes.value) {
@@ -463,8 +454,38 @@ function afficherGallery(imgs) {
   renderGrid(imgs?.posters, "grid-posters", true);
 }
 
+function getAuthHeadersCollection() {
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const headers = { 'Content-Type': 'application/json' };
+    if (auth && auth.token) {
+        headers['Authorization'] = `Bearer ${auth.token}`;
+    }
+    return headers;
+}
+
+async function syncCollectionPoster(colId) {
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    if (auth && auth.token) {
+        try {
+            const res = await fetch(`./user_posters.php?tmdb_id=${colId}&media_type=collection`, {
+                headers: getAuthHeadersCollection()
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.success && data.poster_path) {
+                    localStorage.setItem(`custom_collection_poster_${colId}`, data.poster_path);
+                } else if (data.success && data.poster_path === null) {
+                    localStorage.removeItem(`custom_collection_poster_${colId}`);
+                }
+            }
+        } catch (e) {
+            console.warn("Erreur sync affiche collection API:", e);
+        }
+    }
+}
+
 // Fonction pour changer l'affiche principale de la collection
-function changerAfficheCollection(posterUrl) {
+async function changerAfficheCollection(posterUrl) {
   if (!collectionId) return;
   localStorage.setItem(`custom_collection_poster_${collectionId}`, posterUrl);
   const posterEl = document.getElementById("collection-poster");
@@ -474,6 +495,23 @@ function changerAfficheCollection(posterUrl) {
   if (resetBtn) resetBtn.style.display = "inline-block";
 
   afficherNotification("Affiche de la collection mise à jour avec succès !", "success");
+
+  const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+  if (auth && auth.token) {
+      try {
+          await fetch('./user_posters.php', {
+              method: 'POST',
+              headers: getAuthHeadersCollection(),
+              body: JSON.stringify({
+                  tmdb_id: parseInt(collectionId),
+                  media_type: 'collection',
+                  poster_path: posterUrl
+              })
+          });
+      } catch (e) {
+          console.error("Erreur de sauvegarde de l'affiche de collection:", e);
+      }
+  }
 
   // Mettre à jour l'affichage dynamique de la galerie
   if (galleryImagesCache) {
@@ -485,7 +523,7 @@ function changerAfficheCollection(posterUrl) {
 }
 
 // Réinitialiser l'affiche originale de la collection
-function resetAfficheCollection() {
+async function resetAfficheCollection() {
   if (!collectionId) return;
   localStorage.removeItem(`custom_collection_poster_${collectionId}`);
   const posterEl = document.getElementById("collection-poster");
@@ -496,6 +534,18 @@ function resetAfficheCollection() {
   if (resetBtn) resetBtn.style.display = "none";
 
   afficherNotification("Affiche réinitialisée à l'originale", "info");
+
+  const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+  if (auth && auth.token) {
+      try {
+          await fetch(`./user_posters.php?tmdb_id=${collectionId}&media_type=collection`, {
+              method: 'DELETE',
+              headers: getAuthHeadersCollection()
+          });
+      } catch (e) {
+          console.error("Erreur de réinitialisation d'affiche de collection:", e);
+      }
+  }
 
   // Mettre à jour l'affichage dynamique de la galerie
   if (galleryImagesCache) {

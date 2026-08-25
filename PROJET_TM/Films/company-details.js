@@ -215,9 +215,11 @@ function afficherFilmsCompagnie(films) {
         .map(film => {
             const releaseYear = film.release_date ? new Date(film.release_date).getFullYear() : 'N/A';
             const ratingVal = film.vote_average ? film.vote_average.toFixed(1) : '0.0';
+            const defaultImg = film.poster_path ? IMG_BASE_URL + film.poster_path : 'https://via.placeholder.com/210x315?text=Aucune+affiche';
+            const posterSrc = window.getCustomPoster ? window.getCustomPoster(film.id, defaultImg, 'movie') : (localStorage.getItem(`custom_movie_poster_${film.id}`) || defaultImg);
             return `
                 <div class="premium-card" onclick="afficherDetailsFilm(${film.id})" style="cursor: pointer;">
-                    <img src="${film.poster_path ? IMG_BASE_URL + film.poster_path : 'https://via.placeholder.com/210x315?text=Aucune+affiche'}" loading="lazy" alt="${film.title}">
+                    <img src="${posterSrc}" loading="lazy" alt="${film.title}">
                     <div class="card-details">
                         <div class="card-title text-truncate">${film.title}</div>
                         <div class="card-meta">

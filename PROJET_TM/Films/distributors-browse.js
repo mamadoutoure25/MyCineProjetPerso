@@ -293,13 +293,14 @@ function renderDistributorsGrid() {
             : `<span class="badge bg-primary rounded-pill px-3 py-1 me-2 x-small fw-bold"><i class="ph ph-film-strip me-1"></i> CINÉMA</span>`;
 
         const topItemsHtml = d.top_items && d.top_items.length > 0
-            ? d.top_items.map(m => {
-                const targetUrl = d.type === 'tv' ? `serie-details.html?id=${m.id}` : `movie-details.html?id=${m.id}`;
+                    const targetUrl = d.type === 'tv' ? `serie-details.html?id=${m.id}` : `movie-details.html?id=${m.id}`;
                 const titleText = m.title || m.name;
+                const defaultImg = m.poster_path ? IMG_BASE_URL + m.poster_path : 'https://via.placeholder.com/150x225';
+                const posterSrc = d.type === 'tv' ? defaultImg : (window.getCustomPoster ? window.getCustomPoster(m.id, defaultImg, 'movie') : (localStorage.getItem(`custom_movie_poster_${m.id}`) || defaultImg));
                 return `
                     <div class="col-3" title="${titleText}">
                         <a href="${targetUrl}">
-                            <img src="${m.poster_path ? IMG_BASE_URL + m.poster_path : 'https://via.placeholder.com/150x225'}" class="img-fluid rounded-3 shadow-sm hover-scale" style="aspect-ratio:2/3; object-fit:cover;">
+                            <img src="${posterSrc}" class="img-fluid rounded-3 shadow-sm hover-scale" style="aspect-ratio:2/3; object-fit:cover;">
                         </a>
                     </div>
                 `;
@@ -416,10 +417,12 @@ async function loadDistributorMovies(distributorId, sortMethod) {
                 const targetUrl = distInfo?.type === 'tv' ? `serie-details.html?id=${m.id}` : `movie-details.html?id=${m.id}`;
                 const titleText = m.title || m.name;
                 const releaseYear = m.release_date ? new Date(m.release_date).getFullYear() : (m.first_air_date ? new Date(m.first_air_date).getFullYear() : 'N/A');
+                const defaultImg = m.poster_path ? IMG_BASE_URL + m.poster_path : 'https://via.placeholder.com/210x315';
+                const posterSrc = distInfo?.type === 'tv' ? defaultImg : (window.getCustomPoster ? window.getCustomPoster(m.id, defaultImg, 'movie') : (localStorage.getItem(`custom_movie_poster_${m.id}`) || defaultImg));
 
                 return `
                     <div class="premium-card" onclick="window.location.href='${targetUrl}'" style="cursor: pointer;">
-                        <img src="${m.poster_path ? IMG_BASE_URL + m.poster_path : 'https://via.placeholder.com/210x315'}" loading="lazy">
+                        <img src="${posterSrc}" loading="lazy">
                         <div class="card-details">
                             <div class="card-title text-truncate">${titleText}</div>
                             <div class="card-meta">

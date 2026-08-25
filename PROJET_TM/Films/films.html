@@ -237,8 +237,44 @@
         'category-films': { page: 1, endpoint: '/discover/movie', params: '&with_genres=28' }
     };
 
+    const userCustomMoviePosters = {};
+
+    async function fetchUserCustomPosters() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+        const uid = auth ? (auth.userId || auth.id) : null;
+        const token = auth?.token;
+
+        if (uid || token) {
+            try {
+                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+                const res = await fetch(`./user_posters.php?user_id=${uid || ''}`, { headers });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && Array.isArray(data.posters)) {
+                        data.posters.forEach(p => {
+                            if (p.media_type === 'movie') {
+                                userCustomMoviePosters[p.tmdb_id] = p.poster_path;
+                                localStorage.setItem(`custom_movie_poster_${p.tmdb_id}`, p.poster_path);
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                console.warn("Erreur chargement des affiches personnalisées API:", e);
+            }
+        }
+    }
+
+    function getMoviePosterUrl(item) {
+        if (!item) return 'https://via.placeholder.com/210x315';
+        const custom = userCustomMoviePosters[item.id] || localStorage.getItem(`custom_movie_poster_${item.id}`);
+        if (custom) return custom;
+        return item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : IMG_URL + item.poster_path) : 'https://via.placeholder.com/210x315';
+    }
+
     async function initFilmsPage() {
         try {
+            await fetchUserCustomPosters();
             await loadDefaultLanes();
             setupSearchAndFilters();
         } catch(e) { console.error(e); }
@@ -346,7 +382,7 @@
 
         const html = data.map(item => `
             <div class="premium-card" onclick="window.location.href='movie-details.html?id=${item.id}'">
-                <img src="${item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/210x315'}" loading="lazy">
+                <img src="${getMoviePosterUrl(item)}" loading="lazy">
                 <div class="card-details">
                     <div class="card-title">${item.title}</div>
                     <div class="card-meta">
@@ -454,7 +490,7 @@
         
         let html = data.map(item => `
             <div class="premium-card" onclick="window.location.href='movie-details.html?id=${item.id}'">
-                <img src="${item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/210x315'}" loading="lazy">
+                <img src="${getMoviePosterUrl(item)}" loading="lazy">
                 <div class="card-details">
                     <div class="card-title">${item.title}</div>
                     <div class="card-meta">
@@ -491,6 +527,7 @@
         initFilmsPage();
     }
 </script>
+<script src="posterSync.js"></script>
 <script src="../theme.js"></script>
 </body>
 </html>

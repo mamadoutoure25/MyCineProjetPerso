@@ -19,7 +19,7 @@ let user = null;
 let actorName = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || "null");
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
     user = auth ? (auth.userId || auth.id) : null;
     renderAuth(auth);
 
@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderExternalLinks(actor.external_ids);
         
         updateActorFavoritesUI();
+        await checkActorFavoriteStatus();
         document.getElementById("add-actor-to-favorites")?.addEventListener("click", () => toggleActorFavorite(actor.id, actor.name));
 
     } catch (e) {
@@ -50,6 +51,34 @@ document.addEventListener("DOMContentLoaded", async () => {
         notify("Erreur de chargement du profil", "danger");
     }
 });
+
+async function checkActorFavoriteStatus() {
+    if (!id || !user) return;
+    try {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+        const token = auth?.token;
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        const res = await fetch(`favorite-actors.php?actor_id=${id}&user_id=${user}`, { headers });
+        if (res.ok) {
+            const data = await res.json();
+            if (data.success) {
+                let favorites = getActorFavorites();
+                const numId = parseInt(id);
+                if (data.is_favorite) {
+                    if (!favorites.some(f => f.id === numId)) {
+                        favorites.push({ id: numId, name: actorName || "" });
+                    }
+                } else {
+                    favorites = favorites.filter(f => f.id !== numId);
+                }
+                localStorage.setItem('actor_favorites', JSON.stringify(favorites));
+                updateActorFavoritesUI();
+            }
+        }
+    } catch (e) {
+        console.warn("Erreur statut favori artiste:", e);
+    }
+}
 
 function renderActorHero(a) {
     document.getElementById("actor-name").textContent = a.name;
@@ -97,7 +126,8 @@ function generateCreditsHTML(data) {
     return data.map(m => {
         const title = m.title || m.name;
         const date = (m.release_date || m.first_air_date || "").substring(0, 4) || "N/A";
-        const img = m.poster_path ? CONFIG.W500 + m.poster_path : CONFIG.EMPTY_POSTER;
+        const defaultImg = m.poster_path ? CONFIG.W500 + m.poster_path : CONFIG.EMPTY_POSTER;
+        const img = m.title ? (window.getCustomPoster ? window.getCustomPoster(m.id, defaultImg, 'movie') : (localStorage.getItem(`custom_movie_poster_${m.id}`) || defaultImg)) : defaultImg;
         const page = m.title ? "movie-details.html" : "serie-details.html";
         
         // Use character name if cast, or job title if crew
@@ -136,17 +166,38 @@ function isActorFavorite(actorId) {
 }
 
 async function toggleActorFavorite(actorId, name) {
+    if (!user) {
+        notify("Veuillez vous connecter pour suivre cet artiste", "warning");
+        return;
+    }
     let favorites = getActorFavorites();
-    const index = favorites.findIndex(fav => fav.id === parseInt(actorId));
+    const numId = parseInt(actorId);
+    const index = favorites.findIndex(fav => fav.id === numId);
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const token = auth?.token;
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
 
     if (index > -1) {
         favorites.splice(index, 1);
-        if (user) await fetch('favorite-actors.php', { method: 'DELETE', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ user_id: user, actor_id: actorId }) });
-        notify(`${name} retiré`, "info");
+        try {
+            await fetch('favorite-actors.php', {
+                method: 'DELETE',
+                headers,
+                body: JSON.stringify({ user_id: user, actor_id: numId })
+            });
+        } catch (e) { console.error(e); }
+        notify(`${name} retiré de vos artistes suivis`, "info");
     } else {
-        favorites.push({ id: parseInt(actorId), name: name });
-        if (user) await fetch('favorite-actors.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ user_id: user, actor_id: actorId, actor_name: name }) });
-        notify(`${name} ajouté`, "success");
+        favorites.push({ id: numId, name: name });
+        try {
+            await fetch('favorite-actors.php', {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ user_id: user, actor_id: numId, actor_name: name })
+            });
+        } catch (e) { console.error(e); }
+        notify(`${name} ajouté à vos artistes suivis !`, "success");
     }
 
     localStorage.setItem('actor_favorites', JSON.stringify(favorites));
@@ -157,13 +208,14 @@ function updateActorFavoritesUI() {
     const btn = document.getElementById("add-actor-to-favorites");
     if (!btn) return;
     const active = isActorFavorite(id);
-    const icon = btn.querySelector("i");
     if (active) {
-        btn.classList.replace("btn-light", "btn-primary");
-        if (icon) icon.className = "ph-fill ph-heart me-2";
+        btn.classList.remove("btn-light");
+        btn.classList.add("btn-primary");
+        btn.innerHTML = `<i class="ph-fill ph-heart me-2"></i> ARTISTE SUIVI`;
     } else {
-        btn.classList.replace("btn-primary", "btn-light");
-        if (icon) icon.className = "ph ph-heart me-2";
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-light");
+        btn.innerHTML = `<i class="ph ph-heart me-2"></i> SUIVRE CET ARTISTE`;
     }
 }
 
