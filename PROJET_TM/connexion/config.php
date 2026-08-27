@@ -3,12 +3,20 @@
 $customConfigFile = __DIR__ . '/config.local.php';
 $customConfig = file_exists($customConfigFile) ? require $customConfigFile : [];
 
+// Détection de l'environnement local (WAMP/localhost) vs hébergement distant
+$serverHost = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+$isLocal = (strpos($serverHost, 'localhost') !== false || strpos($serverHost, '127.0.0.1') !== false || php_sapi_name() === 'cli');
+
+$defaultHost = $isLocal ? 'localhost' : 'mycinen620.mysql.db';
+$defaultUser = $isLocal ? 'root' : 'mycinen620';
+$defaultPass = $isLocal ? '' : 'j6phlphi1UdROheq';
+
 return [
     'db' => [
-        'host'     => getenv('DB_HOST') ?: ($customConfig['db']['host'] ?? 'mycinen620.mysql.db'),
+        'host'     => getenv('DB_HOST') ?: ($customConfig['db']['host'] ?? $defaultHost),
         'dbname'   => getenv('DB_NAME') ?: ($customConfig['db']['dbname'] ?? 'mycinen620'),
-        'username' => getenv('DB_USER') ?: ($customConfig['db']['username'] ?? 'mycinen620'),
-        'password' => getenv('DB_PASS') ?: ($customConfig['db']['password'] ?? 'j6phlphi1UdROheq'),
+        'username' => getenv('DB_USER') ?: ($customConfig['db']['username'] ?? $defaultUser),
+        'password' => getenv('DB_PASS') ?: (isset($customConfig['db']['password']) ? $customConfig['db']['password'] : $defaultPass),
         'charset'  => 'utf8mb4',
         'options'  => [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,

@@ -1,19 +1,21 @@
 <?php
+// Configurer la durée de vie de la session avant l'envoi des en-têtes
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.gc_maxlifetime', 3600);
+    session_set_cookie_params(3600);
+    session_start();
+}
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: ' . (in_array($_SERVER['HTTP_ORIGIN'] ?? '', ['http://localhost', 'http://127.0.0.1']) ? ($_SERVER['HTTP_ORIGIN'] ?? 'http://localhost') : 'http://localhost'));
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-CSRF-TOKEN');
 header('Access-Control-Allow-Credentials: true');
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
     http_response_code(204);
     exit;
 }
-
-// Configurer la durée de vie de la session
-ini_set('session.gc_maxlifetime', 3600);
-session_set_cookie_params(3600);
-session_start();
 
 // Charger la configuration
 $configFile = __DIR__ . '/config.php';
