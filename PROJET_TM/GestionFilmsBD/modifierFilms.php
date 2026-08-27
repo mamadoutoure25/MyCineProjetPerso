@@ -5,21 +5,20 @@ session_start();
 require_once __DIR__ . '/../connexion/auth_guard.php';
 $user = require_auth('admin');
 
-// Configuration de la base de données
-$DB_HOST = 'mycinen620.mysql.db';
-$DB_NAME = 'mycinen620';
-$DB_USER = 'mycinen620';
-$DB_PASSWORD = 'j6phlphi1UdROheq';
-
 // Désactiver l'affichage des erreurs et activer le journal
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/errors.log');
 
+$config = require __DIR__ . '/../connexion/config.php';
+
 try {
-    $pdo = new PDO("mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4", $DB_USER, $DB_PASSWORD);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo = new PDO(
+        "mysql:host={$config['db']['host']};dbname={$config['db']['dbname']};charset={$config['db']['charset']}",
+        $config['db']['username'],
+        $config['db']['password'],
+        $config['db']['options']
+    );
 
     // Gestion des requêtes GET (récupérer les données d'un film)
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {

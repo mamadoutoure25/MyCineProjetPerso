@@ -8,16 +8,15 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/errors.log');
 
-// Configuration de la base de données
-$DB_HOST = 'mycinen620.mysql.db';
-$DB_NAME = 'mycinen620';
-$DB_USER = 'mycinen620';
-$DB_PASSWORD = 'j6phlphi1UdROheq';
+$config = require __DIR__ . '/../connexion/config.php';
 
 try {
-    $pdo = new PDO("mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4", $DB_USER, $DB_PASSWORD);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo = new PDO(
+        "mysql:host={$config['db']['host']};dbname={$config['db']['dbname']};charset={$config['db']['charset']}",
+        $config['db']['username'],
+        $config['db']['password'],
+        $config['db']['options']
+    );
 } catch (PDOException $e) {
     error_log("Erreur de connexion à la base de données: " . $e->getMessage());
     ob_end_clean();

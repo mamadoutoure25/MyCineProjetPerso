@@ -9,15 +9,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     exit;
 }
 
-// Configuration de la base de données
-$DB_HOST = 'mycinen620.mysql.db';
-$DB_NAME = 'mycinen620';
-$DB_USER = 'mycinen620';
-$DB_PASSWORD = 'j6phlphi1UdROheq';
+$config = require __DIR__ . '/../connexion/config.php';
 
 try {
-    $pdo = new PDO("mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4", $DB_USER, $DB_PASSWORD);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO(
+        "mysql:host={$config['db']['host']};dbname={$config['db']['dbname']};charset={$config['db']['charset']}",
+        $config['db']['username'],
+        $config['db']['password'],
+        $config['db']['options']
+    );
 
     // Récupérer tous les films avec leur année
     $stmt = $pdo->query("SELECT id, tmdb_id, titre, annee FROM Films ORDER BY titre");

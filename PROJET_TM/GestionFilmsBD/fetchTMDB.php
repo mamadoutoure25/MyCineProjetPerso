@@ -6,14 +6,10 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/errors.log');
 
-// Clé API TMDB
-$TMDB_API_KEY = '04c35731a5ee918f014970082a0088b1';
+$config = require __DIR__ . '/../connexion/config.php';
 
-// Configuration de la base de données
-$DB_HOST = 'mycinen620.mysql.db';
-$DB_NAME = 'mycinen620';
-$DB_USER = 'mycinen620';
-$DB_PASSWORD = 'j6phlphi1UdROheq';
+// Clé API TMDB
+$TMDB_API_KEY = getenv('TMDB_API_KEY') ?: '04c35731a5ee918f014970082a0088b1';
 
 if (!isset($_GET['tmdb_id']) || !filter_var($_GET['tmdb_id'], FILTER_VALIDATE_INT)) {
     echo json_encode(['error' => 'ID TMDB invalide']);
@@ -24,9 +20,12 @@ $tmdb_id = (int)$_GET['tmdb_id'];
 
 try {
     // Connexion à la base de données
-    $pdo = new PDO("mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4", $DB_USER, $DB_PASSWORD);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo = new PDO(
+        "mysql:host={$config['db']['host']};dbname={$config['db']['dbname']};charset={$config['db']['charset']}",
+        $config['db']['username'],
+        $config['db']['password'],
+        $config['db']['options']
+    );
 
     // Requête TMDB
     $url = "https://api.themoviedb.org/3/movie/{$tmdb_id}?api_key={$TMDB_API_KEY}&language=fr-FR&append_to_response=credits,videos";
