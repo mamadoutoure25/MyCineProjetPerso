@@ -33,8 +33,9 @@ const ETAT = {
 };
 
 async function initialiserProfil() {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     if (!auth) {
+        if (window.clearAuth) window.clearAuth();
         window.location.href = "../connexion/connexion.html";
         return;
     }

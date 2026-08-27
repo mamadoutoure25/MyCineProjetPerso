@@ -22,7 +22,7 @@ const GENRE_COLORS = [
 ];
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     const loadingScreen = document.getElementById("loading-screen");
     const hideLoading = () => {
         if (loadingScreen) {

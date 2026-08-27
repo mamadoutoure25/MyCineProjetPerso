@@ -41,7 +41,7 @@ function getYear(dStr) {
 }
 
 async function initPage() {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     renderAuth(auth);
 
     if (!serieId || !seasonNum) return (window.location.href = "../../series.html");

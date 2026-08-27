@@ -6,7 +6,23 @@
     const userPostersCache = {};
 
     function getAuthData() {
-        return JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+        if (typeof window.getValidAuth === 'function') {
+            return window.getValidAuth();
+        }
+        const raw = sessionStorage.getItem("auth") || localStorage.getItem("lastAuth");
+        if (!raw) return null;
+        try {
+            const auth = JSON.parse(raw);
+            if (auth && auth.token && typeof window.isTokenExpired === 'function' && window.isTokenExpired(auth.token)) {
+                if (typeof window.clearAuth === 'function') window.clearAuth();
+                else {
+                    sessionStorage.removeItem('auth');
+                    localStorage.removeItem('lastAuth');
+                }
+                return null;
+            }
+            return auth;
+        } catch(e) { return null; }
     }
 
     function getAuthHeaders() {

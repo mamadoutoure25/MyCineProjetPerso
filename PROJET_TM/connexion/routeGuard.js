@@ -76,6 +76,11 @@
 
         } catch (err) {
             console.warn('RouteGuard: Accès refusé -', err.message);
+            if (window.clearAuth) window.clearAuth();
+            else {
+                sessionStorage.removeItem('auth');
+                localStorage.removeItem('lastAuth');
+            }
             alert('Veuillez vous connecter pour accéder à cette page.');
             window.location.href = getConnexionUrl();
         }

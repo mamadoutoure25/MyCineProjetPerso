@@ -20,7 +20,7 @@ let currentMovieData = null;
 let customMoviePoster = null;
 
 function getAuthHeaders() {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     const headers = { 'Content-Type': 'application/json' };
     if (auth && auth.token) {
         headers['Authorization'] = `Bearer ${auth.token}`;
@@ -30,7 +30,7 @@ function getAuthHeaders() {
 
 async function loadUserCustomPoster() {
     if (!id) return;
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     user = auth ? (auth.userId || auth.id) : null;
 
     if (user || (auth && auth.token)) {
@@ -591,25 +591,50 @@ function renderAuth(a) {
 }
 
 async function initLists() {
-    if (!user || !id) return;
+    if (!id) return;
     const types = [
-        { id: "add-to-favorites", api: "favorites.php", key: "is_favorite" },
-        { id: "add-to-watchlist", api: "watchlist.php", key: "is_in_watchlist" },
-        { id: "mark-as-watched", api: "watched.php", key: "is_watched" }
+        { id: "add-to-favorites", api: "favorites.php", key: "is_favorite", label: "gérer vos favoris" },
+        { id: "add-to-watchlist", api: "watchlist.php", key: "is_in_watchlist", label: "ajouter ce film à votre Watchlist" },
+        { id: "mark-as-watched", api: "watched.php", key: "is_watched", label: "marquer ce film comme vu" }
     ];
     for (const t of types) {
         const btn = document.getElementById(t.id);
         if (!btn) continue;
-        try {
-            const res = await (await fetch(`./${t.api}?user_id=${user}&film_id=${id}&media_type=movie`)).json();
-            let act = res[t.key];
-            if (act) btn.classList.add("active");
-            btn.onclick = async () => {
-                const method = act ? "DELETE" : "POST";
-                const r = await (await fetch(`./${t.api}`, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id:user, film_id:parseInt(id), media_type:'movie'}) })).json();
-                if (r.success) { act = !act; btn.classList.toggle("active", act); notify(r.message, "success"); }
-            };
-        } catch(e) {}
+        let act = false;
+        if (user) {
+            try {
+                const res = await (await fetch(`./${t.api}?user_id=${user}&film_id=${id}&media_type=movie`)).json();
+                act = !!res[t.key];
+                if (act) btn.classList.add("active");
+            } catch(e) {}
+        }
+        btn.onclick = async () => {
+            const auth = typeof window.requireAuthForAction === 'function' ? window.requireAuthForAction(t.label) : null;
+            if (!auth) return;
+            const currentUid = auth.userId || auth.id || user;
+            const method = act ? "DELETE" : "POST";
+            try {
+                const res = await fetch(`./${t.api}`, {
+                    method,
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({user_id: currentUid, film_id: parseInt(id), media_type:'movie'})
+                });
+                if (res.status === 401) {
+                    if (window.clearAuth) window.clearAuth();
+                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    window.location.href = "../connexion/connexion.html";
+                    return;
+                }
+                const r = await res.json();
+                if (r.success) {
+                    act = !act;
+                    btn.classList.toggle("active", act);
+                    notify(r.message, "success");
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        };
     }
 }
 
@@ -673,17 +698,48 @@ function initRating() {
         });
 
         s.onclick = async () => {
-            if (!user) return notify("Connectez-vous pour noter", "warning");
+            const auth = typeof window.requireAuthForAction === 'function' ? window.requireAuthForAction("noter ce film") : null;
+            if (!auth) return;
+            const currentUid = auth.userId || auth.id || user;
             const v = parseInt(s.getAttribute("data-value") || s.dataset.value, 10);
-            const r = await (await fetch('./notes.php', { method: "POST", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id:user, film_id:id, media_type:'movie', note:v}) })).json();
-            if (r.success) { update(v); if (fb) fb.textContent = `Note: ${v}/10`; notify("Note enregistrée", "success"); }
+            try {
+                const response = await fetch('./notes.php', {
+                    method: "POST",
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({user_id: currentUid, film_id: id, media_type:'movie', note: v})
+                });
+                if (response.status === 401) {
+                    if (window.clearAuth) window.clearAuth();
+                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    window.location.href = "../connexion/connexion.html";
+                    return;
+                }
+                const r = await response.json();
+                if (r.success) { update(v); if (fb) fb.textContent = `Note: ${v}/10`; notify("Note enregistrée", "success"); }
+            } catch(e) { console.error(e); }
         };
     });
 
     if (clear) {
         clear.onclick = async () => {
-            const r = await (await fetch('./notes.php', { method: "DELETE", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id:user, film_id:id, media_type:'movie'}) })).json();
-            if (r.success) { update(0); if (fb) fb.textContent = ""; notify("Note supprimée", "info"); }
+            const auth = typeof window.requireAuthForAction === 'function' ? window.requireAuthForAction("supprimer votre note") : null;
+            if (!auth) return;
+            const currentUid = auth.userId || auth.id || user;
+            try {
+                const response = await fetch('./notes.php', {
+                    method: "DELETE",
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({user_id: currentUid, film_id: id, media_type:'movie'})
+                });
+                if (response.status === 401) {
+                    if (window.clearAuth) window.clearAuth();
+                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    window.location.href = "../connexion/connexion.html";
+                    return;
+                }
+                const r = await response.json();
+                if (r.success) { update(0); if (fb) fb.textContent = ""; notify("Note supprimée", "info"); }
+            } catch(e) { console.error(e); }
         };
     }
 }

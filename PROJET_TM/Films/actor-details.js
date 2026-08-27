@@ -19,7 +19,7 @@ let user = null;
 let actorName = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     user = auth ? (auth.userId || auth.id) : null;
     renderAuth(auth);
 
@@ -166,14 +166,12 @@ function isActorFavorite(actorId) {
 }
 
 async function toggleActorFavorite(actorId, name) {
-    if (!user) {
-        notify("Veuillez vous connecter pour suivre cet artiste", "warning");
-        return;
-    }
+    const auth = typeof window.requireAuthForAction === 'function' ? window.requireAuthForAction("suivre cet artiste") : null;
+    if (!auth) return;
+    const currentUid = auth.userId || auth.id || user;
     let favorites = getActorFavorites();
     const numId = parseInt(actorId);
     const index = favorites.findIndex(fav => fav.id === numId);
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
     const token = auth?.token;
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;

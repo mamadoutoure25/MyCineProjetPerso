@@ -134,11 +134,33 @@ document.addEventListener('DOMContentLoaded', initialiserApplication);
  * Gestion de l'authentification
  */
 function verifierAuthentification() {
-    const donneesAuth = sessionStorage.getItem('auth');
-    if (donneesAuth) {
-        ETAT_APPLICATION.authentification = JSON.parse(donneesAuth);
+    let auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
+    if (!auth) {
+        const d = sessionStorage.getItem('auth') || localStorage.getItem('lastAuth');
+        if (d) {
+            try {
+                const parsed = JSON.parse(d);
+                const token = parsed?.token;
+                if (token && typeof window.isTokenExpired === 'function' && window.isTokenExpired(token)) {
+                    sessionStorage.removeItem('auth');
+                    localStorage.removeItem('lastAuth');
+                    ETAT_APPLICATION.authentification = null;
+                    return false;
+                }
+                auth = parsed;
+            } catch(e) {
+                sessionStorage.removeItem('auth');
+                localStorage.removeItem('lastAuth');
+                ETAT_APPLICATION.authentification = null;
+                return false;
+            }
+        }
+    }
+    if (auth) {
+        ETAT_APPLICATION.authentification = auth;
         return true;
     }
+    ETAT_APPLICATION.authentification = null;
     return false;
 }
 

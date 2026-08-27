@@ -48,15 +48,12 @@ let state = {
 };
 
 function checkAuth() {
-    const authData = sessionStorage.getItem('auth');
-    if (authData) {
-        try {
-            state.auth = JSON.parse(authData);
-            return true;
-        } catch (e) {
-            console.error('Erreur lors du parsing de authData:', e);
-        }
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
+    if (auth) {
+        state.auth = auth;
+        return true;
     }
+    state.auth = null;
     return false;
 }
 
@@ -520,10 +517,9 @@ function setupMovieCardEventListeners() {
             const tmdb_id = parseInt(button.dataset.movieId);
             const isFavorite = button.classList.contains('active');
 
-            if (!state.auth) {
-                showToast('Veuillez vous connecter pour gérer les favoris', 'warning');
-                return;
-            }
+            const auth = typeof window.requireAuthForAction === 'function' ? window.requireAuthForAction("gérer les favoris") : null;
+            if (!auth) return;
+            state.auth = auth;
 
             try {
                 const method = isFavorite ? 'DELETE' : 'POST';

@@ -18,7 +18,7 @@ const id = new URLSearchParams(window.location.search).get("id");
 let user = null;
 
 async function initPage() {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     user = auth ? (auth.userId || auth.id) : null;
     renderAuth(auth);
 
@@ -368,25 +368,44 @@ function renderAuth(a) {
 }
 
 async function initLists() {
-    if (!user || !id) return;
+    if (!id) return;
     const types = [
-        { id: "add-to-favorites", api: "favorites.php", key: "is_favorite" },
-        { id: "add-to-watchlist", api: "watchlist.php", key: "is_in_watchlist" },
-        { id: "mark-as-watched", api: "watched.php", key: "is_watched" }
+        { id: "add-to-favorites", api: "favorites.php", key: "is_favorite", label: "gérer vos favoris" },
+        { id: "add-to-watchlist", api: "watchlist.php", key: "is_in_watchlist", label: "ajouter cette série à votre Watchlist" },
+        { id: "mark-as-watched", api: "watched.php", key: "is_watched", label: "marquer cette série comme vue" }
     ];
     for (const t of types) {
         const btn = document.getElementById(t.id);
         if (!btn) continue;
-        try {
-            const res = await (await fetch(`./${t.api}?user_id=${user}&film_id=${id}&media_type=tv`)).json();
-            let act = res[t.key];
-            if (act) btn.classList.add("active");
-            btn.onclick = async () => {
-                const method = act ? "DELETE" : "POST";
-                const r = await (await fetch(`./${t.api}`, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id:user, film_id:parseInt(id), media_type:'tv'}) })).json();
+        let act = false;
+        if (user) {
+            try {
+                const res = await (await fetch(`./${t.api}?user_id=${user}&film_id=${id}&media_type=tv`)).json();
+                act = !!res[t.key];
+                if (act) btn.classList.add("active");
+            } catch(e) {}
+        }
+        btn.onclick = async () => {
+            const auth = typeof window.requireAuthForAction === 'function' ? window.requireAuthForAction(t.label) : null;
+            if (!auth) return;
+            const currentUid = auth.userId || auth.id || user;
+            const method = act ? "DELETE" : "POST";
+            try {
+                const response = await fetch(`./${t.api}`, {
+                    method,
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({user_id: currentUid, film_id: parseInt(id), media_type:'tv'})
+                });
+                if (response.status === 401) {
+                    if (window.clearAuth) window.clearAuth();
+                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    window.location.href = "../connexion/connexion.html";
+                    return;
+                }
+                const r = await response.json();
                 if (r.success) { act = !act; btn.classList.toggle("active", act); notify(r.message, "success"); }
-            };
-        } catch(e) {}
+            } catch(e) { console.error(e); }
+        };
     }
 }
 
@@ -450,17 +469,40 @@ function initRating() {
         });
 
         s.onclick = async () => {
-            if (!user) return notify("Connectez-vous pour noter", "warning");
+            const auth = typeof window.requireAuthForAction === 'function' ? window.requireAuthForAction("noter cette série") : null;
+            if (!auth) return;
+            const currentUid = auth.userId || auth.id || user;
             const v = parseInt(s.getAttribute("data-value") || s.dataset.value, 10);
-            const r = await (await fetch('./notes.php', { method: "POST", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id:user, film_id:id, media_type:'tv', note:v}) })).json();
-            if (r.success) { update(v); if (fb) fb.textContent = `Note: ${v}/10`; notify("Note enregistrée", "success"); }
+            try {
+                const response = await fetch('./notes.php', { method: "POST", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id: currentUid, film_id: id, media_type:'tv', note: v}) });
+                if (response.status === 401) {
+                    if (window.clearAuth) window.clearAuth();
+                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    window.location.href = "../connexion/connexion.html";
+                    return;
+                }
+                const r = await response.json();
+                if (r.success) { update(v); if (fb) fb.textContent = `Note: ${v}/10`; notify("Note enregistrée", "success"); }
+            } catch(e) { console.error(e); }
         };
     });
 
     if (clear) {
         clear.onclick = async () => {
-            const r = await (await fetch('./notes.php', { method: "DELETE", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id:user, film_id:id, media_type:'tv'}) })).json();
-            if (r.success) { update(0); if (fb) fb.textContent = ""; notify("Note supprimée", "info"); }
+            const auth = typeof window.requireAuthForAction === 'function' ? window.requireAuthForAction("supprimer votre note") : null;
+            if (!auth) return;
+            const currentUid = auth.userId || auth.id || user;
+            try {
+                const response = await fetch('./notes.php', { method: "DELETE", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id: currentUid, film_id: id, media_type:'tv'}) });
+                if (response.status === 401) {
+                    if (window.clearAuth) window.clearAuth();
+                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    window.location.href = "../connexion/connexion.html";
+                    return;
+                }
+                const r = await response.json();
+                if (r.success) { update(0); if (fb) fb.textContent = ""; notify("Note supprimée", "info"); }
+            } catch(e) { console.error(e); }
         };
     }
 }

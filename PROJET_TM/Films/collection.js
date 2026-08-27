@@ -455,7 +455,7 @@ function afficherGallery(imgs) {
 }
 
 function getAuthHeadersCollection() {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     const headers = { 'Content-Type': 'application/json' };
     if (auth && auth.token) {
         headers['Authorization'] = `Bearer ${auth.token}`;
@@ -464,7 +464,7 @@ function getAuthHeadersCollection() {
 }
 
 async function syncCollectionPoster(colId) {
-    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     if (auth && auth.token) {
         try {
             const res = await fetch(`./user_posters.php?tmdb_id=${colId}&media_type=collection`, {
