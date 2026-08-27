@@ -167,9 +167,10 @@ function renderExternalLinks(ids) {
     const cont = document.getElementById("external-ids");
     if (!cont || !ids) return;
     const links = [];
-    if (ids.imdb_id) links.push(`<a href="https://imdb.com/name/${ids.imdb_id}" target="_blank" class="btn-circle"><i class="ph ph-imdb-logo"></i></a>`);
-    if (ids.instagram_id) links.push(`<a href="https://instagram.com/${ids.instagram_id}" target="_blank" class="btn-circle"><i class="ph ph-instagram-logo"></i></a>`);
-    if (ids.twitter_id) links.push(`<a href="https://twitter.com/${ids.twitter_id}" target="_blank" class="btn-circle"><i class="ph ph-x-logo"></i></a>`);
+    if (ids.imdb_id) links.push(`<a href="https://imdb.com/name/${ids.imdb_id}" target="_blank" class="btn-circle" title="IMDb"><i class="ph ph-film-slate"></i></a>`);
+    if (ids.instagram_id) links.push(`<a href="https://instagram.com/${ids.instagram_id}" target="_blank" class="btn-circle" title="Instagram"><i class="ph ph-instagram-logo"></i></a>`);
+    if (ids.twitter_id) links.push(`<a href="https://twitter.com/${ids.twitter_id}" target="_blank" class="btn-circle" title="Twitter / X"><i class="ph ph-x-logo"></i></a>`);
+    if (ids.facebook_id) links.push(`<a href="https://facebook.com/${ids.facebook_id}" target="_blank" class="btn-circle" title="Facebook"><i class="ph ph-facebook-logo"></i></a>`);
     cont.innerHTML = links.join("");
 }
 
