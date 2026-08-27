@@ -73,7 +73,6 @@
         if (currentPath.includes('/connexion/')) return 'connexion.html';
         if (currentPath.includes('/GestionFilmsBD/')) return '../connexion/connexion.html';
         if (currentPath.includes('/Films/')) return '../connexion/connexion.html';
-        if (currentPath.includes('/Cine_map/')) return '../connexion/connexion.html';
         return 'PROJET_TM/connexion/connexion.html';
     }
 
