@@ -159,7 +159,11 @@ function renderHero(m) {
     const studioTag = el("studio-tag");
     const studio = m.production_companies?.[0];
     if (studioTag && studio) {
-        studioTag.innerHTML = `<div class="studio-icon">${studio.logo_path ? `<img src="${CONFIG.W500}${studio.logo_path}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span>${studio.name[0]}</span>`}</div><span class="fw-bold">${studio.name.toUpperCase()}</span>`;
+        if (studio.logo_path) {
+            studioTag.innerHTML = `<div class="studio-logo-badge" style="background:#ffffff; padding:6px 14px; border-radius:12px; display:inline-flex; align-items:center; max-height:48px; box-shadow:0 4px 15px rgba(0,0,0,0.3);"><img src="${CONFIG.W500}${studio.logo_path}" alt="${studio.name}" style="max-height:36px; max-width:180px; object-fit:contain; filter:none;"></div><span class="fw-bold text-white ms-2" style="letter-spacing:2px; font-size:0.85rem;">${studio.name.toUpperCase()}</span>`;
+        } else {
+            studioTag.innerHTML = `<span class="fw-bold text-accent" style="letter-spacing:2px; font-size:0.85rem;">${studio.name.toUpperCase()}</span>`;
+        }
     }
 
     if (el("side-budget-item")) {
