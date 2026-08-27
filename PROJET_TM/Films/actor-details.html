@@ -16,10 +16,10 @@
     <style>
         .hero-slider {
             position: relative;
-            min-height: 70vh;
+            min-height: auto;
             display: flex;
-            align-items: flex-end;
-            padding: 140px 5% 60px;
+            align-items: flex-start !important;
+            padding: 210px 5% 60px !important;
             overflow: hidden;
             background: #09090b;
         }
@@ -51,13 +51,33 @@
             display: grid;
             grid-template-columns: 1fr 280px;
             gap: 40px;
-            align-items: flex-end;
+            align-items: flex-start !important;
         }
 
         @media (max-width: 991px) {
             .hero-container {
                 grid-template-columns: 1fr;
             }
+        }
+
+        /* Glassmorphic Main Hero Card */
+        .hero-info {
+            position: relative;
+            z-index: 10;
+            max-width: 750px;
+            padding: 32px 36px;
+            background: rgba(18, 18, 22, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(167, 139, 250, 0.15);
+        }
+
+        [data-theme="light"] .hero-info {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
         }
 
         .hero-title {
@@ -362,7 +382,7 @@
         <div class="hero-overlay-gradient"></div>
         
         <div class="hero-container">
-            <div>
+            <div class="hero-info">
                 <nav aria-label="breadcrumb" class="mb-3 opacity-60">
                     <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;">
                         <li class="breadcrumb-item"><a href="../../index.html" class="text-theme text-decoration-none">MYCINÉ</a></li>
