@@ -26,7 +26,7 @@ async function initPage() {
 
     try {
         const [serie, contentRatings] = await Promise.all([
-            fetch(`${CONFIG.BASE}/tv/${id}?api_key=${CONFIG.KEY}&language=fr-FR&append_to_response=credits,watch/providers,videos,images,external_ids`).then(r => r.json()),
+            fetch(`${CONFIG.BASE}/tv/${id}?api_key=${CONFIG.KEY}&language=fr-FR&append_to_response=credits,aggregate_credits,watch/providers,videos,images,external_ids`).then(r => r.json()),
             fetch(`${CONFIG.BASE}/tv/${id}/content_ratings?api_key=${CONFIG.KEY}`).then(r => r.json())
         ]);
         
@@ -34,7 +34,10 @@ async function initPage() {
         
         renderHero(serie);
         renderSeasons(serie.seasons);
-        renderCast(serie.credits?.cast);
+        const castList = (serie.credits?.cast && serie.credits.cast.length > 0)
+            ? serie.credits.cast
+            : (serie.aggregate_credits?.cast || []);
+        renderCast(castList);
         renderSoundtrack(serie);
         renderVideos(serie.videos?.results);
         renderGallery(serie.images);
@@ -134,15 +137,18 @@ function renderCast(cast) {
     const cont = document.getElementById("serie-cast");
     if (!cont || !cast) return;
     
-    cont.innerHTML = cast.slice(0, 24).map(a => `
-        <div class="actor-card small-actor-card" onclick="window.location.href='actor-details.html?id=${a.id}'">
-            <img src="${a.profile_path ? CONFIG.ACTOR + a.profile_path : CONFIG.EMPTY_ACTOR}" loading="lazy" onerror="this.src='${CONFIG.EMPTY_POSTER}'">
-            <div class="actor-hover-overlay actor-details">
-                <div class="actor-name text-truncate" title="${a.name}">${a.name}</div>
-                <div class="actor-role text-truncate" title="${a.character || 'N/A'}">${a.character || "N/A"}</div>
+    cont.innerHTML = cast.slice(0, 24).map(a => {
+        const role = a.character || (a.roles && a.roles[0] && a.roles[0].character) || "N/A";
+        return `
+            <div class="actor-card small-actor-card" onclick="window.location.href='actor-details.html?id=${a.id}'">
+                <img src="${a.profile_path ? CONFIG.ACTOR + a.profile_path : CONFIG.EMPTY_ACTOR}" loading="lazy" onerror="this.src='${CONFIG.EMPTY_POSTER}'">
+                <div class="actor-hover-overlay actor-details">
+                    <div class="actor-name text-truncate" title="${a.name}">${a.name}</div>
+                    <div class="actor-role text-truncate" title="${role}">${role}</div>
+                </div>
             </div>
-        </div>
-    `).join("");
+        `;
+    }).join("");
 }
 
 function renderSoundtrack(s) {
