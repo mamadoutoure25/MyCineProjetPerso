@@ -57,8 +57,15 @@
             if (shouldUpdateImgSrc(img, custom)) img.src = custom;
         });
 
-        // 3. Fallback universel : détection par href / onclick
-        const candidates = document.querySelectorAll('.premium-card, .actor-credit-card, .collection-card, a[href*="movie-details.html"], a[href*="collection.html"], [onclick*="movie-details.html"], [onclick*="collection.html"]');
+        // 3. Mise à jour via attribut data-person-id / data-actor-id
+        document.querySelectorAll('img[data-person-id], img[data-actor-id]').forEach(img => {
+            const id = img.getAttribute('data-person-id') || img.getAttribute('data-actor-id');
+            const custom = getCustomPoster(id, null, 'person');
+            if (shouldUpdateImgSrc(img, custom)) img.src = custom;
+        });
+
+        // 4. Fallback universel : détection par href / onclick
+        const candidates = document.querySelectorAll('.premium-card, .actor-credit-card, .collection-card, a[href*="movie-details.html"], a[href*="collection.html"], a[href*="actor-details.html"], [onclick*="movie-details.html"], [onclick*="collection.html"], [onclick*="actor-details.html"]');
         candidates.forEach(el => {
             const str = (el.getAttribute('onclick') || '') + ' ' + (el.getAttribute('href') || '');
             
@@ -78,6 +85,17 @@
             if (colMatch) {
                 const colId = colMatch[1];
                 const custom = getCustomPoster(colId, null, 'collection');
+                if (custom) {
+                    const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+                    if (img && shouldUpdateImgSrc(img, custom)) img.src = custom;
+                }
+            }
+
+            // Recherche de actor-details.html?id=123
+            const actorMatch = str.match(/actor-details\.html\?id=(\d+)/);
+            if (actorMatch) {
+                const actorId = actorMatch[1];
+                const custom = getCustomPoster(actorId, null, 'person');
                 if (custom) {
                     const img = el.tagName === 'IMG' ? el : el.querySelector('img');
                     if (img && shouldUpdateImgSrc(img, custom)) img.src = custom;
@@ -105,7 +123,10 @@
                     const data = await res.json();
                     if (data.success && Array.isArray(data.posters)) {
                         data.posters.forEach(p => {
-                            const key = p.media_type === 'collection' ? `custom_collection_poster_${p.tmdb_id}` : `custom_movie_poster_${p.tmdb_id}`;
+                            let key = `custom_movie_poster_${p.tmdb_id}`;
+                            if (p.media_type === 'collection') key = `custom_collection_poster_${p.tmdb_id}`;
+                            else if (p.media_type === 'person' || p.media_type === 'actor') key = `custom_actor_photo_${p.tmdb_id}`;
+                            
                             userPostersCache[key] = p.poster_path;
                             localStorage.setItem(key, p.poster_path);
                         });
@@ -122,7 +143,10 @@
 
     function getCustomPoster(tmdbId, defaultUrl, mediaType = 'movie') {
         if (!tmdbId) return defaultUrl;
-        const key = mediaType === 'collection' ? `custom_collection_poster_${tmdbId}` : `custom_movie_poster_${tmdbId}`;
+        let key = `custom_movie_poster_${tmdbId}`;
+        if (mediaType === 'collection') key = `custom_collection_poster_${tmdbId}`;
+        else if (mediaType === 'person' || mediaType === 'actor') key = `custom_actor_photo_${tmdbId}`;
+
         const cached = userPostersCache[key] || localStorage.getItem(key);
         return cached || defaultUrl;
     }

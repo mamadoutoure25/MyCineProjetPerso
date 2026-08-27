@@ -399,13 +399,22 @@
                     <button id="add-actor-to-favorites" class="btn btn-light rounded-pill px-4 py-3 fw-black shadow-lg" style="letter-spacing: 1px; font-size: 0.85rem;">
                         <i class="ph ph-heart me-2 fs-5"></i> SUIVRE CET ARTISTE
                     </button>
+                    <button id="change-photo-btn" class="btn-circle" title="Changer la photo de l'artiste" onclick="ouvrirModalSelectPhoto()"><i class="ph ph-image"></i></button>
                     <div id="external-ids" class="d-flex gap-2"></div>
                 </div>
             </div>
 
-            <div class="d-none d-lg-block">
+            <div class="d-none d-lg-block text-center">
                 <div class="actor-photo-frame">
                     <img id="actor-photo" src="" alt="Portrait">
+                </div>
+                <div class="mt-3 text-center d-flex align-items-center justify-content-center gap-2">
+                    <button id="btn-change-photo-side" class="btn btn-sm btn-outline-light rounded-pill px-3 py-1.5 x-small fw-bold shadow-sm" onclick="ouvrirModalSelectPhoto()">
+                        <i class="ph ph-image-square me-1"></i> Changer la photo
+                    </button>
+                    <button id="btn-reset-photo-side" class="btn btn-sm btn-link text-danger text-decoration-none x-small" onclick="resetPhotoActeur()" style="display: none;">
+                        Réinitialiser
+                    </button>
                 </div>
             </div>
         </div>
@@ -507,6 +516,41 @@
         </div>
     </footer>
 </main>
+
+<!-- Modal de Sélection / Changement de Photo d'Artiste -->
+<div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background: rgba(18, 18, 22, 0.95); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 28px;">
+            <div class="modal-header border-0 px-4 pt-4 pb-0">
+                <h5 class="modal-title fw-black text-theme d-flex align-items-center gap-2">
+                    <i class="ph ph-image-square text-accent fs-3"></i> SÉLECTIONNER UNE PHOTO DE PORTRAIT
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Saisie URL personnalisée -->
+                <div class="mb-4 p-3 rounded-4" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <label for="custom-photo-url" class="form-label x-small fw-extrabold text-uppercase text-accent mb-2">Utiliser l'URL d'une image personnalisée</label>
+                    <div class="input-group">
+                        <input type="url" id="custom-photo-url" class="form-control bg-dark border-secondary text-white rounded-start-pill px-3" placeholder="https://exemple.com/image.jpg">
+                        <button class="btn btn-primary rounded-end-pill px-4 fw-bold" onclick="appliquerUrlCustomPhoto()"><i class="ph ph-check me-1"></i> Appliquer</button>
+                    </div>
+                </div>
+
+                <div class="section-header-bar mb-3">
+                    <div class="section-bar"></div>
+                    <div class="lane-title mb-0" style="font-size: 1.1rem; letter-spacing: 1px;">PORTRAITS ET PHOTOS OFFICIELLES</div>
+                </div>
+
+                <div id="photo-gallery-grid" class="d-grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));">
+                    <div class="text-center py-5 w-100">
+                        <div class="spinner-border text-accent" role="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 1100;"></div>
 

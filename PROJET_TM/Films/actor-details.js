@@ -18,6 +18,8 @@ const id = new URLSearchParams(window.location.search).get("id");
 let user = null;
 let actorName = null;
 
+let currentActorData = null;
+
 document.addEventListener("DOMContentLoaded", async () => {
     const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     user = auth ? (auth.userId || auth.id) : null;
@@ -28,6 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         const actor = await (await fetch(`${CONFIG.BASE}/person/${id}?api_key=${CONFIG.KEY}&language=fr-FR&append_to_response=movie_credits,tv_credits,external_ids`)).json();
         
+        currentActorData = actor;
         actorName = actor.name;
         renderActorHero(actor);
         
@@ -84,12 +87,20 @@ function renderActorHero(a) {
     document.getElementById("actor-name").textContent = a.name;
     document.getElementById("actor-biography").textContent = a.biography || "Biographie non disponible.";
     
-    if (a.profile_path) {
-        const photo = document.getElementById("actor-photo");
-        const backdrop = document.getElementById("hero-backdrop");
-        if (photo) photo.src = CONFIG.HD + a.profile_path;
-        if (backdrop) backdrop.src = CONFIG.ORIG + a.profile_path;
+    let customPhoto = localStorage.getItem(`custom_actor_photo_${id}`);
+    if (window.getCustomPoster) {
+        customPhoto = window.getCustomPoster(id, customPhoto, 'person');
     }
+    const defaultPhoto = a.profile_path ? CONFIG.HD + a.profile_path : CONFIG.EMPTY_ACTOR;
+    const activePhoto = customPhoto || defaultPhoto;
+
+    const photo = document.getElementById("actor-photo");
+    const backdrop = document.getElementById("hero-backdrop");
+    if (photo) photo.src = activePhoto;
+    if (backdrop) backdrop.src = activePhoto;
+
+    const resetBtn = document.getElementById("btn-reset-photo-side");
+    if (resetBtn) resetBtn.style.display = customPhoto ? "inline-block" : "none";
 
     const bday = a.birthday ? new Date(a.birthday).toLocaleDateString('fr-FR') : "N/A";
     const place = a.place_of_birth || "N/A";
@@ -254,3 +265,152 @@ function notify(msg, type) {
     c.appendChild(t);
     setTimeout(() => t.remove(), 4000);
 }
+
+async function ouvrirModalSelectPhoto() {
+    const modalEl = document.getElementById("photoModal");
+    if (!modalEl) return;
+
+    const bsModal = new bootstrap.Modal(modalEl);
+    bsModal.show();
+
+    const grid = document.getElementById("photo-gallery-grid");
+    if (!grid) return;
+
+    grid.innerHTML = `<div class="text-center py-5 w-100"><div class="spinner-border text-accent" role="status"></div></div>`;
+
+    try {
+        const res = await fetch(`${CONFIG.BASE}/person/${id}/images?api_key=${CONFIG.KEY}`);
+        const data = await res.json();
+        const profiles = data.profiles || [];
+
+        if (profiles.length === 0 && currentActorData?.profile_path) {
+            profiles.push({ file_path: currentActorData.profile_path });
+        }
+
+        if (profiles.length === 0) {
+            grid.innerHTML = `<div class="text-center py-4 opacity-50 w-100">Aucune photo officielle trouvée. Utilisez une URL ci-dessus.</div>`;
+            return;
+        }
+
+        const activeCustom = localStorage.getItem(`custom_actor_photo_${id}`);
+
+        grid.innerHTML = profiles.map(p => {
+            const url = CONFIG.HD + p.file_path;
+            const isSelected = activeCustom === url || (!activeCustom && currentActorData?.profile_path && url.includes(currentActorData.profile_path));
+            return `
+                <div class="position-relative rounded-4 overflow-hidden shadow-sm border ${isSelected ? 'border-primary border-3' : 'border-secondary'}" style="aspect-ratio: 2/3; background: #000;">
+                    <img src="${url}" class="w-100 h-100 object-fit-cover" loading="lazy">
+                    <div class="position-absolute bottom-0 inset-x-0 p-2 text-center" style="background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);">
+                        <button class="btn btn-sm ${isSelected ? 'btn-success' : 'btn-light'} rounded-pill px-3 fw-bold x-small shadow-sm" onclick="changerPhotoActeur('${url}')">
+                            ${isSelected ? '<i class="ph ph-check me-1"></i> Active' : 'Choisir'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error("Erreur galerie photos:", e);
+        grid.innerHTML = `<div class="text-center py-4 text-danger w-100">Erreur lors du chargement des photos.</div>`;
+    }
+}
+
+async function changerPhotoActeur(photoUrl) {
+    if (!id || !photoUrl) return;
+    localStorage.setItem(`custom_actor_photo_${id}`, photoUrl);
+
+    const photo = document.getElementById("actor-photo");
+    const backdrop = document.getElementById("hero-backdrop");
+    if (photo) photo.src = photoUrl;
+    if (backdrop) backdrop.src = photoUrl;
+
+    const resetBtn = document.getElementById("btn-reset-photo-side");
+    if (resetBtn) resetBtn.style.display = "inline-block";
+
+    const modalEl = document.getElementById("photoModal");
+    if (modalEl) {
+        const bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
+    }
+
+    notify("Photo d'artiste mise à jour !", "success");
+
+    // Sync BDD
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const uid = auth ? (auth.userId || auth.id) : user;
+    if (uid || (auth && auth.token)) {
+        try {
+            await fetch('./user_posters.php', {
+                method: 'POST',
+                headers: typeof getAuthHeaders === 'function' ? getAuthHeaders() : { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: uid,
+                    tmdb_id: parseInt(id),
+                    media_type: 'person',
+                    poster_path: photoUrl
+                })
+            });
+        } catch (e) {
+            console.error("Erreur d'enregistrement photo BDD:", e);
+        }
+    }
+
+    if (window.updateAllDomPosters) {
+        window.updateAllDomPosters();
+    }
+}
+
+function appliquerUrlCustomPhoto() {
+    const input = document.getElementById("custom-photo-url");
+    if (!input || !input.value.trim()) return;
+    changerPhotoActeur(input.value.trim());
+    input.value = "";
+}
+
+async function resetPhotoActeur() {
+    if (!id) return;
+    localStorage.removeItem(`custom_actor_photo_${id}`);
+
+    const defaultPhoto = currentActorData?.profile_path ? CONFIG.HD + currentActorData.profile_path : CONFIG.EMPTY_ACTOR;
+    const photo = document.getElementById("actor-photo");
+    const backdrop = document.getElementById("hero-backdrop");
+    if (photo) photo.src = defaultPhoto;
+    if (backdrop) backdrop.src = defaultPhoto;
+
+    const resetBtn = document.getElementById("btn-reset-photo-side");
+    if (resetBtn) resetBtn.style.display = "none";
+
+    const modalEl = document.getElementById("photoModal");
+    if (modalEl) {
+        const bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
+    }
+
+    notify("Photo réinitialisée à l'originale", "info");
+
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const uid = auth ? (auth.userId || auth.id) : user;
+    if (uid || (auth && auth.token)) {
+        try {
+            await fetch('./user_posters.php', {
+                method: 'DELETE',
+                headers: typeof getAuthHeaders === 'function' ? getAuthHeaders() : { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: uid,
+                    tmdb_id: parseInt(id),
+                    media_type: 'person'
+                })
+            });
+        } catch (e) {
+            console.error("Erreur suppression photo BDD:", e);
+        }
+    }
+
+    if (window.updateAllDomPosters) {
+        window.updateAllDomPosters();
+    }
+}
+
+window.ouvrirModalSelectPhoto = ouvrirModalSelectPhoto;
+window.changerPhotoActeur = changerPhotoActeur;
+window.appliquerUrlCustomPhoto = appliquerUrlCustomPhoto;
+window.resetPhotoActeur = resetPhotoActeur;
