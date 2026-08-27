@@ -77,6 +77,7 @@ async function initPage() {
         renderGallery(movie.images);
         renderProviders(movie["watch/providers"]?.results);
         renderTechnical(movie);
+        loadAwardsData(movie.external_ids?.imdb_id, "awards-display-grid", movie.title);
         
         if (movie.belongs_to_collection) {
             renderCollection(movie.belongs_to_collection.id);
@@ -910,3 +911,177 @@ window.ouvrirModalSelectAffiche = ouvrirModalSelectAffiche;
 window.changerAfficheFilm = changerAfficheFilm;
 window.resetAfficheFilm = resetAfficheFilm;
 window.soumettreAfficheCustomUrl = soumettreAfficheCustomUrl;
+
+async function loadAwardsData(imdbId, containerId, title) {
+    const grid = document.getElementById(containerId);
+    if (!grid) return;
+
+    if (!imdbId) {
+        grid.innerHTML = `
+            <div class="glass-award-card w-100 py-4 text-center">
+                <i class="ph ph-trophy opacity-40 fs-2 mb-2 text-warning"></i>
+                <div class="award-main-value fs-6 opacity-75">Aucun palmarès officiel répertorié pour ${title || 'cet élément'}.</div>
+            </div>
+        `;
+        return;
+    }
+
+    try {
+        const apiKeys = ['b793318f', 'trilogy', '9810ef8a'];
+        let awardsStr = "";
+        
+        for (const key of apiKeys) {
+            try {
+                const res = await fetch(`https://www.omdbapi.com/?i=${imdbId}&apikey=${key}`);
+                const data = await res.json();
+                if (data.Response === "True" && data.Awards && data.Awards !== "N/A") {
+                    awardsStr = data.Awards;
+                    break;
+                }
+            } catch (err) {
+                // try next
+            }
+        }
+
+        if (!awardsStr) {
+            grid.innerHTML = `
+                <div class="glass-award-card w-100 py-4 text-center">
+                    <i class="ph ph-trophy opacity-40 fs-2 mb-2 text-warning"></i>
+                    <div class="award-main-value fs-6 opacity-75">Aucune distinction majeure enregistrée dans la base officielle.</div>
+                </div>
+            `;
+            return;
+        }
+
+        const cards = [];
+
+        // 1. Oscars
+        const oscarMatch = awardsStr.match(/(Won|Nominated for)\s+(\d+)\s+Oscar[s]?/i);
+        if (oscarMatch) {
+            const isWon = oscarMatch[1].toLowerCase() === 'won';
+            const count = oscarMatch[2];
+            cards.push(`
+                <div class="glass-award-card">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="award-img-wrapper">
+                            <img src="assets/awards/oscar.png" alt="Oscar Statuette">
+                        </div>
+                        <div>
+                            <div class="award-badge-tag"><i class="ph-fill ph-trophy"></i> ACADEMY AWARDS</div>
+                            <div class="award-main-value">${isWon ? `🏆 ${count} Oscar${count > 1 ? 's' : ''} Remporté${count > 1 ? 's' : ''}` : `⭐ ${count} Nomination${count > 1 ? 's' : ''} aux Oscars`}</div>
+                            <div class="award-sub-desc">Récompense suprême du cinéma mondial</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        // 2. Golden Globes
+        const globeMatch = awardsStr.match(/(Won|Nominated for)\s+(\d+)\s+Golden Globe[s]?/i);
+        if (globeMatch) {
+            const isWon = globeMatch[1].toLowerCase() === 'won';
+            const count = globeMatch[2];
+            cards.push(`
+                <div class="glass-award-card">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="award-img-wrapper">
+                            <img src="assets/awards/golden_globe.png" alt="Golden Globe Trophy">
+                        </div>
+                        <div>
+                            <div class="award-badge-tag"><i class="ph-fill ph-star"></i> GOLDEN GLOBES</div>
+                            <div class="award-main-value">${isWon ? `🌟 ${count} Golden Globe${count > 1 ? 's' : ''}` : `🎬 ${count} Nomination${count > 1 ? 's' : ''} aux Golden Globes`}</div>
+                            <div class="award-sub-desc">Hollywood Foreign Press Association</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        // 3. Emmys
+        const emmyMatch = awardsStr.match(/(Won|Nominated for)\s+(\d+)\s+Emmy[s]?/i);
+        if (emmyMatch) {
+            const isWon = emmyMatch[1].toLowerCase() === 'won';
+            const count = emmyMatch[2];
+            cards.push(`
+                <div class="glass-award-card">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="award-img-wrapper">
+                            <img src="assets/awards/emmy.png" alt="Emmy Statuette">
+                        </div>
+                        <div>
+                            <div class="award-badge-tag"><i class="ph-fill ph-television"></i> PRIMETIME EMMY AWARDS</div>
+                            <div class="award-main-value">${isWon ? `📺 ${count} Emmy Award${count > 1 ? 's' : ''}` : `📺 ${count} Nomination${count > 1 ? 's' : ''} aux Emmys`}</div>
+                            <div class="award-sub-desc">Prix d'excellence de la télévision</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        // 4. Total Wins
+        const winsMatch = awardsStr.match(/(\d+)\s+win[s]?/i);
+        if (winsMatch) {
+            const count = winsMatch[1];
+            cards.push(`
+                <div class="glass-award-card">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="award-img-wrapper">
+                            <img src="assets/awards/laurel.png" alt="Gold Laurel Wreath">
+                        </div>
+                        <div>
+                            <div class="award-badge-tag"><i class="ph-fill ph-medal"></i> TOTAL VICTOIRES</div>
+                            <div class="award-main-value">🥇 ${count} Victoire${count > 1 ? 's' : ''} en Festivals</div>
+                            <div class="award-sub-desc">Cumul de tous les prix remportés</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        // 5. Total Nominations
+        const nomMatch = awardsStr.match(/(\d+)\s+nomination[s]?/i);
+        if (nomMatch) {
+            const count = nomMatch[1];
+            cards.push(`
+                <div class="glass-award-card">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="award-img-wrapper">
+                            <img src="assets/awards/laurel.png" alt="Certificate Badge">
+                        </div>
+                        <div>
+                            <div class="award-badge-tag"><i class="ph-fill ph-certificate"></i> NOMINATIONS GLOBALES</div>
+                            <div class="award-main-value">📜 ${count} Nomination${count > 1 ? 's' : ''} Officielles</div>
+                            <div class="award-sub-desc">Sélections dans les académies & festivals</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        if (cards.length === 0) {
+            cards.push(`
+                <div class="glass-award-card w-100">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="award-img-wrapper">
+                            <img src="assets/awards/oscar.png" alt="Trophy">
+                        </div>
+                        <div>
+                            <div class="award-badge-tag"><i class="ph-fill ph-trophy"></i> PALMARÈS OFFICIEL</div>
+                            <div class="award-main-value">${awardsStr}</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        grid.innerHTML = cards.join('');
+
+    } catch (e) {
+        console.error("Erreur chargement palmarès:", e);
+        grid.innerHTML = `
+            <div class="glass-award-card w-100 py-3 text-center">
+                <span class="x-small text-danger opacity-75">Impossible de charger le palmarès pour le moment.</span>
+            </div>
+        `;
+    }
+}
