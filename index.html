@@ -175,6 +175,12 @@
         <div id="trending-series" class="movie-grid mb-5"></div>
 
         <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">ACTUELLEMENT AU CINÉMA</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('now-playing-movies')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="now-playing-movies" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
             <div class="lane-title mb-0">BIENTÔT AU CINÉMA</div>
             <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('upcoming-movies')">VOIR PLUS <i class="ph ph-plus"></i></button>
         </div>
@@ -198,7 +204,8 @@
     const laneStates = {
         'trending-movies': { page: 1, endpoint: '/trending/movie/week', params: '', type: 'movie' },
         'trending-series': { page: 1, endpoint: '/trending/tv/week', params: '', type: 'tv' },
-        'upcoming-movies': { page: 1, endpoint: '/movie/upcoming', params: '', type: 'movie' }
+        'now-playing-movies': { page: 1, endpoint: '/movie/now_playing', params: '&region=FR', type: 'movie' },
+        'upcoming-movies': { page: 1, endpoint: '/movie/upcoming', params: '&region=FR', type: 'movie' }
     };
 
     async function loadPremiumHome() {
@@ -216,22 +223,24 @@
     }
 
     async function loadDefaultLanes() {
-        const [movies, series, upcoming] = await Promise.all([
+        const [movies, series, nowPlaying, upcoming] = await Promise.all([
             fetch(`${BASE_URL}${laneStates['trending-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
             fetch(`${BASE_URL}${laneStates['trending-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
-            fetch(`${BASE_URL}${laneStates['upcoming-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json())
+            fetch(`${BASE_URL}${laneStates['now-playing-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['upcoming-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`).then(r => r.json())
         ]);
 
-        if(movies.results[0]) {
+        if(movies.results && movies.results[0]) {
             const top = movies.results[0];
             document.getElementById('main-hero-img').src = BACKDROP_URL + top.backdrop_path;
             document.getElementById('main-hero-title').textContent = top.title;
             document.getElementById('main-hero-desc').textContent = top.overview;
         }
 
-        renderLane(movies.results, 'trending-movies', 'movie');
-        renderLane(series.results, 'trending-series', 'tv');
-        renderLane(upcoming.results, 'upcoming-movies', 'movie');
+        if (movies.results) renderLane(movies.results, 'trending-movies', 'movie');
+        if (series.results) renderLane(series.results, 'trending-series', 'tv');
+        if (nowPlaying.results) renderLane(nowPlaying.results, 'now-playing-movies', 'movie');
+        if (upcoming.results) renderLane(upcoming.results, 'upcoming-movies', 'movie');
     }
 
     async function loadMore(laneId) {

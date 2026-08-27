@@ -190,10 +190,16 @@
         <div id="top-rated-films" class="movie-grid mb-5"></div>
 
         <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
-            <div class="lane-title mb-0">SORTIES CINÉMA</div>
+            <div class="lane-title mb-0">ACTUELLEMENT AU CINÉMA</div>
             <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('now-playing-films')">CHARGER PLUS <i class="ph ph-plus"></i></button>
         </div>
         <div id="now-playing-films" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">BIENTÔT AU CINÉMA</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('upcoming-films')">CHARGER PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="upcoming-films" class="movie-grid mb-5"></div>
 
         <!-- Box-Office Lane -->
         <div class="d-flex justify-content-between align-items-center mb-4 pe-5 flex-wrap gap-3">
@@ -233,7 +239,8 @@
 
     const laneStates = {
         'top-rated-films': { page: 1, endpoint: '/movie/top_rated', params: '' },
-        'now-playing-films': { page: 1, endpoint: '/movie/now_playing', params: '&region=BE' },
+        'now-playing-films': { page: 1, endpoint: '/movie/now_playing', params: '&region=FR' },
+        'upcoming-films': { page: 1, endpoint: '/movie/upcoming', params: '&region=FR' },
         'boxoffice-films': { page: 1, endpoint: '/discover/movie', params: '&sort_by=revenue.desc' },
         'category-films': { page: 1, endpoint: '/discover/movie', params: '&with_genres=28' }
     };
@@ -283,9 +290,10 @@
 
     async function loadDefaultLanes() {
         try {
-            const [topRated, nowPlaying, boxOffice, actionMovies] = await Promise.all([
+            const [topRated, nowPlaying, upcoming, boxOffice, actionMovies] = await Promise.all([
                 fetch(`${BASE_URL}${laneStates['top-rated-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
-                fetch(`${BASE_URL}${laneStates['now-playing-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=BE&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['now-playing-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['upcoming-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`).then(r => r.json()),
                 fetch(`${BASE_URL}${laneStates['boxoffice-films'].endpoint}?api_key=${API_KEY}&language=fr-FR${laneStates['boxoffice-films'].params}&page=1`).then(r => r.json()),
                 fetch(`${BASE_URL}${laneStates['category-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&with_genres=28&page=1`).then(r => r.json())
             ]);
@@ -294,10 +302,11 @@
                 document.getElementById('films-hero-img').src = BACKDROP_URL + topRated.results[0].backdrop_path;
             }
 
-            renderLane(topRated.results, 'top-rated-films');
-            renderLane(nowPlaying.results, 'now-playing-films');
-            renderLane(boxOffice.results, 'boxoffice-films');
-            renderLane(actionMovies.results, 'category-films');
+            if (topRated.results) renderLane(topRated.results, 'top-rated-films');
+            if (nowPlaying.results) renderLane(nowPlaying.results, 'now-playing-films');
+            if (upcoming.results) renderLane(upcoming.results, 'upcoming-films');
+            if (boxOffice.results) renderLane(boxOffice.results, 'boxoffice-films');
+            if (actionMovies.results) renderLane(actionMovies.results, 'category-films');
             renderPopularCollections();
         } catch(e) { console.error(e); }
     }
