@@ -81,25 +81,6 @@ function renderHero(s) {
     document.getElementById("serie-tags").innerHTML = `${certBadge}<span>${year}</span><div class="v-sep"></div><span>${genres}</span><div class="v-sep"></div><span>${seasons}</span>`;
     document.getElementById("serie-status").textContent = s.status === "Returning Series" ? "En cours" : "Terminée";
 
-    // Populate Glassmorphic Stats Section
-    const statsSeasonsEp = document.getElementById("stats-seasons-episodes");
-    if (statsSeasonsEp) {
-        statsSeasonsEp.textContent = `${s.number_of_seasons || 0} Saisons (${s.number_of_episodes || 0} Éps)`;
-    }
-    const statsRuntime = document.getElementById("stats-episode-runtime");
-    if (statsRuntime) {
-        const avgRuntime = s.episode_run_time && s.episode_run_time.length ? s.episode_run_time[0] : (s.episode_run_time || null);
-        statsRuntime.textContent = avgRuntime ? `${avgRuntime} min / ép.` : "N/A";
-    }
-    const statsVote = document.getElementById("stats-vote-average");
-    if (statsVote) {
-        statsVote.textContent = s.vote_average ? `${s.vote_average.toFixed(1)} / 10` : "N/A";
-    }
-    const statsCert = document.getElementById("stats-certification");
-    if (statsCert) {
-        statsCert.textContent = cert ? cert : "Tous publics";
-    }
-
     const studio = s.production_companies?.[0];
     if (studio) {
         document.getElementById("studio-tag").innerHTML = `<div class="studio-icon">${studio.logo_path ? `<img src="${CONFIG.W500}${studio.logo_path}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span>${studio.name[0]}</span>`}</div><span class="fw-bold">${studio.name.toUpperCase()}</span>`;
@@ -118,13 +99,12 @@ function renderHero(s) {
 
 function renderSeasons(seasons) {
     const cont = document.getElementById("serie-seasons");
-    if (!cont || !seasons) return;
     cont.innerHTML = seasons.filter(s => s.season_number > 0).map(s => `
-        <div class="season-card-premium" onclick="window.location.href='saison-details.html?serieId=${id}&season=${s.season_number}'">
+        <div class="premium-card" onclick="window.location.href='saison-details.html?serieId=${id}&season=${s.season_number}'">
             <img src="${s.poster_path ? CONFIG.W500 + s.poster_path : CONFIG.EMPTY_POSTER}" loading="lazy">
-            <div class="season-overlay">
-                <div class="season-title">SAISON ${s.season_number}</div>
-                <div class="season-episodes-pill">${s.episode_count} ÉPISODES</div>
+            <div class="card-details">
+                <div class="card-title">SAISON ${s.season_number}</div>
+                <div class="card-meta">${s.episode_count} ÉPISODES</div>
             </div>
         </div>
     `).join("");
