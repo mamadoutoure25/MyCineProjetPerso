@@ -136,10 +136,10 @@ function renderCast(cast) {
     
     cont.innerHTML = cast.slice(0, 24).map(a => `
         <div class="actor-card small-actor-card" onclick="window.location.href='actor-details.html?id=${a.id}'">
-            <img src="${a.profile_path ? CONFIG.ACTOR + a.profile_path : CONFIG.EMPTY_ACTOR}" loading="lazy">
-            <div class="actor-hover-overlay">
-                <div class="actor-name">${a.name}</div>
-                <div class="actor-role">${a.character || "N/A"}</div>
+            <img src="${a.profile_path ? CONFIG.ACTOR + a.profile_path : CONFIG.EMPTY_ACTOR}" loading="lazy" onerror="this.src='${CONFIG.EMPTY_POSTER}'">
+            <div class="actor-hover-overlay actor-details">
+                <div class="actor-name text-truncate" title="${a.name}">${a.name}</div>
+                <div class="actor-role text-truncate" title="${a.character || 'N/A'}">${a.character || "N/A"}</div>
             </div>
         </div>
     `).join("");
