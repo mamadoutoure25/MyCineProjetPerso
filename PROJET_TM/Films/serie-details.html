@@ -436,12 +436,148 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.8) !important;
         }
 
-        /* Tech Specs Footer */
+        /* Tech Specs Footer (Identique à movie-details.html) */
         .tech-footer {
-            padding: 60px 6%;
-            background: #050507;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 50px 6%;
+            background: var(--bg-card, rgba(18, 18, 24, 0.85));
+            backdrop-filter: blur(25px);
+            border-top: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
             margin-top: 60px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tech-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tech-col-title {
+            font-size: 0.8rem;
+            font-weight: 900;
+            color: var(--accent, #a78bfa);
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted, rgba(255, 255, 255, 0.6)) !important;
+            margin-bottom: 4px;
+        }
+
+        .tech-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary, #ffffff) !important;
+            line-height: 1.3;
+        }
+
+        .tech-card-box {
+            background: var(--glass, rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+            border-radius: 16px;
+            padding: 16px 20px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tech-card-box:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            background: var(--glass-hover, rgba(255, 255, 255, 0.07));
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .studio-item-card {
+            display: flex !important;
+            align-items: center !important;
+            gap: 14px !important;
+            padding: 10px 16px !important;
+            background: var(--glass, rgba(255, 255, 255, 0.04)) !important;
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.08)) !important;
+            border-radius: 14px !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .studio-item-card:hover {
+            border-color: var(--accent) !important;
+            background: rgba(167, 139, 250, 0.1) !important;
+            transform: translateX(4px) !important;
+        }
+
+        .studio-logo-box {
+            background: #ffffff !important;
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            max-width: 36px !important;
+            max-height: 36px !important;
+            border-radius: 10px !important;
+            padding: 6px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+            flex-shrink: 0 !important;
+            overflow: hidden !important;
+        }
+
+        .studio-logo-box img {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+            filter: none !important;
+        }
+
+        .studio-name {
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
+            color: var(--text-primary, #ffffff) !important;
+        }
+
+        .social-link-btn {
+            width: 44px !important;
+            height: 44px !important;
+            border-radius: 50% !important;
+            background: var(--glass, rgba(255, 255, 255, 0.05)) !important;
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.15)) !important;
+            color: var(--text-primary, #ffffff) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 1.25rem !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            text-decoration: none !important;
+        }
+
+        .social-link-btn:hover {
+            background: var(--accent) !important;
+            color: #ffffff !important;
+            border-color: var(--accent) !important;
+            transform: translateY(-3px) scale(1.08) !important;
+            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4) !important;
+        }
+
+        .footer-copyright {
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 1px !important;
+            color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
         }
     </style>
 </head>
@@ -679,29 +815,25 @@
 
     <!-- Tech Specs Footer -->
     <footer class="tech-footer">
-        <div class="row g-4">
-            <div class="col-lg-4">
-                <div class="tech-col-title"><i class="ph-fill ph-broadcast me-1"></i> Diffusion & Période</div>
-                <div class="tech-card-box mb-3">
-                    <div class="tech-label">Première Diffusion</div>
-                    <div id="serie-first-air" class="tech-value">...</div>
-                </div>
-                <div class="tech-card-box">
-                    <div class="tech-label">Dernière Diffusion / État</div>
-                    <div id="serie-last-air" class="tech-value text-accent">...</div>
-                </div>
+        <div class="tech-col">
+            <div class="tech-col-title"><i class="ph-fill ph-broadcast me-1"></i> Diffusion & Période</div>
+            <div class="tech-card-box mb-3">
+                <div class="tech-label">Première Diffusion</div>
+                <div id="serie-first-air" class="tech-value">...</div>
             </div>
-
-            <div class="col-lg-4">
-                <div class="tech-col-title"><i class="ph-fill ph-buildings me-1"></i> Production & Studios</div>
-                <div id="serie-production-companies" class="d-flex flex-column gap-2"></div>
+            <div class="tech-card-box">
+                <div class="tech-label">Dernière Diffusion / État</div>
+                <div id="serie-last-air" class="tech-value text-accent">...</div>
             </div>
-
-            <div class="col-lg-4 text-lg-end">
-                <div class="tech-col-title justify-content-lg-end"><i class="ph-fill ph-share-network me-1"></i> Réseaux & Médias</div>
-                <div id="external-links" class="d-flex gap-3 justify-content-lg-end flex-wrap mb-4"></div>
-                <p class="footer-copyright m-0">© 2026 MYCINÉ • SÉRIES & DÉCOUVERTES</p>
-            </div>
+        </div>
+        <div class="tech-col">
+            <div class="tech-col-title"><i class="ph-fill ph-buildings me-1"></i> Production & Studios</div>
+            <div id="serie-production-companies" class="d-flex flex-column gap-2"></div>
+        </div>
+        <div class="tech-col text-md-end">
+            <div class="tech-col-title justify-content-md-end"><i class="ph-fill ph-share-network me-1"></i> Réseaux & Médias</div>
+            <div id="external-links" class="d-flex gap-3 justify-content-md-end flex-wrap mb-4"></div>
+            <p class="footer-copyright">© 2026 MYCINÉ • SÉRIES & DÉCOUVERTES</p>
         </div>
     </footer>
 </main>
