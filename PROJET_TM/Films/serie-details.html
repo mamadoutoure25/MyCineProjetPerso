@@ -354,6 +354,88 @@
             width: fit-content;
         }
 
+        /* Universal Ultra-Premium Actor Cards */
+        .actor-card,
+        .small-actor-card {
+            position: relative !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            aspect-ratio: 2/3 !important;
+            border-radius: 20px !important;
+            overflow: hidden !important;
+            cursor: pointer !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            background: #121215 !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        .actor-card:hover,
+        .small-actor-card:hover {
+            transform: translateY(-8px) scale(1.04) !important;
+            border-color: #a78bfa !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(167, 139, 250, 0.3) !important;
+            z-index: 10 !important;
+        }
+
+        .actor-card img,
+        .small-actor-card img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        .actor-card:hover img,
+        .small-actor-card:hover img {
+            transform: scale(1.1) !important;
+        }
+
+        .actor-hover-overlay,
+        .actor-details {
+            position: absolute !important;
+            inset: 0 !important;
+            background: linear-gradient(to top, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.4) 50%, transparent 100%) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-end !important;
+            padding: 16px 14px !important;
+            opacity: 0 !important;
+            transition: opacity 0.35s ease, transform 0.35s ease !important;
+            text-align: center !important;
+            pointer-events: none !important;
+        }
+
+        .actor-card:hover .actor-hover-overlay,
+        .actor-card:hover .actor-details,
+        .small-actor-card:hover .actor-hover-overlay,
+        .small-actor-card:hover .actor-details {
+            opacity: 1 !important;
+        }
+
+        .actor-name {
+            font-size: 0.88rem !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            margin-bottom: 4px !important;
+            line-height: 1.2 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8) !important;
+        }
+
+        .actor-role {
+            font-size: 0.75rem !important;
+            color: #a78bfa !important;
+            font-weight: 700 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            opacity: 0.95 !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8) !important;
+        }
+
         /* Tech Specs Footer */
         .tech-footer {
             padding: 60px 6%;
