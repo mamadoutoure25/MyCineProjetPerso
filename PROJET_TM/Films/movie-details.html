@@ -10,68 +10,199 @@
     <!-- Unification via premium-home.css -->
     <link rel="stylesheet" href="premium-home.css">
     <style>
-        /* Ajustements spécifiques pour la page détails tout en restant fidèle à index.html */
-        .hero-slider { height: 90vh; }
-        .hero-info { bottom: 10%; max-width: 800px; }
-        .hero-desc { font-size: 1.1rem; line-height: 1.6; opacity: 0.8; margin-bottom: 30px; }
-        
-        /* Floating Side Panel (Premium Addition) */
-        .side-panel {
-            position: absolute;
-            right: 5%;
-            top: 105px;
-            max-height: calc(88vh - 105px);
-            width: 320px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 20px;
-            z-index: 20;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.2) transparent;
+        .hero-slider {
+            position: relative;
+            min-height: 70vh;
+            display: flex;
+            align-items: flex-end;
+            padding: 140px 5% 60px;
+            overflow: hidden;
+            background: #09090b;
         }
 
-        .side-panel::-webkit-scrollbar {
-            width: 5px;
+        .hero-backdrop {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 20%;
+            filter: brightness(0.85);
+            transition: transform 0.8s ease, filter 0.3s ease;
         }
-        .side-panel::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
+
+        [data-theme="dark"] .hero-backdrop {
+            filter: brightness(0.7);
+        }
+
+        .hero-overlay-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.15) 0%, transparent 60%),
+                        linear-gradient(to bottom, rgba(9, 9, 11, 0.3) 0%, #09090b 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 40px;
+            align-items: flex-end;
         }
 
         @media (max-width: 991px) {
-            .side-panel {
-                position: relative;
-                right: auto;
-                top: auto;
-                width: 100%;
-                max-height: none;
-                margin-top: 30px;
+            .hero-container {
+                grid-template-columns: 1fr;
             }
         }
 
-        .side-item { margin-bottom: 20px; }
-        .side-item:last-child { margin-bottom: 0; }
-        .side-label { font-size: 0.7rem; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-        .side-value { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+        /* Glassmorphic Main Hero Card */
+        .hero-info {
+            position: relative;
+            z-index: 10;
+            max-width: 750px;
+            padding: 32px 36px;
+            background: rgba(18, 18, 22, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(167, 139, 250, 0.15);
+        }
+
+        [data-theme="light"] .hero-info {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .hero-title {
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1.05;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        [data-theme="light"] .hero-title {
+            background: linear-gradient(135deg, #111827 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 25px;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        [data-theme="light"] .hero-desc {
+            color: rgba(31, 41, 55, 0.9);
+        }
+
+        /* Glassmorphic Side Panel */
+        .side-panel {
+            position: relative;
+            background: rgba(18, 18, 22, 0.65);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(167, 139, 250, 0.15);
+            z-index: 10;
+        }
+
+        [data-theme="light"] .side-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .side-item {
+            margin-bottom: 22px;
+        }
+
+        .side-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .side-label {
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: #a78bfa;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .side-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
 
         /* Action Buttons */
         .btn-circle {
-            width: 55px; height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.12) !important;
+            backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
         }
-        .btn-circle:hover { background: var(--accent); color: #000; border-color: var(--accent); }
-        .btn-circle.active { background: var(--accent); color: #000; }
+
+        .btn-circle i {
+            color: #ffffff !important;
+            font-size: 1.4rem;
+            transition: color 0.3s ease;
+        }
+
+        .btn-circle:hover {
+            background: linear-gradient(135deg, #a78bfa, #f472b6) !important;
+            color: #000000 !important;
+            border-color: #a78bfa !important;
+            transform: translateY(-4px) scale(1.12);
+            box-shadow: 0 10px 25px rgba(167, 139, 250, 0.5);
+        }
+
+        .btn-circle:hover i {
+            color: #000000 !important;
+        }
+
+        .btn-circle.active {
+            background: linear-gradient(135deg, #a78bfa, #f472b6) !important;
+            color: #000000 !important;
+            border-color: #a78bfa !important;
+        }
+
+        .btn-circle.active i {
+            color: #000000 !important;
+        }
 
         /* Scroller fixes */
         .movie-scroller {
@@ -156,76 +287,83 @@
         }
 
         .studio-item-card {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 10px 16px;
-            background: var(--glass, rgba(255, 255, 255, 0.04));
-            border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-            border-radius: 14px;
+            display: flex !important;
+            align-items: center !important;
+            gap: 14px !important;
+            padding: 10px 16px !important;
+            background: var(--glass, rgba(255, 255, 255, 0.04)) !important;
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.08)) !important;
+            border-radius: 14px !important;
             text-decoration: none !important;
-            transition: all 0.3s ease;
+            transition: all 0.3s ease !important;
         }
 
         .studio-item-card:hover {
-            border-color: var(--accent);
-            background: rgba(167, 139, 250, 0.1);
-            transform: translateX(4px);
+            border-color: var(--accent) !important;
+            background: rgba(167, 139, 250, 0.1) !important;
+            transform: translateX(4px) !important;
         }
 
         .studio-logo-box {
             background: #ffffff !important;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            padding: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            flex-shrink: 0;
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            max-width: 36px !important;
+            max-height: 36px !important;
+            border-radius: 10px !important;
+            padding: 6px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+            flex-shrink: 0 !important;
+            overflow: hidden !important;
         }
 
         .studio-logo-box img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
             filter: none !important;
         }
 
         .studio-name {
-            font-size: 0.88rem;
-            font-weight: 700;
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
             color: var(--text-primary, #ffffff) !important;
         }
 
         .social-link-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--glass, rgba(255, 255, 255, 0.05));
-            border: 1px solid var(--border, rgba(255, 255, 255, 0.15));
+            width: 44px !important;
+            height: 44px !important;
+            border-radius: 50% !important;
+            background: var(--glass, rgba(255, 255, 255, 0.05)) !important;
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.15)) !important;
             color: var(--text-primary, #ffffff) !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 1.25rem !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
             text-decoration: none !important;
         }
 
         .social-link-btn:hover {
-            background: var(--accent);
+            background: var(--accent) !important;
             color: #ffffff !important;
-            border-color: var(--accent);
-            transform: translateY(-3px) scale(1.08);
-            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4);
+            border-color: var(--accent) !important;
+            transform: translateY(-3px) scale(1.08) !important;
+            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4) !important;
         }
 
         .footer-copyright {
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 1px !important;
             color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
         }
 
@@ -494,13 +632,12 @@
 </nav>
 
 <main>
-    <!-- Cinematic Hero -->
-    <section class="hero-slider">
-        <div class="hero-slide active">
-            <img id="hero-backdrop" src="" class="hero-backdrop">
-            <div class="hero-overlay-top"></div>
-            <div class="hero-overlay-bottom"></div>
-            
+    <!-- Cinematic Hero Section -->
+    <header class="hero-slider">
+        <img id="hero-backdrop" src="" class="hero-backdrop">
+        <div class="hero-overlay-gradient"></div>
+        
+        <div class="hero-container">
             <div class="hero-info">
                 <nav aria-label="breadcrumb" class="mb-3 opacity-60">
                     <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;">
@@ -509,13 +646,16 @@
                         <li class="breadcrumb-item active text-theme" id="breadcrumb-title">CHARGEMENT...</li>
                     </ol>
                 </nav>
-                <div id="studio-tag" class="d-flex align-items-center gap-2 mb-3" style="font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; opacity: 0.8;"></div>
+
+                <div id="studio-tag" class="d-flex align-items-center gap-2 mb-3" style="font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; opacity: 0.9;"></div>
                 <h1 id="movie-title" class="hero-title">...</h1>
-                <div id="movie-tags" class="d-flex gap-3 fw-bold opacity-75 mb-4"></div>
+                <div id="movie-tags" class="d-flex align-items-center gap-3 fw-bold opacity-85 mb-3" style="font-size: 0.85rem; letter-spacing: 1px;"></div>
                 <p id="movie-overview" class="hero-desc"></p>
                 
-                <div class="d-flex align-items-center gap-3">
-                    <a id="watch-trailer" href="#" class="btn btn-light rounded-pill px-5 py-3 fw-black"><i class="ph-fill ph-play me-2"></i> BANDE-ANNONCE</a>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <a id="watch-trailer" href="#" class="btn btn-light rounded-pill px-4 py-3 fw-black shadow-lg" style="letter-spacing: 1px; font-size: 0.85rem;">
+                        <i class="ph-fill ph-play me-2 fs-5"></i> BANDE-ANNONCE
+                    </a>
                     <button id="add-to-favorites" class="btn-circle" title="Ajouter aux favoris"><i class="ph ph-heart"></i></button>
                     <button id="add-to-watchlist" class="btn-circle" title="Ajouter à la liste de lecture"><i class="ph ph-plus"></i></button>
                     <button id="mark-as-watched" class="btn-circle" title="Marquer comme vu"><i class="ph ph-eye"></i></button>
@@ -523,7 +663,7 @@
                 </div>
             </div>
 
-            <!-- Detail Side Panel -->
+            <!-- Glassmorphic Side Panel -->
             <div class="side-panel">
                 <div class="side-item text-center mb-3 d-none" id="side-poster-item">
                     <div class="d-flex flex-column align-items-center">
@@ -538,12 +678,14 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="side-item d-none" id="side-collection-item">
-                    <div class="side-label">Collection</div>
+                    <div class="side-label"><i class="ph-fill ph-film-slate"></i> Collection</div>
                     <a id="side-collection-link" href="#" class="side-value text-accent text-decoration-none fw-bold small text-truncate d-block">...</a>
                 </div>
+
                 <div class="side-item">
-                    <div class="side-label">Note Global</div>
+                    <div class="side-label"><i class="ph-fill ph-star"></i> Votre Évaluation</div>
                     <div id="star-rating" class="d-flex gap-1 mb-1">
                         <span class="star" data-value="1" title="1/10"><i class="ph ph-star"></i></span>
                         <span class="star" data-value="2" title="2/10"><i class="ph ph-star"></i></span>
@@ -558,18 +700,21 @@
                     </div>
                     <div id="rating-feedback" class="x-small opacity-50 fw-bold"></div>
                     <button id="btn-clear-rating" class="btn btn-link text-danger p-0 x-small d-none" style="text-decoration:none">EFFACER</button>
+                </div>
+
                 <div class="side-item">
-                    <div class="side-label">Où regarder</div>
+                    <div class="side-label"><i class="ph-fill ph-tv"></i> Où regarder</div>
                     <div id="movie-providers" class="d-flex gap-2 flex-wrap mt-2"></div>
                     <div id="noProviders" class="x-small opacity-50 d-none">Indisponible en ligne.</div>
                 </div>
-                <div class="side-item">
-                    <div class="side-label">Maturité</div>
-                    <div id="maturity-rating" class="side-value">N/A</div>
+
+                <div class="side-item mb-0">
+                    <div class="side-label"><i class="ph-fill ph-shield-check"></i> Classification</div>
+                    <div id="maturity-rating" class="side-value text-accent">N/A</div>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
     <!-- Glassmorphic Quick Info Section -->
     <section class="serie-stats-section" style="padding: 40px 5% 15px; margin-top: -10px; position: relative; z-index: 10;">
