@@ -3,425 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>MyCiné - Series Experience</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Unification via premium-home.css -->
     <link rel="stylesheet" href="premium-home.css">
+    <link rel="stylesheet" href="movie-details.css">
+    <link rel="stylesheet" href="theme-variables.css">
+    <script src="../connexion/authUtils.js"></script>
     <style>
-        /* Ajustements spécifiques pour la page détails tout en restant fidèle à index.html */
-        .hero-slider { height: 90vh; }
-        .hero-info { bottom: 10%; max-width: 800px; }
-        .hero-desc { font-size: 1.1rem; line-height: 1.6; opacity: 0.8; margin-bottom: 30px; }
-        
-        /* Floating Side Panel (Premium Addition) */
-        .side-panel {
-            position: absolute;
-            right: 5%;
-            bottom: 10%;
-            width: 320px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 25px;
-            z-index: 20;
+        .hero-slider {
+            position: relative;
+            min-height: 70vh;
+            display: flex;
+            align-items: flex-end;
+            padding: 140px 5% 60px;
+            overflow: hidden;
+            background: #09090b;
         }
 
-        .side-item { margin-bottom: 20px; }
-        .side-item:last-child { margin-bottom: 0; }
-        .side-label { font-size: 0.7rem; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-        .side-value { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+        .hero-backdrop {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 20%;
+            filter: brightness(0.85);
+            transition: transform 0.8s ease, filter 0.3s ease;
+        }
+
+        [data-theme="dark"] .hero-backdrop {
+            filter: brightness(0.7);
+        }
+
+        .hero-overlay-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.15) 0%, transparent 60%),
+                        linear-gradient(to bottom, rgba(9, 9, 11, 0.3) 0%, #09090b 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 40px;
+            align-items: flex-end;
+        }
+
+        @media (max-width: 991px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hero-info {
+            position: relative;
+            z-index: 10;
+            max-width: 750px;
+            padding: 30px 35px;
+            background: rgba(18, 18, 22, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(167, 139, 250, 0.15);
+        }
+
+        [data-theme="light"] .hero-info {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .hero-title {
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1.05;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        [data-theme="light"] .hero-title {
+            background: linear-gradient(135deg, #111827 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 25px;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        [data-theme="light"] .hero-desc {
+            color: rgba(31, 41, 55, 0.9);
+        }
+
+        /* Glassmorphic Side Panel */
+        .side-panel {
+            position: relative;
+            background: rgba(18, 18, 22, 0.65);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(167, 139, 250, 0.15);
+            z-index: 10;
+        }
+
+        [data-theme="light"] .side-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .side-item {
+            margin-bottom: 22px;
+        }
+
+        .side-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .side-label {
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: #a78bfa;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .side-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
 
         /* Action Buttons */
         .btn-circle {
-            width: 55px; height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.12) !important;
+            backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
         }
-        .btn-circle:hover { background: var(--accent); color: #000; border-color: var(--accent); }
-        .btn-circle.active { background: var(--accent); color: #000; }
 
-        /* Scroller fixes */
-        .movie-scroller { padding: 20px 0; }
-        
-        /* --- Premium Tech Footer Redesign --- */
-        .tech-footer {
-            padding: 50px 6%;
-            background: var(--bg-card, rgba(18, 18, 24, 0.85));
-            backdrop-filter: blur(25px);
-            border-top: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
+        .btn-circle i {
+            color: #ffffff !important;
+            font-size: 1.4rem;
+            transition: color 0.3s ease;
+        }
+
+        .btn-circle:hover {
+            background: linear-gradient(135deg, #a78bfa, #f472b6) !important;
+            color: #000000 !important;
+            border-color: #a78bfa !important;
+            transform: translateY(-4px) scale(1.12);
+            box-shadow: 0 10px 25px rgba(167, 139, 250, 0.5);
+        }
+
+        .btn-circle:hover i {
+            color: #000000 !important;
+        }
+
+        .btn-circle.active {
+            background: linear-gradient(135deg, #a78bfa, #f472b6) !important;
+            color: #000000 !important;
+            border-color: #a78bfa !important;
+        }
+
+        .btn-circle.active i {
+            color: #000000 !important;
+        }
+
+        /* Glassmorphic Stats Section */
+        .serie-stats-section {
+            padding: 40px 5%;
+            margin-top: -10px;
             position: relative;
             z-index: 10;
         }
 
-        .tech-col {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
         }
 
-        .tech-col-title {
-            font-size: 0.8rem;
-            font-weight: 900;
-            color: var(--accent, #a78bfa);
-            text-transform: uppercase;
-            letter-spacing: 1.8px;
-            margin-bottom: 12px;
+        .glass-stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 22px 24px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 18px;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .tech-label {
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted, rgba(255, 255, 255, 0.6)) !important;
-            margin-bottom: 4px;
+        .glass-stat-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(167, 139, 250, 0.35);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 25px rgba(167, 139, 250, 0.15);
         }
 
-        .tech-value {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--text-primary, #ffffff) !important;
-            line-height: 1.3;
-        }
-
-        .tech-card-box {
-            background: var(--glass, rgba(255, 255, 255, 0.04));
-            border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+        .stat-icon-wrapper {
+            width: 52px;
+            height: 52px;
             border-radius: 16px;
-            padding: 16px 20px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .tech-card-box:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            background: var(--glass-hover, rgba(255, 255, 255, 0.07));
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .studio-item-card {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 10px 16px;
-            background: var(--glass, rgba(255, 255, 255, 0.04));
-            border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-            border-radius: 14px;
-            text-decoration: none !important;
-            transition: all 0.3s ease;
-        }
-
-        .studio-item-card:hover {
-            border-color: var(--accent);
-            background: rgba(167, 139, 250, 0.1);
-            transform: translateX(4px);
-        }
-
-        .studio-logo-box {
-            background: #ffffff !important;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            padding: 6px;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(244, 114, 182, 0.15));
+            border: 1px solid rgba(167, 139, 250, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            font-size: 1.5rem;
+            color: #a78bfa;
             flex-shrink: 0;
         }
 
-        .studio-logo-box img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            filter: none !important;
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 4px;
         }
 
-        .studio-name {
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: var(--text-primary, #ffffff) !important;
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
         }
 
-        .social-link-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--glass, rgba(255, 255, 255, 0.05));
-            border: 1px solid var(--border, rgba(255, 255, 255, 0.15));
-            color: var(--text-primary, #ffffff) !important;
+        .section-header-bar {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            text-decoration: none !important;
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
-        .social-link-btn:hover {
-            background: var(--accent);
-            color: #ffffff !important;
-            border-color: var(--accent);
-            transform: translateY(-3px) scale(1.08);
-            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4);
+        .section-bar {
+            width: 5px;
+            height: 26px;
+            background: linear-gradient(to bottom, #a78bfa, #f472b6);
+            border-radius: 3px;
         }
 
-        .footer-copyright {
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
-        }
-
-        /* Saisons Grille Compacte & Proportionnelle */
+        /* Saisons Grille Premium */
         .seasons-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 160px));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 20px;
             padding: 20px 0;
             width: 100%;
         }
 
-        .seasons-grid .premium-card {
-            width: 100% !important;
-            min-width: 120px !important;
-            max-width: 160px !important;
-        }
-
-        /* Distribution Grille Ultra-Responsive */
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
-            padding: 20px 0;
-            width: 100%;
-        }
-
-        @media (min-width: 2560px) { .movie-grid { grid-template-columns: repeat(12, 1fr); } }
-        @media (min-width: 2200px) and (max-width: 2559px) { .movie-grid { grid-template-columns: repeat(10, 1fr); } }
-        @media (min-width: 1920px) and (max-width: 2199px) { .movie-grid { grid-template-columns: repeat(9, 1fr); } }
-        @media (min-width: 1600px) and (max-width: 1919px) { .movie-grid { grid-template-columns: repeat(8, 1fr); } }
-        @media (min-width: 1300px) and (max-width: 1599px) { .movie-grid { grid-template-columns: repeat(7, 1fr); } }
-        @media (min-width: 1000px) and (max-width: 1299px) { .movie-grid { grid-template-columns: repeat(6, 1fr); } }
-        @media (min-width: 700px) and (max-width: 999px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (min-width: 450px) and (max-width: 699px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 449px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
-
-        .small-actor-card {
+        .season-card-premium {
             position: relative;
-            width: 100% !important;
-            min-width: 0 !important;
-            max-width: none !important;
+            width: 100%;
             aspect-ratio: 2/3;
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
             cursor: pointer;
-            border: 1px solid var(--border);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #121215;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .small-actor-card img {
+        .season-card-premium:hover {
+            transform: translateY(-8px) scale(1.04);
+            border-color: #a78bfa;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(167, 139, 250, 0.3);
+        }
+
+        .season-card-premium img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: 0.5s;
+            transition: transform 0.5s ease;
         }
 
-        .actor-hover-overlay {
+        .season-card-premium:hover img {
+            transform: scale(1.08);
+        }
+
+        .season-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%);
+            background: linear-gradient(to top, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.3) 60%, transparent 100%);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 15px;
-            opacity: 0;
-            transition: 0.3s;
-            text-align: center;
+            padding: 16px;
         }
 
-        .small-actor-card:hover {
-            transform: translateY(-10px) scale(1.03);
-            border-color: var(--accent);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        .season-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            line-height: 1.2;
         }
 
-        .small-actor-card:hover img { transform: scale(1.1); }
-        .small-actor-card:hover .actor-hover-overlay { opacity: 1; }
-
-        .actor-name { font-size: 0.85rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; line-height: 1.2; }
-        .actor-role { font-size: 0.75rem; color: var(--accent); font-weight: 600; opacity: 0.9; }
-
-        /* Section Musique Originale & B.O. Premium */
-        #soundtrack-wrapper {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 30px;
-            margin-bottom: 40px;
-            backdrop-filter: blur(15px);
-        }
-
-        .music-platforms-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .music-btn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 10px !important;
-            padding: 12px 24px !important;
-            border-radius: 50px !important;
-            font-weight: 800 !important;
-            font-size: 0.85rem !important;
-            text-decoration: none !important;
-            letter-spacing: 0.5px !important;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
-            border: 1px solid rgba(255,255,255,0.15) !important;
-            cursor: pointer !important;
-        }
-
-        .music-btn:hover {
-            transform: translateY(-3px) scale(1.05) !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-            color: #ffffff !important;
-            text-decoration: none !important;
-        }
-
-        .music-btn-spotify {
-            background: linear-gradient(135deg, #1ed760, #1db954) !important;
-        }
-        .music-btn-spotify:hover {
-            box-shadow: 0 10px 30px rgba(30, 215, 96, 0.4) !important;
-        }
-
-        .music-btn-youtube {
-            background: linear-gradient(135deg, #ff4e45, #cc0000) !important;
-        }
-        .music-btn-youtube:hover {
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4) !important;
-        }
-
-        .music-btn-apple {
-            background: linear-gradient(135deg, #fb5c74, #fa243c) !important;
-        }
-        .music-btn-apple:hover {
-            box-shadow: 0 10px 30px rgba(250, 36, 60, 0.4) !important;
-        }
-
-        .music-btn-deezer {
-            background: linear-gradient(135deg, #ef5466, #b01b68) !important;
-        }
-        .music-btn-deezer:hover {
-            box-shadow: 0 10px 30px rgba(239, 84, 102, 0.4) !important;
-        }
-
-        .composer-card {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            padding: 14px 22px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            max-width: 420px;
+        .season-episodes-pill {
+            background: rgba(167, 139, 250, 0.25);
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            color: #a78bfa;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 800;
             width: fit-content;
         }
 
-        .composer-card:hover {
-            background: rgba(167, 139, 250, 0.15);
-            border-color: var(--accent);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-        }
-
-        .composer-avatar {
-            width: 70px !important;
-            height: 70px !important;
-            min-width: 70px !important;
-            min-height: 70px !important;
-            max-width: 70px !important;
-            max-height: 70px !important;
-            border-radius: 50% !important;
-            object-fit: cover !important;
-            border: 2px solid var(--accent);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        /* Fix dimensions logos studios de production */
-        #studio-tag img,
-        .studio-icon img,
-        div.studio-icon img {
-            width: 36px !important;
-            height: 36px !important;
-            min-width: 36px !important;
-            min-height: 36px !important;
-            max-width: 36px !important;
-            max-height: 36px !important;
-            object-fit: contain !important;
-            border-radius: 6px !important;
-            background: #ffffff !important;
-            padding: 2px !important;
-            filter: none !important;
-            display: inline-block !important;
-        }
-
-        .studio-icon {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            width: 36px !important;
-            height: 36px !important;
-            min-width: 36px !important;
-            min-height: 36px !important;
-            max-width: 36px !important;
-            max-height: 36px !important;
-            background: #ffffff !important;
-            border-radius: 8px !important;
-            padding: 3px !important;
-            overflow: hidden !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
-        }
-
-        .studio-icon span {
-            color: #000000 !important;
-            font-weight: 900 !important;
-            font-size: 0.9rem !important;
+        /* Tech Specs Footer */
+        .tech-footer {
+            padding: 60px 6%;
+            background: #050507;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 60px;
         }
     </style>
-<link rel="stylesheet" href="movie-details.css">
-<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
-            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #fff;">M</div>
             MYCINÉ
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -431,9 +377,10 @@
             <ul class="navbar-nav gap-4">
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold active text-theme" href="../../series.html">SÉRIES</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/distributors-browse.html">DISTRIBUTEURS</a></li>
             </ul>
         </div>
         <div class="d-flex align-items-center gap-3">
@@ -443,7 +390,6 @@
             <div id="auth-section">
                 <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
-            <script src="../connexion/authUtils.js"></script>
             <script>
                 (function() {
                     const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
@@ -470,38 +416,41 @@
 </nav>
 
 <main>
-    <!-- Cinematic Hero -->
-    <section class="hero-slider">
-        <div class="hero-slide active">
-            <img id="hero-backdrop" src="" class="hero-backdrop">
-            <div class="hero-overlay-top"></div>
-            <div class="hero-overlay-bottom"></div>
-            
+    <!-- Cinematic Hero Section -->
+    <header class="hero-slider">
+        <img id="hero-backdrop" src="" class="hero-backdrop">
+        <div class="hero-overlay-gradient"></div>
+        
+        <div class="hero-container">
             <div class="hero-info">
-                <nav aria-label="breadcrumb" class="mb-4 opacity-50">
-                    <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800;">
+                <nav aria-label="breadcrumb" class="mb-3 opacity-60">
+                    <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;">
                         <li class="breadcrumb-item"><a href="../../index.html" class="text-theme text-decoration-none">MYCINÉ</a></li>
+                        <li class="breadcrumb-item"><a href="../../series.html" class="text-theme text-decoration-none">SÉRIES</a></li>
                         <li class="breadcrumb-item active text-theme" id="breadcrumb-title">CHARGEMENT...</li>
                     </ol>
                 </nav>
-                <div id="studio-tag" class="d-flex align-items-center gap-2 mb-3" style="font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; opacity: 0.8;"></div>
+
+                <div id="studio-tag" class="d-flex align-items-center gap-2 mb-3" style="font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; opacity: 0.9;"></div>
                 <h1 id="serie-title" class="hero-title">...</h1>
-                <div id="serie-tags" class="d-flex gap-3 fw-bold opacity-75 mb-4"></div>
+                <div id="serie-tags" class="d-flex align-items-center gap-3 fw-bold opacity-85 mb-3" style="font-size: 0.85rem; letter-spacing: 1px;"></div>
                 <p id="serie-overview" class="hero-desc"></p>
                 
-                <div class="d-flex align-items-center gap-3">
-                    <a id="watch-trailer" href="#" class="btn btn-light rounded-pill px-5 py-3 fw-black"><i class="ph-fill ph-play me-2"></i> BANDE-ANNONCE</a>
-                    <button id="add-to-favorites" class="btn-circle"><i class="ph ph-heart"></i></button>
-                    <button id="add-to-watchlist" class="btn-circle"><i class="ph ph-plus"></i></button>
-                    <button id="mark-as-watched" class="btn-circle"><i class="ph ph-eye"></i></button>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <a id="watch-trailer" href="#" class="btn btn-light rounded-pill px-4 py-3 fw-black shadow-lg" style="letter-spacing: 1px; font-size: 0.85rem;">
+                        <i class="ph-fill ph-play me-2 fs-5"></i> BANDE-ANNONCE
+                    </a>
+                    <button id="add-to-favorites" class="btn-circle" title="Ajouter aux favoris"><i class="ph ph-heart"></i></button>
+                    <button id="add-to-watchlist" class="btn-circle" title="Ajouter à la Watchlist"><i class="ph ph-plus"></i></button>
+                    <button id="mark-as-watched" class="btn-circle" title="Marquer comme vu"><i class="ph ph-eye"></i></button>
                 </div>
             </div>
 
-            <!-- Detail Side Panel -->
+            <!-- Glassmorphic Side Panel -->
             <div class="side-panel">
                 <div class="side-item">
-                    <div class="side-label">Note Moyenne</div>
-                    <div id="star-rating" class="d-flex gap-1 mb-1">
+                    <div class="side-label"><i class="ph-fill ph-star"></i> Votre Évaluation</div>
+                    <div id="star-rating" class="d-flex gap-1 mb-2">
                         <span class="star" data-value="1"><i class="ph ph-star"></i></span>
                         <span class="star" data-value="2"><i class="ph ph-star"></i></span>
                         <span class="star" data-value="3"><i class="ph ph-star"></i></span>
@@ -513,57 +462,131 @@
                         <span class="star" data-value="9"><i class="ph ph-star"></i></span>
                         <span class="star" data-value="10"><i class="ph ph-star"></i></span>
                     </div>
-                    <div id="rating-feedback" class="x-small opacity-50 fw-bold"></div>
-                    <button id="btn-clear-rating" class="btn btn-link text-danger p-0 x-small d-none" style="text-decoration:none">EFFACER</button>
+                    <div id="rating-feedback" class="x-small opacity-75 fw-bold"></div>
+                    <button id="btn-clear-rating" class="btn btn-link text-danger p-0 x-small d-none mt-1" style="text-decoration:none">EFFACER LA NOTE</button>
                 </div>
+
                 <div class="side-item">
-                    <div class="side-label">Où regarder</div>
+                    <div class="side-label"><i class="ph-fill ph-tv"></i> Où Regarder</div>
                     <div id="serie-providers" class="d-flex gap-2 flex-wrap mt-2"></div>
-                    <div id="noProviders" class="x-small opacity-50 d-none">Indisponible en ligne.</div>
+                    <div id="noProviders" class="x-small opacity-50 d-none">Indisponible en streaming direct.</div>
                 </div>
-                <div class="side-item">
-                    <div class="side-label">Statut</div>
-                    <div id="serie-status" class="side-value">N/A</div>
+
+                <div class="side-item mb-0">
+                    <div class="side-label"><i class="ph-fill ph-info"></i> Statut de Production</div>
+                    <div id="serie-status" class="side-value text-accent">N/A</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Glassmorphic Quick Info Section -->
+    <section class="serie-stats-section">
+        <div class="section-header-bar mb-4">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">APERCU & STATISTIQUES</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-stack"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Saisons & Épisodes</div>
+                    <div id="stats-seasons-episodes" class="stat-value">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-clock"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Durée d'un Épisode</div>
+                    <div id="stats-episode-runtime" class="stat-value">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-star"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Note Communautaire</div>
+                    <div id="stats-vote-average" class="stat-value text-accent">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-shield-check"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Classification</div>
+                    <div id="stats-certification" class="stat-value" style="color: #f472b6;">...</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Content Sections -->
+    <!-- Seasons Section -->
     <section class="content-lane">
-        <div class="lane-title">SAISONS</div>
+        <div class="section-header-bar">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">SAISONS DE LA SÉRIE</div>
+        </div>
         <div id="serie-seasons" class="seasons-grid"></div>
     </section>
 
+    <!-- Main Cast Section -->
     <section class="content-lane pt-0">
-        <div class="lane-title">DISTRIBUTION PRINCIPALE</div>
+        <div class="section-header-bar">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">DISTRIBUTION PRINCIPALE</div>
+        </div>
         <div id="serie-cast" class="movie-grid"></div>
     </section>
 
-    <!-- Bande Originale & Musique Section -->
+    <!-- Soundtrack Section -->
     <section id="soundtrack-wrapper" class="content-lane pt-0" style="display: none;">
-        <div class="lane-title d-flex align-items-center gap-2">
-            <i class="ph-fill ph-music-notes text-accent"></i> BANDE ORIGINALE & MUSIQUE
+        <div class="section-header-bar">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0 d-flex align-items-center gap-2" style="font-size: 1.3rem; letter-spacing: 1.5px;">
+                <i class="ph-fill ph-music-notes text-accent"></i> BANDE ORIGINALE & MUSIQUE
+            </div>
         </div>
         <div class="row g-4 mb-4">
             <div class="col-lg-6">
-                <div class="fw-bold small opacity-75 mb-3 text-uppercase" style="letter-spacing: 1px;">Musique Originale créée par</div>
+                <div class="fw-bold small opacity-75 mb-3 text-uppercase" style="letter-spacing: 1.5px;">Musique Originale créée par</div>
                 <div id="serie-composers" class="d-flex flex-column gap-3"></div>
             </div>
             <div class="col-lg-6">
-                <div class="fw-bold small opacity-75 mb-3 text-uppercase" style="letter-spacing: 1px;">Écouter la bande originale sur</div>
+                <div class="fw-bold small opacity-75 mb-3 text-uppercase" style="letter-spacing: 1.5px;">Écouter la bande originale sur</div>
                 <div id="music-platforms" class="music-platforms-grid"></div>
             </div>
         </div>
     </section>
 
+    <!-- Media Gallery Section -->
     <section class="content-lane pt-0">
-        <div class="lane-title">MÉDIAS & GALERIE</div>
-        <ul class="nav nav-pills mb-4 gap-2" style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50px; width: fit-content;">
-            <li class="nav-item"><button class="nav-link active rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-vid">VIDÉOS</button></li>
-            <li class="nav-item"><button class="nav-link rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-back">IMAGES</button></li>
-            <li class="nav-item"><button class="nav-link rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-post">AFFICHES</button></li>
+        <div class="section-header-bar">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">MÉDIAS & GALERIE</div>
+        </div>
+        
+        <ul class="nav nav-pills mb-4 gap-2" style="background: rgba(255,255,255,0.04); padding: 6px; border-radius: 50px; width: fit-content; border: 1px solid rgba(255,255,255,0.08);">
+            <li class="nav-item">
+                <button class="nav-link active rounded-pill text-theme fw-bold px-4" data-bs-toggle="tab" data-bs-target="#tab-vid">VIDÉOS</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill text-theme fw-bold px-4" data-bs-toggle="tab" data-bs-target="#tab-back">IMAGES</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill text-theme fw-bold px-4" data-bs-toggle="tab" data-bs-target="#tab-post">AFFICHES</button>
+            </li>
         </ul>
+
         <div class="tab-content">
             <div class="tab-pane fade show active" id="tab-vid"><div id="serie-videos" class="movie-scroller"></div></div>
             <div class="tab-pane fade" id="tab-back"><div id="grid-backdrops" class="movie-scroller"></div></div>
@@ -573,30 +596,34 @@
 
     <!-- Tech Specs Footer -->
     <footer class="tech-footer">
-        <div class="tech-col">
-            <div class="tech-col-title"><i class="ph-fill ph-broadcast me-1"></i> Diffusion & Période</div>
-            <div class="tech-card-box mb-3">
-                <div class="tech-label">Première Diffusion</div>
-                <div id="serie-first-air" class="tech-value">...</div>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="tech-col-title"><i class="ph-fill ph-broadcast me-1"></i> Diffusion & Période</div>
+                <div class="tech-card-box mb-3">
+                    <div class="tech-label">Première Diffusion</div>
+                    <div id="serie-first-air" class="tech-value">...</div>
+                </div>
+                <div class="tech-card-box">
+                    <div class="tech-label">Dernière Diffusion / État</div>
+                    <div id="serie-last-air" class="tech-value text-accent">...</div>
+                </div>
             </div>
-            <div class="tech-card-box">
-                <div class="tech-label">Dernière Diffusion / État</div>
-                <div id="serie-last-air" class="tech-value text-accent">...</div>
+
+            <div class="col-lg-4">
+                <div class="tech-col-title"><i class="ph-fill ph-buildings me-1"></i> Production & Studios</div>
+                <div id="serie-production-companies" class="d-flex flex-column gap-2"></div>
             </div>
-        </div>
-        <div class="tech-col">
-            <div class="tech-col-title"><i class="ph-fill ph-buildings me-1"></i> Production & Studios</div>
-            <div id="serie-production-companies" class="d-flex flex-column gap-2"></div>
-        </div>
-        <div class="tech-col text-md-end">
-            <div class="tech-col-title justify-content-md-end"><i class="ph-fill ph-share-network me-1"></i> Réseaux & Médias</div>
-            <div id="external-links" class="d-flex gap-3 justify-content-md-end flex-wrap mb-4"></div>
-            <p class="footer-copyright">© 2026 MYCINÉ • SÉRIES & DÉCOUVERTES</p>
+
+            <div class="col-lg-4 text-lg-end">
+                <div class="tech-col-title justify-content-lg-end"><i class="ph-fill ph-share-network me-1"></i> Réseaux & Médias</div>
+                <div id="external-links" class="d-flex gap-3 justify-content-lg-end flex-wrap mb-4"></div>
+                <p class="footer-copyright m-0">© 2026 MYCINÉ • SÉRIES & DÉCOUVERTES</p>
+            </div>
         </div>
     </footer>
 </main>
 
-<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 1100;"></div>
 
 <div class="modal fade" id="mediaModal" tabindex="-1">
     <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -608,14 +635,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="serie-details.js?v=7"></script>
-<script>
-    window.onscroll = () => {
-        const nav = document.querySelector('.navbar');
-        if (window.scrollY > 50) nav.classList.add('scrolled');
-        else nav.classList.remove('scrolled');
-    };
-</script>
+<script src="serie-details.js?v=8"></script>
 <script src="../theme.js"></script>
 </body>
 </html>
