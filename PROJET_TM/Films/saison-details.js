@@ -114,6 +114,9 @@ function renderHeader(serie, s) {
         serieLinkEl.textContent = serieName;
     }
 
+    const backBtn = document.getElementById("back-to-serie-btn");
+    if (backBtn) backBtn.href = `serie-details.html?id=${serieId}`;
+
     const breadcrumbSeason = document.getElementById("breadcrumb-season");
     if (breadcrumbSeason) breadcrumbSeason.textContent = `SAISON ${sNum}`;
     
@@ -121,7 +124,18 @@ function renderHeader(serie, s) {
     const year = (s && s.air_date) ? getYear(s.air_date) : getYear(serie.first_air_date);
     
     const tagsEl = document.getElementById("season-tags");
-    if (tagsEl) tagsEl.innerHTML = `<span>${year}</span><div class="v-sep"></div><span>${epCount} Épisode${epCount > 1 ? 's' : ''}</span>`;
+    if (tagsEl) tagsEl.innerHTML = `<span><i class="ph ph-calendar-blank me-1"></i> ${year}</span><div class="v-sep"></div><span><i class="ph ph-film-strip me-1"></i> ${epCount} Épisode${epCount > 1 ? 's' : ''}</span>`;
+
+    // Populate Glassmorphic Stats Section
+    const statsEp = document.getElementById("stats-episodes-count");
+    if (statsEp) statsEp.textContent = `${epCount} Épisode${epCount > 1 ? 's' : ''}`;
+    const statsYear = document.getElementById("stats-season-year");
+    if (statsYear) statsYear.textContent = year;
+    const statsRating = document.getElementById("stats-season-rating");
+    if (statsRating) {
+        const rating = s && s.vote_average ? s.vote_average.toFixed(1) : (serie && serie.vote_average ? serie.vote_average.toFixed(1) : 'N/A');
+        statsRating.textContent = rating !== 'N/A' ? `${rating} / 10` : 'N/A';
+    }
 }
 
 function renderEpisodes(eps) {
@@ -138,14 +152,16 @@ function renderEpisodes(eps) {
             <div class="ep-card-premium">
                 <div class="ep-thumb-wrap">
                     <img src="${e.still_path ? CONFIG.HD + e.still_path : CONFIG.EMPTY_THUMB}" loading="lazy" onerror="this.src='${CONFIG.EMPTY_THUMB}'">
+                    <div class="ep-badge-chip">ÉPISODE ${e.episode_number}</div>
                 </div>
                 <div class="ep-content">
-                    <div class="ep-meta-top">ÉPISODE ${e.episode_number}</div>
+                    <div class="ep-meta-top"><i class="ph ph-film-strip me-1"></i> ÉPISODE ${e.episode_number}</div>
                     <div class="ep-title-main">${e.name || ('Épisode ' + e.episode_number)}</div>
                     <p class="ep-desc-main">${e.overview || "Pas de description disponible pour cet épisode."}</p>
                     <div class="ep-footer-meta">
                         <span><i class="ph ph-calendar-blank me-2"></i>${formatDate(e.air_date)}</span>
                         <span><i class="ph ph-clock me-2"></i>${e.runtime ? e.runtime + ' MIN' : 'N/A'}</span>
+                        ${e.vote_average ? `<span class="text-accent"><i class="ph-fill ph-star me-1"></i>${e.vote_average.toFixed(1)}</span>` : ''}
                     </div>
                 </div>
             </div>
@@ -164,6 +180,9 @@ function renderCast(cast) {
         cont.innerHTML = "<p class='opacity-50 fs-6 py-4 w-100 text-center'>Aucun membre de la distribution répertorié pour cette saison.</p>";
         return;
     }
+
+    const statsCast = document.getElementById("stats-cast-count");
+    if (statsCast) statsCast.textContent = `${cast.length} Acteurs`;
 
     try {
         cont.innerHTML = cast.slice(0, 24).map(a => `
