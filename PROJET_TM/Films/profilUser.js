@@ -80,7 +80,7 @@ async function chargerToutesLesListes() {
 
 async function chargerDonneesListe(type, uid) {
     try {
-        const res = await fetch(`${type}.php?user_id=${uid}`).then(r => r.json());
+        const res = await fetch(`${type}.php?user_id=${uid}&_t=${Date.now()}`, { cache: 'no-cache' }).then(r => r.json());
         if (res.success && res[type]) {
             ETAT[type] = await Promise.all(res[type].map(i => recupererDetails(i.tmdb_id, i.media_type || 'movie')));
             renderListeType(type);
@@ -179,7 +179,7 @@ function appliquerFiltres(type) {
 
 async function chargerActeurs(uid) {
     try {
-        const res = await fetch(`favorite-actors.php?user_id=${uid}`).then(r => r.json());
+        const res = await fetch(`favorite-actors.php?user_id=${uid}&_t=${Date.now()}`, { cache: 'no-cache' }).then(r => r.json());
         if (res.success && res.favorite_actors) {
             ETAT.acteursFavorisDetails = await Promise.all(res.favorite_actors.map(a => 
                 fetch(`${CONFIG.URL_BASE}/person/${a.tmdb_id}?api_key=${CONFIG.CLE_API}&language=fr-FR`).then(r => r.json())
@@ -317,4 +317,21 @@ function filtrerMediaType(type, media, btn) {
 window.filtrerMediaType = filtrerMediaType;
 window.appliquerFiltresActeurs = appliquerFiltresActeurs;
 window.appliquerFiltres = appliquerFiltres;
+
 document.addEventListener("DOMContentLoaded", initialiserProfil);
+
+// Auto-rafraîchissement lors du retour sur la page (Back/Forward cache & changement d'onglet)
+window.addEventListener("pageshow", (event) => {
+    cacheContenu.clear();
+    initialiserProfil();
+});
+
+window.addEventListener("focus", () => {
+    cacheContenu.clear();
+    if (ETAT.user) chargerToutesLesListes();
+});
+
+document.addEventListener("authChange", () => {
+    cacheContenu.clear();
+    initialiserProfil();
+});
