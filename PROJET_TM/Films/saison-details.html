@@ -53,7 +53,7 @@
             z-index: 2;
             width: 100%;
             display: grid;
-            grid-template-columns: 1fr 260px;
+            grid-template-columns: 1fr minmax(260px, 340px);
             gap: 40px;
             align-items: flex-start !important;
         }
@@ -117,7 +117,8 @@
 
         .season-photo-frame {
             position: relative;
-            width: 240px;
+            width: 100%;
+            max-width: 340px;
             aspect-ratio: 2/3;
             border-radius: 24px;
             overflow: hidden;
