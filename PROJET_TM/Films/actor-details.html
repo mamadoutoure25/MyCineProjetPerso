@@ -3,71 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Talent - MyCiné Experience</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="premium-home.css">
+    <link rel="stylesheet" href="theme-variables.css">
+    <script src="../connexion/authUtils.js"></script>
     <style>
-        .hero-slider { height: 75vh; }
-        .hero-info { bottom: 10%; max-width: 900px; }
-        .hero-desc { 
-            font-size: 1.1rem; 
-            line-height: 1.6; 
-            opacity: 0.8; 
+        .hero-slider {
+            position: relative;
+            min-height: 70vh;
+            display: flex;
+            align-items: flex-end;
+            padding: 140px 5% 60px;
+            overflow: hidden;
+            background: #09090b;
+        }
+
+        .hero-backdrop {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.25;
+            filter: blur(40px) brightness(0.6);
+            transform: scale(1.1);
+            transition: opacity 0.8s ease;
+        }
+
+        .hero-overlay-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(167, 139, 250, 0.15) 0%, transparent 60%),
+                        linear-gradient(to bottom, rgba(9, 9, 11, 0.4) 0%, #09090b 100%);
+            z-index: 1;
+        }
+
+        .hero-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 40px;
+            align-items: flex-end;
+        }
+
+        @media (max-width: 991px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4.2rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1.05;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.75);
+            max-width: 850px;
             margin-bottom: 30px;
             display: -webkit-box;
-            -webkit-line-clamp: 4;
+            -webkit-line-clamp: 5;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        
-        .side-panel {
-            position: absolute;
-            right: 5%;
-            bottom: 10%;
-            width: 320px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
+
+        .actor-photo-frame {
+            position: relative;
+            width: 280px;
+            aspect-ratio: 2/3;
             border-radius: 24px;
-            padding: 25px;
-            z-index: 20;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(167, 139, 250, 0.2);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease;
         }
 
-        .side-item { margin-bottom: 20px; }
-        .side-label { font-size: 0.7rem; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-        .side-value { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+        .actor-photo-frame:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(167, 139, 250, 0.6);
+        }
+
+        .actor-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .v-sep {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            align-self: center;
+        }
 
         .btn-circle {
-            width: 55px; height: 55px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             color: var(--text-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
-            transition: 0.3s;
+            font-size: 1.3rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
         }
-        .btn-circle:hover { background: var(--accent); color: #000; border-color: var(--accent); }
-        .btn-circle.active { background: var(--accent); color: #000; }
 
-        .actor-photo-main {
-            width: 280px;
-            aspect-ratio: 2/3;
+        .btn-circle:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow: 0 10px 20px rgba(167, 139, 250, 0.3);
+        }
+
+        /* Glassmorphic Stats Section */
+        .talent-stats-section {
+            padding: 40px 5%;
+            margin-top: -20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .glass-stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
-            border: 1px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            position: absolute;
-            right: 5%;
-            bottom: 15%;
-            z-index: 5;
-            object-fit: cover;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Grille Verticale Ultra-Responsive */
+        .glass-stat-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(167, 139, 250, 0.35);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 25px rgba(167, 139, 250, 0.15);
+        }
+
+        .stat-icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(244, 114, 182, 0.15));
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: #a78bfa;
+            flex-shrink: 0;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        /* Grille Filmographie */
         .movie-grid, .filmography-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -76,118 +210,114 @@
             width: 100%;
         }
 
-        @media (min-width: 2560px) { .movie-grid, .filmography-list { grid-template-columns: repeat(10, 1fr); } }
-        @media (min-width: 2200px) and (max-width: 2559px) { .movie-grid, .filmography-list { grid-template-columns: repeat(9, 1fr); } }
-        @media (min-width: 1920px) and (max-width: 2199px) { .movie-grid, .filmography-list { grid-template-columns: repeat(8, 1fr); } }
-        @media (min-width: 1650px) and (max-width: 1919px) { .movie-grid, .filmography-list { grid-template-columns: repeat(7, 1fr); } }
-        @media (min-width: 1400px) and (max-width: 1649px) { .movie-grid, .filmography-list { grid-template-columns: repeat(6, 1fr); } }
+        @media (min-width: 1920px) { .movie-grid, .filmography-list { grid-template-columns: repeat(8, 1fr); } }
+        @media (min-width: 1400px) and (max-width: 1919px) { .movie-grid, .filmography-list { grid-template-columns: repeat(6, 1fr); } }
         @media (min-width: 1100px) and (max-width: 1399px) { .movie-grid, .filmography-list { grid-template-columns: repeat(5, 1fr); } }
         @media (min-width: 800px) and (max-width: 1099px) { .movie-grid, .filmography-list { grid-template-columns: repeat(4, 1fr); } }
         @media (min-width: 500px) and (max-width: 799px) { .movie-grid, .filmography-list { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 499px) { .movie-grid, .filmography-list { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
 
-
         .actor-credit-card {
             position: relative;
             width: 100%;
             aspect-ratio: 2/3;
-            border-radius: 15px;
+            border-radius: 16px;
             overflow: hidden;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #121215;
         }
 
         .actor-credit-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            border-color: var(--accent);
-            z-index: 10;
+            transform: translateY(-8px) scale(1.04);
+            border-color: #a78bfa;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(167, 139, 250, 0.25);
+            z-index: 5;
         }
 
         .actor-credit-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: 0.5s;
+            transition: transform 0.5s ease;
         }
 
-        .actor-credit-card:hover img { transform: scale(1.1); }
+        .actor-credit-card:hover img { transform: scale(1.08); }
 
         .wide-credit-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 70%);
+            background: linear-gradient(to top, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.4) 50%, transparent 100%);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 15px;
+            padding: 16px;
         }
 
         .wide-title {
             font-weight: 800;
-            font-size: 0.85rem;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-            line-height: 1.2;
+            font-size: 0.88rem;
+            color: #ffffff;
+            margin-bottom: 6px;
+            line-height: 1.25;
             text-transform: uppercase;
         }
 
         .character-badge {
-            background: #f1c40f;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
             color: #000;
-            padding: 1px 8px;
-            border-radius: 4px;
-            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.65rem;
             font-weight: 900;
             text-transform: uppercase;
             width: fit-content;
+            letter-spacing: 0.5px;
         }
 
         .wide-year {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 12px;
+            right: 12px;
             font-weight: 900;
             font-size: 0.75rem;
-            color: var(--text-primary);
-            background: rgba(0,0,0,0.5);
-            padding: 2px 8px;
-            border-radius: 6px;
-            backdrop-filter: blur(5px);
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.65);
+            padding: 3px 9px;
+            border-radius: 8px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .section-header-bar {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
         .section-bar {
-            width: 4px;
-            height: 24px;
-            background: var(--accent);
-            border-radius: 2px;
+            width: 5px;
+            height: 26px;
+            background: linear-gradient(to bottom, #a78bfa, #f472b6);
+            border-radius: 3px;
         }
 
         .tech-footer {
-            padding: 60px 5%;
-            background: #000;
-            border-top: 1px solid var(--border);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 50px;
+            padding: 50px 5%;
+            background: #050507;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 60px;
         }
-        .tech-col-title { font-size: 0.75rem; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
     </style>
-<link rel="stylesheet" href="theme-variables.css">
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg fixed-top px-5">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
-            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">M</div>
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #fff;">M</div>
             MYCINÉ
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -200,6 +330,7 @@
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/distributors-browse.html">DISTRIBUTEURS</a></li>
             </ul>
         </div>
         <div class="d-flex align-items-center gap-3">
@@ -214,50 +345,115 @@
 </nav>
 
 <main>
-    <!-- Immersive Header -->
+    <!-- Cinematic Hero Section -->
     <header class="hero-slider">
-        <div class="hero-slide active">
-            <img id="hero-backdrop" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=2000" class="hero-backdrop" style="filter: brightness(0.3) blur(20px);">
-            <div class="hero-overlay-top"></div>
-            <div class="hero-overlay-bottom"></div>
-            
-            <div class="hero-info">
-                <nav aria-label="breadcrumb" class="mb-4 opacity-50">
-                    <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800;">
+        <img id="hero-backdrop" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=2000" class="hero-backdrop">
+        <div class="hero-overlay-gradient"></div>
+        
+        <div class="hero-container">
+            <div>
+                <nav aria-label="breadcrumb" class="mb-3 opacity-60">
+                    <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;">
                         <li class="breadcrumb-item"><a href="../../index.html" class="text-theme text-decoration-none">MYCINÉ</a></li>
                         <li class="breadcrumb-item active text-theme text-uppercase">TALENT</li>
                     </ol>
                 </nav>
+
                 <h1 id="actor-name" class="hero-title">...</h1>
-                <div id="actor-tags" class="d-flex gap-3 fw-bold opacity-75 mb-4"></div>
+                <div id="actor-tags" class="d-flex align-items-center gap-3 fw-bold opacity-85 mb-3" style="font-size: 0.85rem; letter-spacing: 1px;"></div>
                 <p id="actor-biography" class="hero-desc"></p>
                 
-                <div class="d-flex align-items-center gap-3">
-                    <button id="add-actor-to-favorites" class="btn btn-light rounded-pill px-5 py-3 fw-black"><i class="ph ph-heart me-2"></i> SUIVRE CET ARTISTE</button>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <button id="add-actor-to-favorites" class="btn btn-light rounded-pill px-4 py-3 fw-black shadow-lg" style="letter-spacing: 1px; font-size: 0.85rem;">
+                        <i class="ph ph-heart me-2 fs-5"></i> SUIVRE CET ARTISTE
+                    </button>
                     <div id="external-ids" class="d-flex gap-2"></div>
                 </div>
             </div>
 
-            <img id="actor-photo" src="" class="actor-photo-main d-none d-lg-block">
+            <div class="d-none d-lg-block">
+                <div class="actor-photo-frame">
+                    <img id="actor-photo" src="" alt="Portrait">
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- Content Sections -->
+    <!-- Glassmorphic Informations & Statistiques Cards Section -->
+    <section class="talent-stats-section">
+        <div class="section-header-bar mb-4">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">INFORMATIONS & STATISTIQUES</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-cake"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Date de Naissance</div>
+                    <div id="actor-birthday" class="stat-value">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-map-pin"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Lieu de Naissance</div>
+                    <div id="actor-birthplace" class="stat-value">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-film-strip"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Projets Total</div>
+                    <div id="movie-count" class="stat-value text-accent">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-star"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Score Popularité</div>
+                    <div id="actor-popularity" class="stat-value" style="color: #f472b6;">...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Known For Section -->
     <section class="content-lane">
-        <div class="lane-title">CONNU POUR</div>
+        <div class="section-header-bar">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">CONNU POUR</div>
+        </div>
         <div id="known-for" class="movie-grid mb-5"></div>
     </section>
 
+    <!-- Filmography Section -->
     <section class="content-lane pt-0">
         <div class="section-header-bar">
             <div class="section-bar"></div>
-            <div class="lane-title mb-0" style="font-size: 1.5rem;">FILMOGRAPHIE COMPLÈTE</div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">FILMOGRAPHIE COMPLÈTE</div>
         </div>
         
-        <ul class="nav nav-pills mb-4 gap-2" style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50px; width: fit-content;">
-            <li class="nav-item"><button class="nav-link active rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-movies">FILMS</button></li>
-            <li class="nav-item"><button class="nav-link rounded-pill text-theme fw-bold" data-bs-toggle="tab" data-bs-target="#tab-tv">SÉRIES TV</button></li>
+        <ul class="nav nav-pills mb-4 gap-2" style="background: rgba(255,255,255,0.04); padding: 6px; border-radius: 50px; width: fit-content; border: 1px solid rgba(255,255,255,0.08);">
+            <li class="nav-item">
+                <button class="nav-link active rounded-pill text-theme fw-bold px-4" data-bs-toggle="tab" data-bs-target="#tab-movies">FILMS</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill text-theme fw-bold px-4" data-bs-toggle="tab" data-bs-target="#tab-tv">SÉRIES TV</button>
+            </li>
         </ul>
+
         <div class="tab-content">
             <div class="tab-pane fade show active" id="tab-movies">
                 <div id="actor-movies" class="filmography-list"></div>
@@ -268,45 +464,23 @@
         </div>
     </section>
 
-    <!-- Info Footer -->
-    <footer class="tech-footer">
-        <div class="tech-col">
-            <div class="tech-col-title">Informations Personnelles</div>
-            <div class="mb-3">
-                <div class="x-small opacity-50">Date de naissance</div>
-                <div id="actor-birthday" class="fw-bold fs-5">...</div>
+    <!-- Footer Premium -->
+    <footer class="tech-footer text-center">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900; color: #fff;">M</div>
+                <span class="fw-black text-theme" style="letter-spacing: 1px;">MYCINÉ TALENT PROFILE</span>
             </div>
-            <div>
-                <div class="x-small opacity-50">Lieu de naissance</div>
-                <div id="actor-birthplace" class="fw-bold fs-6">...</div>
-            </div>
-        </div>
-        <div class="tech-col">
-            <div class="tech-col-title">Statistiques</div>
-            <div class="mb-3">
-                <div class="x-small opacity-50">Films total</div>
-                <div id="movie-count" class="fw-bold fs-5 text-accent">...</div>
-            </div>
-        </div>
-        <div class="tech-col ms-auto text-end">
-            <p class="x-small opacity-25">© 2026 MYCINÉ TALENT PROFILE</p>
+            <p class="m-0 x-small opacity-50">© 2026 MYCINÉ EXPERIENCE - TOUS DROITS RÉSERVÉS</p>
         </div>
     </footer>
 </main>
 
-<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4"></div>
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 1100;"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="posterSync.js"></script>
-<script src="../connexion/authUtils.js"></script>
 <script src="actor-details.js"></script>
-<script>
-    window.onscroll = () => {
-        const nav = document.querySelector('.navbar');
-        if (window.scrollY > 50) nav.classList.add('scrolled');
-        else nav.classList.remove('scrolled');
-    };
-</script>
 <script src="../theme.js"></script>
 </body>
 </html>

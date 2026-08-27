@@ -95,10 +95,27 @@ function renderActorHero(a) {
     const place = a.place_of_birth || "N/A";
     const count = (a.movie_credits?.cast?.length || 0) + (a.tv_credits?.cast?.length || 0);
 
-    document.getElementById("actor-tags").innerHTML = `<span>Artiste</span><div class="v-sep"></div><span>${count} Projets</span>`;
-    document.getElementById("actor-birthday").textContent = bday;
-    document.getElementById("actor-birthplace").textContent = place;
-    document.getElementById("movie-count").textContent = count;
+    let ageStr = "";
+    if (a.birthday) {
+        const birthDate = new Date(a.birthday);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        if (age > 0) ageStr = ` (${age} ans)`;
+    }
+
+    const tagsElem = document.getElementById("actor-tags");
+    if (tagsElem) tagsElem.innerHTML = `<span><i class="ph ph-user me-1"></i> ARTISTE</span><div class="v-sep"></div><span><i class="ph ph-film-strip me-1"></i> ${count} PROJETS</span>`;
+
+    const bdayElem = document.getElementById("actor-birthday");
+    if (bdayElem) bdayElem.textContent = bday + ageStr;
+    const placeElem = document.getElementById("actor-birthplace");
+    if (placeElem) placeElem.textContent = place;
+    const countElem = document.getElementById("movie-count");
+    if (countElem) countElem.textContent = count;
+    const popElem = document.getElementById("actor-popularity");
+    if (popElem) popElem.textContent = a.popularity ? Math.round(a.popularity) + " pts" : "N/A";
 }
 
 function renderKnownFor(credits) {
