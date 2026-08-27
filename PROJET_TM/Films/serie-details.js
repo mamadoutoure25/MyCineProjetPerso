@@ -587,15 +587,13 @@ async function loadAwardsData(imdbId, containerId, title) {
             const count = oscarMatch[2];
             cards.push(`
                 <div class="glass-award-card">
-                    <div class="d-flex align-items-center gap-4">
-                        <div class="award-img-wrapper">
-                            <img src="assets/awards/oscar.png" alt="Oscar Statuette">
-                        </div>
-                        <div>
-                            <div class="award-badge-tag"><i class="ph-fill ph-trophy"></i> ACADEMY AWARDS</div>
-                            <div class="award-main-value">${isWon ? `🏆 ${count} Oscar${count > 1 ? 's' : ''} Remporté${count > 1 ? 's' : ''}` : `⭐ ${count} Nomination${count > 1 ? 's' : ''} aux Oscars`}</div>
-                            <div class="award-sub-desc">Récompense suprême du cinéma mondial</div>
-                        </div>
+                    <div class="award-img-wrapper">
+                        <img src="assets/awards/oscar.png" alt="Oscar Statuette">
+                    </div>
+                    <div>
+                        <div class="award-badge-pill"><i class="ph-fill ph-trophy"></i> ACADEMY AWARDS</div>
+                        <div class="award-main-title">${isWon ? `🏆 ${count} Oscar${count > 1 ? 's' : ''} Remporté${count > 1 ? 's' : ''}` : `⭐ ${count} Nomination${count > 1 ? 's' : ''} aux Oscars`}</div>
+                        <div class="award-sub-desc">Récompense suprême du cinéma mondial</div>
                     </div>
                 </div>
             `);
@@ -608,15 +606,13 @@ async function loadAwardsData(imdbId, containerId, title) {
             const count = globeMatch[2];
             cards.push(`
                 <div class="glass-award-card">
-                    <div class="d-flex align-items-center gap-4">
-                        <div class="award-img-wrapper">
-                            <img src="assets/awards/golden_globe.png" alt="Golden Globe Trophy">
-                        </div>
-                        <div>
-                            <div class="award-badge-tag"><i class="ph-fill ph-star"></i> GOLDEN GLOBES</div>
-                            <div class="award-main-value">${isWon ? `🌟 ${count} Golden Globe${count > 1 ? 's' : ''}` : `🎬 ${count} Nomination${count > 1 ? 's' : ''} aux Golden Globes`}</div>
-                            <div class="award-sub-desc">Hollywood Foreign Press Association</div>
-                        </div>
+                    <div class="award-img-wrapper">
+                        <img src="assets/awards/golden_globe.png" alt="Golden Globe Trophy">
+                    </div>
+                    <div>
+                        <div class="award-badge-pill"><i class="ph-fill ph-star"></i> GOLDEN GLOBES</div>
+                        <div class="award-main-title">${isWon ? `🌟 ${count} Golden Globe${count > 1 ? 's' : ''}` : `🎬 ${count} Nomination${count > 1 ? 's' : ''} aux Golden Globes`}</div>
+                        <div class="award-sub-desc">Hollywood Foreign Press Association</div>
                     </div>
                 </div>
             `);
@@ -629,15 +625,13 @@ async function loadAwardsData(imdbId, containerId, title) {
             const count = emmyMatch[2];
             cards.push(`
                 <div class="glass-award-card">
-                    <div class="d-flex align-items-center gap-4">
-                        <div class="award-img-wrapper">
-                            <img src="assets/awards/emmy.png" alt="Emmy Statuette">
-                        </div>
-                        <div>
-                            <div class="award-badge-tag"><i class="ph-fill ph-television"></i> PRIMETIME EMMY AWARDS</div>
-                            <div class="award-main-value">${isWon ? `📺 ${count} Emmy Award${count > 1 ? 's' : ''}` : `📺 ${count} Nomination${count > 1 ? 's' : ''} aux Emmys`}</div>
-                            <div class="award-sub-desc">Prix d'excellence de la télévision</div>
-                        </div>
+                    <div class="award-img-wrapper">
+                        <img src="assets/awards/emmy.png" alt="Emmy Statuette">
+                    </div>
+                    <div>
+                        <div class="award-badge-pill"><i class="ph-fill ph-television"></i> PRIMETIME EMMY AWARDS</div>
+                        <div class="award-main-title">${isWon ? `📺 ${count} Emmy Award${count > 1 ? 's' : ''}` : `📺 ${count} Nomination${count > 1 ? 's' : ''} aux Emmys`}</div>
+                        <div class="award-sub-desc">Prix d'excellence de la télévision</div>
                     </div>
                 </div>
             `);
@@ -649,15 +643,13 @@ async function loadAwardsData(imdbId, containerId, title) {
             const count = winsMatch[1];
             cards.push(`
                 <div class="glass-award-card">
-                    <div class="d-flex align-items-center gap-4">
-                        <div class="award-img-wrapper">
-                            <img src="assets/awards/laurel.png" alt="Gold Laurel Wreath">
-                        </div>
-                        <div>
-                            <div class="award-badge-tag"><i class="ph-fill ph-medal"></i> TOTAL VICTOIRES</div>
-                            <div class="award-main-value">🥇 ${count} Victoire${count > 1 ? 's' : ''} en Festivals</div>
-                            <div class="award-sub-desc">Cumul de tous les prix remportés</div>
-                        </div>
+                    <div class="award-img-wrapper">
+                        <img src="assets/awards/laurel.png" alt="Gold Laurel Wreath">
+                    </div>
+                    <div>
+                        <div class="award-badge-pill"><i class="ph-fill ph-medal"></i> TOTAL VICTOIRES</div>
+                        <div class="award-main-title">🥇 ${count} Victoire${count > 1 ? 's' : ''} en Festivals</div>
+                        <div class="award-sub-desc">Cumul de tous les prix remportés</div>
                     </div>
                 </div>
             `);
@@ -669,15 +661,13 @@ async function loadAwardsData(imdbId, containerId, title) {
             const count = nomMatch[1];
             cards.push(`
                 <div class="glass-award-card">
-                    <div class="d-flex align-items-center gap-4">
-                        <div class="award-img-wrapper">
-                            <img src="assets/awards/laurel.png" alt="Certificate Badge">
-                        </div>
-                        <div>
-                            <div class="award-badge-tag"><i class="ph-fill ph-certificate"></i> NOMINATIONS GLOBALES</div>
-                            <div class="award-main-value">📜 ${count} Nomination${count > 1 ? 's' : ''} Officielles</div>
-                            <div class="award-sub-desc">Sélections dans les académies & festivals</div>
-                        </div>
+                    <div class="award-img-wrapper">
+                        <img src="assets/awards/laurel.png" alt="Certificate Badge">
+                    </div>
+                    <div>
+                        <div class="award-badge-pill"><i class="ph-fill ph-certificate"></i> NOMINATIONS GLOBALES</div>
+                        <div class="award-main-title">📜 ${count} Nomination${count > 1 ? 's' : ''} Officielles</div>
+                        <div class="award-sub-desc">Sélections dans les académies & festivals</div>
                     </div>
                 </div>
             `);
@@ -686,14 +676,12 @@ async function loadAwardsData(imdbId, containerId, title) {
         if (cards.length === 0) {
             cards.push(`
                 <div class="glass-award-card w-100">
-                    <div class="d-flex align-items-center gap-4">
-                        <div class="award-img-wrapper">
-                            <img src="assets/awards/oscar.png" alt="Trophy">
-                        </div>
-                        <div>
-                            <div class="award-badge-tag"><i class="ph-fill ph-trophy"></i> PALMARÈS OFFICIEL</div>
-                            <div class="award-main-value">${awardsStr}</div>
-                        </div>
+                    <div class="award-img-wrapper">
+                        <img src="assets/awards/oscar.png" alt="Trophy">
+                    </div>
+                    <div>
+                        <div class="award-badge-pill"><i class="ph-fill ph-trophy"></i> PALMARÈS OFFICIEL</div>
+                        <div class="award-main-title">${awardsStr}</div>
                     </div>
                 </div>
             `);
