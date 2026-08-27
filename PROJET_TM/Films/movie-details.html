@@ -580,6 +580,56 @@
         </div>
     </section>
 
+    <!-- Glassmorphic Quick Info Section -->
+    <section class="serie-stats-section" style="padding: 40px 5% 15px; margin-top: -10px; position: relative; z-index: 10;">
+        <div class="section-header-bar mb-4" style="display: flex; align-items: center; gap: 12px;">
+            <div class="section-bar" style="width: 5px; height: 26px; background: linear-gradient(to bottom, #a78bfa, #f472b6); border-radius: 3px;"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">APERCU & STATISTIQUES</div>
+        </div>
+
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+            <div class="glass-stat-card" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 22px 24px; display: flex; align-items: center; gap: 18px;">
+                <div class="stat-icon-wrapper" style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(244, 114, 182, 0.15)); border: 1px solid rgba(167, 139, 250, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #a78bfa; flex-shrink: 0;">
+                    <i class="ph ph-clock"></i>
+                </div>
+                <div>
+                    <div class="stat-label" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255, 255, 255, 0.45); margin-bottom: 4px;">Durée du Film</div>
+                    <div id="stats-movie-runtime" class="stat-value" style="font-size: 1.2rem; font-weight: 800;">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 22px 24px; display: flex; align-items: center; gap: 18px;">
+                <div class="stat-icon-wrapper" style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(244, 114, 182, 0.15)); border: 1px solid rgba(167, 139, 250, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #a78bfa; flex-shrink: 0;">
+                    <i class="ph ph-currency-dollar"></i>
+                </div>
+                <div>
+                    <div class="stat-label" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255, 255, 255, 0.45); margin-bottom: 4px;">Recettes Box-Office</div>
+                    <div id="stats-movie-revenue" class="stat-value text-accent" style="font-size: 1.2rem; font-weight: 800;">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 22px 24px; display: flex; align-items: center; gap: 18px;">
+                <div class="stat-icon-wrapper" style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(244, 114, 182, 0.15)); border: 1px solid rgba(167, 139, 250, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #a78bfa; flex-shrink: 0;">
+                    <i class="ph ph-star"></i>
+                </div>
+                <div>
+                    <div class="stat-label" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255, 255, 255, 0.45); margin-bottom: 4px;">Note Communautaire</div>
+                    <div id="stats-movie-rating" class="stat-value" style="font-size: 1.2rem; font-weight: 800;">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 22px 24px; display: flex; align-items: center; gap: 18px;">
+                <div class="stat-icon-wrapper" style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(244, 114, 182, 0.15)); border: 1px solid rgba(167, 139, 250, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #a78bfa; flex-shrink: 0;">
+                    <i class="ph ph-shield-check"></i>
+                </div>
+                <div>
+                    <div class="stat-label" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255, 255, 255, 0.45); margin-bottom: 4px;">Classification</div>
+                    <div id="stats-movie-cert" class="stat-value" style="font-size: 1.2rem; font-weight: 800; color: #f472b6;">...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Content Sections -->
     <section class="content-lane">
         <div class="lane-title">DISTRIBUTION PRINCIPALE</div>

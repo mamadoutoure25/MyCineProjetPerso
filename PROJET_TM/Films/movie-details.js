@@ -180,6 +180,26 @@ function renderHero(m) {
         }
     }
 
+    // Populate Glassmorphic Stats Section
+    if (el("stats-movie-runtime")) {
+        el("stats-movie-runtime").textContent = runtime || "N/A";
+    }
+    if (el("stats-movie-revenue")) {
+        if (m.revenue && m.revenue > 0) {
+            el("stats-movie-revenue").textContent = m.revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " $";
+        } else if (m.budget && m.budget > 0) {
+            el("stats-movie-revenue").textContent = m.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " $ (Budget)";
+        } else {
+            el("stats-movie-revenue").textContent = "N/A";
+        }
+    }
+    if (el("stats-movie-rating")) {
+        el("stats-movie-rating").textContent = m.vote_average ? `${m.vote_average.toFixed(1)} / 10` : "N/A";
+    }
+    if (el("stats-movie-cert")) {
+        el("stats-movie-cert").textContent = cert ? cert : "Tous publics";
+    }
+
     const trailer = m.videos?.results?.find(v => v.type === "Trailer");
     if (trailer && el("watch-trailer")) {
         el("watch-trailer").onclick = (e) => {
