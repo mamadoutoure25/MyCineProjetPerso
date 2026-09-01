@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sociétés de production - MyCiné</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Unified Premium Styles -->
     <link rel="stylesheet" href="premium-home.css">
+    <link rel="stylesheet" href="responsive-bootstrap-tv.css">
     <link rel="stylesheet" href="theme-variables.css">
     <style>
         .companies-hero {
@@ -147,6 +149,25 @@
             align-items: center;
             gap: 10px;
         }
+
+        .custom-select-dark {
+            background-color: var(--glass) !important;
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border) !important;
+            color: var(--text-primary) !important;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .custom-select-dark:focus {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2) !important;
+            outline: none;
+        }
+        .custom-select-dark option {
+            background-color: #1e293b;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -161,14 +182,14 @@
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <i class="ph ph-list fs-2 text-theme"></i>
         </button>
-        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
-            <ul class="navbar-nav gap-4">
+        <div class="navbar-collapse justify-content-center" id="navbarContent" style="display: flex !important; visibility: visible !important; opacity: 1 !important;">
+            <ul class="navbar-nav d-flex flex-row align-items-center gap-4 m-0 p-0" style="display: flex !important; flex-direction: row !important; list-style: none !important;">
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="films.html">FILMS</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold active text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/distributors-browse.html">DISTRIBUTEURS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold active text-theme" href="companies-browse.html">STUDIOS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="distributors-browse.html">DISTRIBUTEURS</a></li>
             </ul>
         </div>
         <div class="d-flex align-items-center gap-3">
@@ -207,10 +228,17 @@
 </header>
 
 <main class="section-wrapper">
-    <!-- Recherche -->
-    <div class="search-input-wrapper">
-        <input type="text" id="search-input" placeholder="Rechercher un studio (ex: Warner Bros, Pixar)..." aria-label="Rechercher">
-        <i class="ph ph-magnifying-glass position-absolute text-theme opacity-50" style="right: 25px; top: 18px; font-size: 1.2rem;"></i>
+    <!-- Recherche et Filtre par Pays -->
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3 mb-5 mx-auto" style="max-width: 850px;">
+        <div class="search-input-wrapper flex-grow-1 w-100 m-0">
+            <input type="text" id="search-input" placeholder="Rechercher un studio (ex: Warner Bros, Pixar)..." aria-label="Rechercher">
+            <i class="ph ph-magnifying-glass position-absolute text-theme opacity-50" style="right: 25px; top: 18px; font-size: 1.2rem;"></i>
+        </div>
+        <div class="w-100 w-md-auto" style="min-width: 230px;">
+            <select id="country-filter" class="form-select custom-select-dark rounded-pill py-3 px-4 fw-bold" aria-label="Filtrer par pays">
+                <option value="ALL">🌍 Tous les pays</option>
+            </select>
+        </div>
     </div>
 
     <!-- Grille des sociétés -->

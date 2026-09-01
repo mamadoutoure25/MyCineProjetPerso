@@ -70,7 +70,7 @@ const COMPANIES_LIST = [
     { id: 22213, name: 'TSG Entertainment' },
     { id: 25120, name: 'Warner Animation Group' },
     { id: 30148, name: 'Bona Film Group' },
-    { id: 35654, name: 'MAPPA' },
+    { id: 30571, name: 'MAPPA' },
     { id: 41077, name: 'A24' },
     { id: 69484, name: 'Alibaba Pictures Group' },
     { id: 178464, name: 'Netflix' },
@@ -81,10 +81,29 @@ const COMPANIES_LIST = [
 let companiesData = [];
 let filteredCompanies = [];
 
+const PAYS_LIST = [
+    { code: 'US', name: 'États-Unis' },
+    { code: 'FR', name: 'France' },
+    { code: 'JP', name: 'Japon' },
+    { code: 'GB', name: 'Royaume-Uni' },
+    { code: 'DE', name: 'Allemagne' },
+    { code: 'CN', name: 'Chine' },
+    { code: 'KR', name: 'Corée du Sud' },
+    { code: 'CA', name: 'Canada' },
+    { code: 'AU', name: 'Australie' },
+    { code: 'IT', name: 'Italie' },
+    { code: 'ES', name: 'Espagne' },
+    { code: 'BR', name: 'Brésil' },
+    { code: 'IN', name: 'Inde' },
+    { code: 'MX', name: 'Mexique' },
+    { code: 'RU', name: 'Russie' }
+];
+
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
+    remplirSelectPays();
+    configurerFiltres();
     await chargerSocietes();
-    configurerRecherche();
 });
 
 /**
@@ -136,11 +155,47 @@ async function chargerSocietes() {
         document.getElementById('total-countries').textContent = countriesSet.size;
         document.getElementById('total-films').textContent = filmsTotal.toLocaleString('fr-FR');
 
-        // Afficher les sociétés
+        // Mettre à jour les pays et afficher les sociétés
+        remplirSelectPays();
         afficherSocietes(companiesData);
     } catch (error) {
         console.error('Erreur lors du chargement:', error);
     }
+}
+
+/**
+ * Remplir le menu déroulant des pays
+ */
+function remplirSelectPays() {
+    const countrySelect = document.getElementById('country-filter');
+    if (!countrySelect) return;
+
+    const countriesMap = new Map();
+
+    // 1. Ajouter les pays issus des sociétés chargées
+    companiesData.forEach(c => {
+        if (c.origin_country) {
+            const code = c.origin_country.toUpperCase();
+            const label = obtenirNomPays(code);
+            countriesMap.set(code, label);
+        }
+    });
+
+    // 2. Si chargement en cours ou données vides, afficher les pays par défaut
+    if (countriesMap.size === 0) {
+        PAYS_LIST.forEach(p => countriesMap.set(p.code, p.name));
+    }
+
+    const sortedCountries = Array.from(countriesMap.entries()).sort((a, b) => a[1].localeCompare(b[1], 'fr'));
+
+    const countLabel = companiesData.length > 0 ? ` (${companiesData.length})` : '';
+
+    countrySelect.innerHTML = `<option value="ALL">🌍 Tous les pays${countLabel}</option>` +
+        sortedCountries.map(([code, name]) => {
+            const count = companiesData.filter(c => c.origin_country?.toUpperCase() === code).length;
+            const countStr = count > 0 ? ` (${count})` : '';
+            return `<option value="${code}">${name}${countStr}</option>`;
+        }).join('');
 }
 
 /**
@@ -162,44 +217,19 @@ function afficherSocietes(companies) {
         .map(company => {
             const hasLogo = company.logo_path !== null;
             const logoUrl = hasLogo ? `${IMG_BASE_URL}${company.logo_path}` : `https://via.placeholder.com/300x300?text=${encodeURIComponent(company.name)}`;
+            const countryName = obtenirNomPays(company.origin_country);
             return `
         <div class="premium-company-card" onclick="window.location.href='company-details.html?id=${company.id}'">
             <img src="${logoUrl}" loading="lazy" alt="${company.name}">
             <div class="card-details">
                 <div class="card-title text-truncate">${company.name}</div>
                 <div class="card-meta">
-                    <span class="rating-badge"><i class="ph-fill ph-globe-hemisphere-west"></i> ${company.origin_country || 'Inconnu'}</span>
+                    <span class="rating-badge"><i class="ph-fill ph-globe-hemisphere-west"></i> ${countryName}</span>
                 </div>
             </div>
         </div>
     `}).join('');
 }
-/**
- * Configurer la recherche
- */
-function configurerRecherche() {
-    const searchInput = document.getElementById('search-input');
-
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-
-        if (query === '') {
-            filteredCompanies = [...companiesData];
-        } else {
-            filteredCompanies = companiesData.filter(company =>
-                company.name.toLowerCase().includes(query) ||
-                company.headquarters?.toLowerCase().includes(query) ||
-                company.origin_country?.toLowerCase().includes(query)
-            );
-        }
-
-        afficherSocietes(filteredCompanies);
-    });
-}
-
-/**
- * Obtenir le nom du pays à partir du code
- */
 function obtenirNomPays(countryCode) {
     const paysMap = {
         'US': 'États-Unis',
@@ -225,6 +255,47 @@ function obtenirNomPays(countryCode) {
 
 
 
+
+/**
+ * Filtrer les sociétés selon la recherche texte et le pays sélectionné
+ */
+function filtrerSocietes() {
+    const searchInput = document.getElementById('search-input');
+    const countrySelect = document.getElementById('country-filter');
+
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const selectedCountry = countrySelect ? countrySelect.value : 'ALL';
+
+    filteredCompanies = companiesData.filter(company => {
+        const matchesQuery = query === '' ||
+            company.name.toLowerCase().includes(query) ||
+            company.headquarters?.toLowerCase().includes(query) ||
+            company.origin_country?.toLowerCase().includes(query) ||
+            obtenirNomPays(company.origin_country).toLowerCase().includes(query);
+
+        const matchesCountry = selectedCountry === 'ALL' ||
+            company.origin_country?.toUpperCase() === selectedCountry;
+
+        return matchesQuery && matchesCountry;
+    });
+
+    afficherSocietes(filteredCompanies);
+}
+
+/**
+ * Configurer les écouteurs d'événements pour la recherche et les filtres
+ */
+function configurerFiltres() {
+    const searchInput = document.getElementById('search-input');
+    const countrySelect = document.getElementById('country-filter');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', filtrerSocietes);
+    }
+    if (countrySelect) {
+        countrySelect.addEventListener('change', filtrerSocietes);
+    }
+}
 
 function generateCompanyCard(company) {
     const hasLogo = company.logo_path !== null;
