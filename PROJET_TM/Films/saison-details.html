@@ -12,14 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="premium-home.css">
     <link rel="stylesheet" href="theme-variables.css">
+    <link rel="stylesheet" href="theme-variables.css">
     <script src="../connexion/authUtils.js"></script>
     <style>
         .hero-slider {
             position: relative;
             min-height: auto;
+            height: auto !important;
+            max-height: none !important;
             display: flex;
             align-items: flex-start !important;
-            padding: 200px 5% 50px !important;
+            padding: 105px 5% 50px !important;
             overflow: hidden;
             background: #09090b;
         }
@@ -193,6 +196,10 @@
             letter-spacing: 1.5px;
             color: rgba(255, 255, 255, 0.45);
             margin-bottom: 4px;
+        }
+
+        [data-theme="light"] .stat-label {
+            color: #6b7280 !important;
         }
 
         .stat-value {

@@ -274,7 +274,7 @@ async function fetchDistributorHeader() {
             const netId = meta.networkId ? meta.networkId.split('|')[0] : (NETWORK_FAMILIES[distributorId] ? NETWORK_FAMILIES[distributorId].split('|')[0] : distributorId);
             resInfo = await fetch(`${API_BASE_URL}/network/${netId}?api_key=${API_KEY}`).then(r => r.ok ? r.json() : null).catch(() => null);
         } else {
-            resInfo = await fetch(`${API_BASE_URL}/company/${distributorId}?api_key=${API_KEY}&language=fr-FR`).then(r => r.ok ? r.json() : null).catch(() => null);
+            resInfo = await fetch(`${API_BASE_URL}/company/${distributorId}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.ok ? r.json() : null).catch(() => null);
         }
         
         const nameEl = document.getElementById("distributor-name");
@@ -327,13 +327,13 @@ async function loadMovies(reset = false) {
 
         if (currentMediaType === 'tv') {
             const netQuery = meta.networkId || NETWORK_FAMILIES[distributorId] || distributorId;
-            url = `${API_BASE_URL}/discover/tv?api_key=${API_KEY}&language=fr-FR&with_networks=${netQuery}&sort_by=${currentSort}&page=${currentPage}`;
+            url = `${API_BASE_URL}/discover/tv?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_networks=${netQuery}&sort_by=${currentSort}&page=${currentPage}`;
 
             if (selectedGenre) url += `&with_genres=${selectedGenre}`;
             if (selectedYear) url += `&first_air_date_year=${selectedYear}`;
         } else {
             const companiesQuery = COMPANY_FAMILIES[distributorId] ? COMPANY_FAMILIES[distributorId].join('|') : distributorId;
-            url = `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=fr-FR&with_companies=${companiesQuery}&sort_by=${currentSort}&page=${currentPage}`;
+            url = `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_companies=${companiesQuery}&sort_by=${currentSort}&page=${currentPage}`;
 
             if (selectedGenre) url += `&with_genres=${selectedGenre}`;
             if (selectedYear) url += `&primary_release_year=${selectedYear}`;

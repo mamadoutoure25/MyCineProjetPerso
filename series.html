@@ -108,6 +108,9 @@
                                             <div class="x-small opacity-50">MON PROFIL</div>
                                         </a>
                                     </div>
+                                    <a href="PROJET_TM/profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres">
+                                        <i class="ph ph-gear fs-5"></i>
+                                    </a>
                                     <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
                                 </div>`;
                         }
@@ -124,7 +127,7 @@
         <div class="hero-slide active">
             <img src="https://image.tmdb.org/t/p/original/969UmUNbWpS5S6uO0pPA6p8AZ9H.jpg" class="hero-backdrop" id="series-hero-img">
             <div class="hero-overlay-bottom"></div>
-            <div class="hero-info">
+            <div class="home-hero-info">
                 <h1 class="hero-title">SÉRIES TV</h1>
                 <p class="opacity-75 fs-5">Plongez dans les meilleures productions télévisuelles du moment.</p>
             </div>
@@ -132,45 +135,76 @@
     </header>
 
     <section class="content-lane">
-        <div class="d-flex flex-column align-items-center mb-5">
+        <div class="d-flex flex-column align-items-center mb-5" style="margin-top: -50px; position: relative; z-index: 100;">
             <div class="search-hero mb-4">
                 <i class="ph ph-magnifying-glass text-muted fs-4"></i>
                 <input type="text" id="series-search" placeholder="Rechercher une série...">
             </div>
             
-            <div class="d-flex gap-3 flex-wrap justify-content-center mb-2" id="series-genre-filters">
-                <a href="#" class="cat-tag active" data-genre="">TOUS LES GENRES</a>
-                <a href="#" class="cat-tag" data-genre="10759">ACTION</a>
-                <a href="#" class="cat-tag" data-genre="18">DRAME</a>
-                <a href="#" class="cat-tag" data-genre="35">COMÉDIE</a>
-                <a href="#" class="cat-tag" data-genre="80">CRIME</a>
-                <a href="#" class="cat-tag" data-genre="10765">S-FICTION</a>
-            </div>
+            <div class="filter-panel shadow-lg">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Genre</label>
+                        <select id="filter-genre" class="premium-select">
+                            <option value="">Tous les genres</option>
+                            <option value="10759">Action & Aventure</option>
+                            <option value="18">Drame</option>
+                            <option value="35">Comédie</option>
+                            <option value="80">Crime</option>
+                            <option value="10765">S-Fiction</option>
+                        </select>
+                    </div>
 
-            <div class="d-flex gap-2 flex-wrap justify-content-center align-items-center mt-2" id="series-platform-filters">
-                <span class="x-small fw-extrabold text-accent uppercase me-1"><i class="ph ph-broadcast me-1"></i> STREAMING & TV :</span>
-                <a href="#" class="cat-tag active" data-network="">TOUTES</a>
-                <a href="#" class="cat-tag" data-network="49|3186">HBO MAX</a>
-                <a href="#" class="cat-tag" data-network="213">NETFLIX</a>
-                <a href="#" class="cat-tag" data-network="1024">PRIME VIDEO</a>
-                <a href="#" class="cat-tag" data-network="2552">APPLE TV+</a>
-                <a href="#" class="cat-tag" data-network="2739">DISNEY+</a>
-                <a href="#" class="cat-tag" data-network="174">AMC</a>
-                <a href="#" class="cat-tag" data-network="285">CANAL+</a>
-                <a href="#" class="cat-tag" data-network="88">FX</a>
-                <a href="#" class="cat-tag" data-network="67|4330">PARAMOUNT+</a>
-            </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Année</label>
+                        <input type="number" id="filter-year" class="year-input" placeholder="2024">
+                    </div>
 
-            <div class="d-flex gap-2 flex-wrap justify-content-center align-items-center mt-2" id="series-year-filters">
-                <span class="x-small fw-extrabold text-accent uppercase me-1"><i class="ph ph-calendar-blank me-1"></i> ANNÉE :</span>
-                <a href="#" class="cat-tag active" data-year="">TOUTES</a>
-                <a href="#" class="cat-tag" data-year="2026">2026</a>
-                <a href="#" class="cat-tag" data-year="2025">2025</a>
-                <a href="#" class="cat-tag" data-year="2024">2024</a>
-                <a href="#" class="cat-tag" data-year="2023">2023</a>
-                <a href="#" class="cat-tag" data-year="2020-2026">2020s</a>
-                <a href="#" class="cat-tag" data-year="2010-2019">2010s</a>
-                <a href="#" class="cat-tag" data-year="2000-2009">2000s</a>
+                    <div class="filter-group">
+                        <label class="filter-label">Streaming & TV</label>
+                        <select id="filter-platform" class="premium-select">
+                            <option value="">Toutes</option>
+                            <option value="49|3186">HBO Max</option>
+                            <option value="213">Netflix</option>
+                            <option value="1024">Prime Video</option>
+                            <option value="2552">Apple TV+</option>
+                            <option value="2739">Disney+</option>
+                            <option value="1112">Crunchyroll</option>
+                            <option value="174">AMC</option>
+                            <option value="285">Canal+</option>
+                            <option value="88">FX</option>
+                            <option value="67|4330">Paramount+</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Origine</label>
+                        <select id="filter-origin" class="premium-select">
+                            <option value="">Tous les pays</option>
+                            <option value="US">États-Unis</option>
+                            <option value="FR">France</option>
+                            <option value="GB">Royaume-Uni</option>
+                            <option value="ES">Espagne</option>
+                            <option value="KR">Corée du Sud</option>
+                            <option value="JP">Japon</option>
+                            <option value="CN">Chine</option>
+                            <option value="IN">Inde</option>
+                            <option value="TR">Turquie</option>
+                            <option value="MX">Mexique</option>
+                            <option value="AR|CO|CL|PE|VE">Amérique Latine</option>
+                            <option value="ZA|NG|SN|GH|MA|EG|KE|CI">Afrique (Sélection)</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Trier</label>
+                        <select id="filter-sort" class="premium-select">
+                            <option value="popularity.desc">Populaires</option>
+                            <option value="vote_average.desc">Mieux notées</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="btn-apply-filters" class="btn-apply-filters">METTRE À JOUR LA LISTE</button>
             </div>
         </div>
 
@@ -179,6 +213,8 @@
             <div id="series-search-results" class="movie-grid mb-5"></div>
             <hr class="border-secondary opacity-25 my-5">
         </div>
+
+
 
         <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
             <div class="lane-title mb-0">SÉRIES LES PLUS POPULAIRES</div>
@@ -228,9 +264,9 @@
 
     async function loadDefaultSeriesLanes() {
         const [popular, topRated, action] = await Promise.all([
-            fetch(`${BASE_URL}${laneStates['popular-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
-            fetch(`${BASE_URL}${laneStates['top-rated-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
-            fetch(`${BASE_URL}${laneStates['action-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&with_genres=10759&page=1`).then(r => r.json())
+            fetch(`${BASE_URL}${laneStates['popular-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['top-rated-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['action-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_genres=10759&page=1`).then(r => r.json())
         ]);
 
         if (popular.results && popular.results[0]) {
@@ -256,7 +292,7 @@
 
         state.page++;
         try {
-            const res = await fetch(`${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=fr-FR${state.params}&page=${state.page}`).then(r => r.json());
+            const res = await fetch(`${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}${state.params}&page=${state.page}`).then(r => r.json());
             if (res.results && res.results.length > 0) {
                 appendCards(res.results, laneId);
             } else {
@@ -306,6 +342,12 @@
     }
 
     function generateCardsHTML(data) {
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+        data = data.filter(item => {
+            if (includeAdult) return true;
+            return item.adult !== true;
+        });
+
         return data.map(item => `
             <div class="premium-card" onclick="window.location.href='PROJET_TM/Films/serie-details.html?id=${item.id}'">
                 <img src="${item.poster_path ? IMG_URL + item.poster_path : 'https://via.placeholder.com/220x330?text=No+Image'}" loading="lazy">
@@ -338,7 +380,8 @@
             }
 
             searchTimeout = setTimeout(async () => {
-                const res = await fetch(`${BASE_URL}/search/tv?api_key=${API_KEY}&language=fr-FR&query=${encodeURIComponent(query)}`).then(r => r.json());
+                const includeAdult = localStorage.getItem("include_adult") === "true";
+                const res = await fetch(`${BASE_URL}/search/tv?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&query=${encodeURIComponent(query)}&include_adult=${includeAdult}`).then(r => r.json());
                 if (res.results && res.results.length > 0) {
                     searchSection.style.display = 'block';
                     renderLane(res.results, 'series-search-results');
@@ -346,57 +389,35 @@
             }, 500);
         });
 
-        const platformTags = document.querySelectorAll('#series-platform-filters .cat-tag');
-        const yearTags = document.querySelectorAll('#series-year-filters .cat-tag');
+        const btnApply = document.getElementById('btn-apply-filters');
 
-        const applySeriesFilters = async () => {
-            const activeGenre = document.querySelector('#series-genre-filters .cat-tag.active')?.dataset?.genre || '';
-            const activePlatform = document.querySelector('#series-platform-filters .cat-tag.active')?.dataset?.network || '';
-            const activeYear = document.querySelector('#series-year-filters .cat-tag.active')?.dataset?.year || '';
+        btnApply.onclick = async () => {
+            const genreSelect = document.getElementById('filter-genre');
+            const genreId = genreSelect.value;
+            const genreName = genreSelect.options[genreSelect.selectedIndex].text;
+            const year = document.getElementById('filter-year').value;
+            const platform = document.getElementById('filter-platform').value;
+            const sort = document.getElementById('filter-sort').value;
+            const origin = document.getElementById('filter-origin').value;
 
-            let endpoint = (activeGenre || activePlatform || activeYear) ? '/discover/tv' : '/tv/popular';
-            let params = '';
-            if (activeGenre) params += `&with_genres=${activeGenre}`;
-            if (activePlatform) params += `&with_networks=${activePlatform}`;
-            if (activeYear) {
-                if (activeYear.includes('-')) {
-                    const [startYear, endYear] = activeYear.split('-');
-                    params += `&first_air_date.gte=${startYear}-01-01&first_air_date.lte=${endYear}-12-31`;
-                } else {
-                    params += `&first_air_date_year=${activeYear}`;
-                }
-            }
+            let queryParams = `api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=${sort}`;
+            if (genreId) queryParams += `&with_genres=${genreId}`;
+            if (year) queryParams += `&first_air_date_year=${year}`;
+            if (platform) queryParams += `&with_networks=${platform}`;
+            if (origin) queryParams += `&with_origin_country=${origin}`;
 
-            laneStates['popular-series'].endpoint = endpoint;
-            laneStates['popular-series'].params = params;
+            laneStates['popular-series'].endpoint = '/discover/tv';
+            laneStates['popular-series'].params = `&sort_by=${sort}${genreId ? '&with_genres='+genreId : ''}${year ? '&first_air_date_year='+year : ''}${platform ? '&with_networks='+platform : ''}${origin ? '&with_origin_country='+origin : ''}`;
             laneStates['popular-series'].page = 1;
 
-            const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}&language=fr-FR${params}`;
-
-            try {
-                const res = await fetch(url).then(r => r.json());
-                renderLane(res.results, 'popular-series');
-                const titleEl = document.querySelector('.lane-title');
-                if (titleEl) {
-                    titleEl.textContent = (activeGenre || activePlatform || activeYear) ? `SÉRIES FILTRÉES` : "SÉRIES LES PLUS POPULAIRES";
-                }
-            } catch(e) { console.error(e); }
+            const res = await fetch(`${BASE_URL}/discover/tv?${queryParams}`).then(r => r.json());
+            const titleEl = document.querySelector('.lane-title');
+            if (titleEl) {
+                titleEl.textContent = (genreId || year || platform || origin) ? "SÉRIES FILTRÉES" : "SÉRIES LES PLUS POPULAIRES";
+            }
+            renderLane(res.results, 'popular-series');
+            titleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
-
-        const bindTagGroup = (tags) => {
-            tags.forEach(tag => {
-                tag.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    tags.forEach(t => t.classList.remove('active'));
-                    tag.classList.add('active');
-                    applySeriesFilters();
-                });
-            });
-        };
-
-        bindTagGroup(genreTags);
-        bindTagGroup(platformTags);
-        bindTagGroup(yearTags);
     }
 
     function notify(msg, type) {

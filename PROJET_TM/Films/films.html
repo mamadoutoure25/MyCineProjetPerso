@@ -91,6 +91,9 @@
                                             <div class="x-small opacity-50">MON PROFIL</div>
                                         </a>
                                     </div>
+                                    <a href="../profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres">
+                                        <i class="ph ph-gear fs-5"></i>
+                                    </a>
                                     <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
                                 </div>`;
                         }
@@ -108,7 +111,7 @@
             <img src="https://image.tmdb.org/t/p/original/5m0v89Yp9YmN4V1V19x0j91V19X.jpg" class="hero-backdrop" id="films-hero-img">
             <div class="hero-overlay-top"></div>
             <div class="hero-overlay-bottom"></div>
-            <div class="hero-info">
+            <div class="home-hero-info">
                 <h1 class="hero-title">BIBLIOTHÈQUE</h1>
                 <p class="opacity-75 mb-4 fs-5">Explorez des milliers de films, des blockbusters aux trésors cachés.</p>
                 <div class="d-flex gap-3">
@@ -154,6 +157,25 @@
                             <option value="420">Marvel Studios</option>
                             <option value="174">Warner Bros. Discovery</option>
                             <option value="2739">Disney</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Origine</label>
+                        <select id="filter-origin" class="premium-select">
+                            <option value="">Tous les pays</option>
+                            <option value="US">États-Unis</option>
+                            <option value="FR">France</option>
+                            <option value="GB">Royaume-Uni</option>
+                            <option value="ES">Espagne</option>
+                            <option value="KR">Corée du Sud</option>
+                            <option value="JP">Japon</option>
+                            <option value="CN">Chine</option>
+                            <option value="IN">Inde</option>
+                            <option value="TR">Turquie</option>
+                            <option value="MX">Mexique</option>
+                            <option value="AR|CO|CL|PE|VE">Amérique Latine</option>
+                            <option value="ZA|NG|SN|GH|MA|EG|KE|CI">Afrique (Sélection)</option>
                         </select>
                     </div>
 
@@ -291,11 +313,11 @@
     async function loadDefaultLanes() {
         try {
             const [topRated, nowPlaying, upcoming, boxOffice, actionMovies] = await Promise.all([
-                fetch(`${BASE_URL}${laneStates['top-rated-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
-                fetch(`${BASE_URL}${laneStates['now-playing-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`).then(r => r.json()),
-                fetch(`${BASE_URL}${laneStates['upcoming-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`).then(r => r.json()),
-                fetch(`${BASE_URL}${laneStates['boxoffice-films'].endpoint}?api_key=${API_KEY}&language=fr-FR${laneStates['boxoffice-films'].params}&page=1`).then(r => r.json()),
-                fetch(`${BASE_URL}${laneStates['category-films'].endpoint}?api_key=${API_KEY}&language=fr-FR&with_genres=28&page=1`).then(r => r.json())
+                fetch(`${BASE_URL}${laneStates['top-rated-films'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['now-playing-films'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&region=FR&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['upcoming-films'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&region=FR&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['boxoffice-films'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}${laneStates['boxoffice-films'].params}&page=1`).then(r => r.json()),
+                fetch(`${BASE_URL}${laneStates['category-films'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_genres=28&page=1`).then(r => r.json())
             ]);
 
             if (topRated.results && topRated.results[0]) {
@@ -327,7 +349,7 @@
         laneStates['boxoffice-films'].page = 1;
 
         try {
-            const res = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=fr-FR&sort_by=${orderSort}&page=1`).then(r => r.json());
+            const res = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=${orderSort}&page=1`).then(r => r.json());
             if (res.results) {
                 renderLane(res.results, 'boxoffice-films');
             }
@@ -360,7 +382,7 @@
         state.page++;
         
         try {
-            const url = `${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=fr-FR${state.params}&page=${state.page}`;
+            const url = `${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}${state.params}&page=${state.page}`;
             const res = await fetch(url).then(r => r.json());
             
             if (res.results && res.results.length > 0) {
@@ -427,7 +449,7 @@
         if (!container) return;
         try {
             const data = await Promise.all(ids.map(id => 
-                fetch(`${BASE_URL}/collection/${id}?api_key=${API_KEY}&language=fr-FR`).then(r => r.json())
+                fetch(`${BASE_URL}/collection/${id}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.json())
             ));
 
             container.innerHTML = data.map(c => `
@@ -454,7 +476,8 @@
             const query = e.target.value.trim();
             if (query.length < 2) { searchSection.style.display = 'none'; return; }
             searchTimeout = setTimeout(async () => {
-                const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=fr-FR&query=${encodeURIComponent(query)}`).then(r => r.json());
+                const includeAdult = localStorage.getItem("include_adult") === "true";
+                const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&query=${encodeURIComponent(query)}&include_adult=${includeAdult}`).then(r => r.json());
                 if (res.results) {
                     searchSection.style.display = 'block';
                     renderLane(res.results, 'films-search-results', true);
@@ -470,15 +493,17 @@
             const year = document.getElementById('filter-year').value;
             const studio = document.getElementById('filter-studio').value;
             const sort = document.getElementById('filter-sort').value;
+            const origin = document.getElementById('filter-origin').value;
 
-            let queryParams = `api_key=${API_KEY}&language=fr-FR&sort_by=${sort}`;
+            let queryParams = `api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=${sort}`;
             if (genreId) queryParams += `&with_genres=${genreId}`;
             if (year) queryParams += `&primary_release_year=${year}`;
             if (studio) queryParams += `&with_companies=${studio}`;
+            if (origin) queryParams += `&with_origin_country=${origin}`;
 
             // Update lane states for filters
             laneStates['top-rated-films'].endpoint = '/discover/movie';
-            laneStates['top-rated-films'].params = `&sort_by=${sort}${genreId ? '&with_genres='+genreId : ''}${year ? '&primary_release_year='+year : ''}${studio ? '&with_companies='+studio : ''}`;
+            laneStates['top-rated-films'].params = `&sort_by=${sort}${genreId ? '&with_genres='+genreId : ''}${year ? '&primary_release_year='+year : ''}${studio ? '&with_companies='+studio : ''}${origin ? '&with_origin_country='+origin : ''}`;
             laneStates['top-rated-films'].page = 1;
 
             const res = await fetch(`${BASE_URL}/discover/movie?${queryParams}`).then(r => r.json());
@@ -497,6 +522,12 @@
     function renderLane(data, elementId, isSearch = false) {
         const container = document.getElementById(elementId);
         if (!container) return;
+        
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+        data = data.filter(item => {
+            if (includeAdult) return true;
+            return item.adult !== true;
+        });
         
         let html = data.map(item => `
             <div class="premium-card" onclick="window.location.href='movie-details.html?id=${item.id}'">

@@ -199,7 +199,7 @@
 
             // Test 2: Film populaire
             console.log("Test 2: Chargement d'un film populaire");
-            const popularUrl = `${API_CONFIG.URL_BASE}/movie/550?api_key=${API_CONFIG.CLE_API}&language=fr-FR`;
+            const popularUrl = `${API_CONFIG.URL_BASE}/movie/550?api_key=${API_CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
             const popularResponse = await fetch(popularUrl);
 
             if (popularResponse.ok) {
@@ -265,7 +265,7 @@
 
         try {
             console.log(`Test film ID: ${filmId}`);
-            const url = `${API_CONFIG.URL_BASE}/movie/${filmId}?api_key=${API_CONFIG.CLE_API}&language=fr-FR&append_to_response=credits,videos,images`;
+            const url = `${API_CONFIG.URL_BASE}/movie/${filmId}?api_key=${API_CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&append_to_response=credits,videos,images`;
             console.log("URL complète:", url);
 
             const response = await fetch(url);

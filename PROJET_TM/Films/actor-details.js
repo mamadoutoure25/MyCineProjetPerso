@@ -28,14 +28,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!id) return (window.location.href = "../../index.html");
 
     try {
-        const actor = await (await fetch(`${CONFIG.BASE}/person/${id}?api_key=${CONFIG.KEY}&language=fr-FR&append_to_response=movie_credits,tv_credits,external_ids`)).json();
+        const actor = await (await fetch(`${CONFIG.BASE}/person/${id}?api_key=${CONFIG.KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&append_to_response=movie_credits,tv_credits,external_ids`)).json();
         
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+
+        if (actor.adult && !includeAdult) {
+            document.body.innerHTML = `
+                <div class="d-flex flex-column align-items-center justify-content-center vh-100 bg-dark text-white text-center p-4">
+                    <i class="ph ph-warning-circle text-danger mb-3" style="font-size: 4rem;"></i>
+                    <h2 class="fw-bold mb-3">Contenu Adulte Masqué</h2>
+                    <p class="opacity-75 mb-4">Ce contenu est restreint selon vos paramètres de profil.<br>Vous pouvez modifier cela dans vos paramètres.</p>
+                    <button class="btn btn-primary rounded-pill px-4 fw-bold" onclick="history.back()">RETOUR</button>
+                </div>
+            `;
+            return;
+        }
+
         currentActorData = actor;
         actorName = actor.name;
         renderActorHero(actor);
         
-        const allMovies = [...(actor.movie_credits?.cast || []), ...(actor.movie_credits?.crew || [])];
-        const allTV = [...(actor.tv_credits?.cast || []), ...(actor.tv_credits?.crew || [])];
+        let allMovies = [...(actor.movie_credits?.cast || []), ...(actor.movie_credits?.crew || [])];
+        let allTV = [...(actor.tv_credits?.cast || []), ...(actor.tv_credits?.crew || [])];
+
+        if (!includeAdult) {
+            allMovies = allMovies.filter(m => !m.adult);
+            allTV = allTV.filter(m => !m.adult);
+        }
 
         const uniqueMovies = Array.from(new Map(allMovies.map(m => [m.id, m])).values());
         const uniqueTV = Array.from(new Map(allTV.map(m => [m.id, m])).values());
@@ -100,8 +119,13 @@ function renderActorHero(a) {
     if (photo) photo.src = activePhoto;
     if (backdrop) backdrop.src = activePhoto;
 
-    const resetBtn = document.getElementById("btn-reset-photo-side");
-    if (resetBtn) resetBtn.style.display = customPhoto ? "inline-block" : "none";
+    if (!user) {
+        if (document.getElementById("btn-change-photo")) document.getElementById("btn-change-photo").style.display = "none";
+        if (document.getElementById("btn-reset-photo-side")) document.getElementById("btn-reset-photo-side").style.display = "none";
+    } else {
+        const resetBtn = document.getElementById("btn-reset-photo-side");
+        if (resetBtn) resetBtn.style.display = customPhoto ? "inline-block" : "none";
+    }
 
     const bday = a.birthday ? new Date(a.birthday).toLocaleDateString('fr-FR') : "N/A";
     const place = a.place_of_birth || "N/A";
@@ -251,7 +275,8 @@ function renderAuth(a) {
     const c = document.getElementById("auth-section");
     if (!c) return;
     if (a) {
-        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-white text-decoration-none"><div class="fw-bold small">${a.username}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
+        const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><a href="../profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres"><i class="ph ph-gear fs-5"></i></a><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
     } else {
         c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>`;
     }
@@ -427,5 +452,75 @@ async function loadAwardsData(imdbId, containerId, title) {
             </div>
         `;
     }
+}
+
+let photoModalInstance = null;
+
+function ouvrirModalSelectPhoto() {
+    if (!photoModalInstance) {
+        photoModalInstance = new bootstrap.Modal(document.getElementById('photoModal'));
+    }
+    photoModalInstance.show();
+    renderPhotoGallery();
+}
+
+async function renderPhotoGallery() {
+    const gallery = document.getElementById("photo-gallery");
+    gallery.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-accent"></div></div>';
+    try {
+        const res = await fetch(`${CONFIG.BASE}/person/${id}/images?api_key=${CONFIG.KEY}`);
+        const data = await res.json();
+        
+        if (!data.profiles || data.profiles.length === 0) {
+            gallery.innerHTML = '<div class="col-12 text-center py-5 text-muted">Aucune photo alternative disponible.</div>';
+            return;
+        }
+
+        const html = data.profiles.map(img => {
+            const url = CONFIG.HD + img.file_path;
+            const thumbUrl = CONFIG.W500 + img.file_path;
+            return `
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="position-relative" style="cursor:pointer" onclick="changerPhotoActeur('${url}')" onmouseover="this.querySelector('.overlay-choose').style.opacity='1'" onmouseout="this.querySelector('.overlay-choose').style.opacity='0'">
+                        <img src="${thumbUrl}" class="img-fluid rounded-4 shadow-sm" style="aspect-ratio: 2/3; object-fit: cover;">
+                        <div class="overlay-choose position-absolute bg-dark bg-opacity-50 transition d-flex align-items-center justify-content-center rounded-4" style="inset:0; opacity: 0; transition: opacity 0.3s;">
+                            <span class="btn btn-sm btn-light rounded-pill fw-bold">Choisir</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        gallery.innerHTML = html;
+    } catch(e) {
+        console.error(e);
+        gallery.innerHTML = '<div class="col-12 text-center py-5 text-danger">Erreur de chargement.</div>';
+    }
+}
+
+function changerPhotoActeur(url) {
+    localStorage.setItem(`custom_actor_photo_${id}`, url);
+    if (window.saveCustomPoster) {
+        window.saveCustomPoster(id, url, 'person');
+    }
+    
+    document.getElementById("actor-photo").src = url;
+    document.getElementById("hero-backdrop").src = url;
+    document.getElementById("btn-reset-photo-side").style.display = "inline-block";
+    
+    if (photoModalInstance) photoModalInstance.hide();
+    notify("Photo mise à jour avec succès !", "success");
+}
+
+function resetPhotoActeur() {
+    localStorage.removeItem(`custom_actor_photo_${id}`);
+    if (window.deleteCustomPoster) {
+        window.deleteCustomPoster(id, 'person');
+    }
+    
+    const defaultPhoto = currentActorData && currentActorData.profile_path ? CONFIG.HD + currentActorData.profile_path : CONFIG.EMPTY_ACTOR;
+    document.getElementById("actor-photo").src = defaultPhoto;
+    document.getElementById("hero-backdrop").src = defaultPhoto;
+    document.getElementById("btn-reset-photo-side").style.display = "none";
+    notify("Photo réinitialisée.", "info");
 }
 

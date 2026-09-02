@@ -229,7 +229,7 @@ async function chargerDistributeurs() {
                 const mainNetId = d.networkId.split('|')[0];
                 return Promise.all([
                     fetch(`${API_BASE_URL}/network/${mainNetId}?api_key=${API_KEY}`).then(r => r.ok ? r.json() : null).catch(() => null),
-                    fetch(`${API_BASE_URL}/discover/tv?api_key=${API_KEY}&language=fr-FR&with_networks=${d.networkId}&sort_by=popularity.desc&page=1`).then(r => r.ok ? r.json() : null).catch(() => null)
+                    fetch(`${API_BASE_URL}/discover/tv?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_networks=${d.networkId}&sort_by=popularity.desc&page=1`).then(r => r.ok ? r.json() : null).catch(() => null)
                 ]).then(([apiNet, apiSeries]) => {
                     const item = {
                         ...d,
@@ -244,7 +244,7 @@ async function chargerDistributeurs() {
             } else {
                 const compQuery = COMPANY_FAMILIES[d.id] ? COMPANY_FAMILIES[d.id].join('|') : d.id;
                 return Promise.all([
-                    fetch(`${API_BASE_URL}/company/${d.id}?api_key=${API_KEY}&language=fr-FR`).then(r => r.ok ? r.json() : null).catch(() => null),
+                    fetch(`${API_BASE_URL}/company/${d.id}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.ok ? r.json() : null).catch(() => null),
                     fetch(`${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_companies=${compQuery}&sort_by=revenue.desc&page=1`).then(r => r.ok ? r.json() : null).catch(() => null)
                 ]).then(([apiCompany, apiFilms]) => {
                     const item = {
@@ -293,7 +293,8 @@ function renderDistributorsGrid() {
             : `<span class="badge bg-primary rounded-pill px-3 py-1 me-2 x-small fw-bold"><i class="ph ph-film-strip me-1"></i> CINÉMA</span>`;
 
         const topItemsHtml = d.top_items && d.top_items.length > 0
-                    const targetUrl = d.type === 'tv' ? `serie-details.html?id=${m.id}` : `movie-details.html?id=${m.id}`;
+            ? d.top_items.slice(0, 4).map(m => {
+                const targetUrl = d.type === 'tv' ? `serie-details.html?id=${m.id}` : `movie-details.html?id=${m.id}`;
                 const titleText = m.title || m.name;
                 const defaultImg = m.poster_path ? IMG_BASE_URL + m.poster_path : 'https://via.placeholder.com/150x225';
                 const posterSrc = d.type === 'tv' ? defaultImg : (window.getCustomPoster ? window.getCustomPoster(m.id, defaultImg, 'movie') : (localStorage.getItem(`custom_movie_poster_${m.id}`) || defaultImg));
@@ -402,10 +403,10 @@ async function loadDistributorMovies(distributorId, sortMethod) {
     try {
         let res;
         if (distInfo && distInfo.type === 'tv') {
-            res = await fetch(`${API_BASE_URL}/discover/tv?api_key=${API_KEY}&language=fr-FR&with_networks=${distInfo.networkId}&sort_by=${sortMethod}&page=1`).then(r => r.json());
+            res = await fetch(`${API_BASE_URL}/discover/tv?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_networks=${distInfo.networkId}&sort_by=${sortMethod}&page=1`).then(r => r.json());
         } else {
             const compQuery = COMPANY_FAMILIES[distributorId] ? COMPANY_FAMILIES[distributorId].join('|') : distributorId;
-            res = await fetch(`${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=fr-FR&with_companies=${compQuery}&sort_by=${sortMethod}&page=1`).then(r => r.json());
+            res = await fetch(`${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_companies=${compQuery}&sort_by=${sortMethod}&page=1`).then(r => r.json());
         }
 
         if (countEl) {

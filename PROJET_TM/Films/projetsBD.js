@@ -203,7 +203,7 @@ function displayAllMovies(movies) {
 
 async function loadNowPlayingMovies() {
     try {
-        const response = await fetch(`${API_BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=fr-FR&region=FR`);
+        const response = await fetch(`${API_BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&region=FR`);
         if (!response.ok) throw new Error('Erreur lors du chargement des films en lecture');
 
         const data = await response.json();
@@ -432,7 +432,7 @@ function getFilterTitle(filter) {
 
 async function loadNowPlayingFiltered() {
     try {
-        const response = await fetch(`${API_BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`);
+        const response = await fetch(`${API_BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&region=FR&page=1`);
         if (!response.ok) throw new Error('Erreur lors du chargement des films en lecture');
 
         const data = await response.json();

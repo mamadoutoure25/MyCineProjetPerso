@@ -76,7 +76,7 @@
             <img src="PROJET_TM/img/ciné.jpg" class="hero-backdrop" id="main-hero-img">
             <div class="hero-overlay-top"></div>
             <div class="hero-overlay-bottom"></div>
-            <div class="hero-info">
+            <div class="home-hero-info">
                 <h1 class="hero-title" id="main-hero-title">EXPLOREZ LE CINÉMA</h1>
                 <p class="opacity-75 mb-4 fs-5" id="main-hero-desc">Découvrez les dernières sorties, vos classiques préférés et gérez votre collection personnelle.</p>
                 <div class="d-flex gap-3">
@@ -124,8 +124,13 @@
                             <option value="9933">DC Studios</option>
                             <option value="174">Warner Bros. Discovery</option>
                             <option value="213">Netflix</option>
+                            <option value="1024">Prime Video</option>
+                            <option value="49|3186">HBO Max</option>
                             <option value="2739">Disney+</option>
                             <option value="453">Sony Pictures</option>
+                            <option value="2552">Apple TV+</option>
+                            <option value="1112">Crunchyroll</option>
+                            <option value="67|4330">Paramount+</option>
                         </select>
                     </div>
 
@@ -144,6 +149,63 @@
         <div id="search-results-section" style="display: none;">
             <div class="lane-title">RÉSULTATS DE RECHERCHE</div>
             <div id="search-results" class="movie-grid mb-5"></div>
+            <hr class="border-secondary opacity-25 my-5">
+        </div>
+
+        <!-- PLATEFORMES DE STREAMING -->
+        <div class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+                <div class="lane-title mb-0">🎬 PLATEFORMES DE STREAMING</div>
+            </div>
+            <div class="platforms-grid">
+                <div class="platform-card" data-platform="netflix" onclick="filterByPlatform('213', 'Netflix')">
+                    <div id="yt-netflix" class="platform-hover-youtube" data-video-id="cFS4Zcd_kb8"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" class="platform-logo">
+                    <div class="platform-badge">2 817 FILMS & SÉRIES</div>
+                </div>
+
+                <div class="platform-card" data-platform="prime" onclick="filterByPlatform('1024', 'Prime Video')">
+                    <div id="yt-prime" class="platform-hover-youtube" data-video-id="QJNynN61wHA"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png" alt="Prime Video" class="platform-logo">
+                    <div class="platform-badge">2 799 FILMS & SÉRIES</div>
+                </div>
+
+                <div class="platform-card" data-platform="hbomax" onclick="filterByPlatform('49|3186', 'HBO Max')">
+                    <div id="yt-hbomax" class="platform-hover-youtube" data-video-id="PZKqFqXCRyM"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/17/HBO_Max_Logo.svg" alt="HBO Max" class="platform-logo">
+                    <div class="platform-badge">850 FILMS & SÉRIES</div>
+                </div>
+
+                <div class="platform-card" data-platform="disney" onclick="filterByPlatform('2739', 'Disney+')">
+                    <div id="yt-disney" class="platform-hover-youtube" data-video-id="EWxFJlPN8Iw"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" alt="Disney+" class="platform-logo">
+                    <div class="platform-badge">1 152 FILMS & SÉRIES</div>
+                </div>
+
+
+                <div class="platform-card" data-platform="apple" onclick="filterByPlatform('2552', 'Apple TV+')">
+                    <div id="yt-apple" class="platform-hover-youtube" data-video-id="6sX_BfDnyrg"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Apple_TV_Plus_Logo.svg" alt="Apple TV+" class="platform-logo">
+                    <div class="platform-badge">138 FILMS & SÉRIES</div>
+                </div>
+
+                <div class="platform-card" data-platform="crunchyroll" onclick="filterByPlatform('1112', 'Crunchyroll')">
+                    <div id="yt-crunchyroll" class="platform-hover-youtube" data-video-id="jFJjCMPUTpE"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Crunchyroll_Logo.png" alt="Crunchyroll" class="platform-logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Crunchyroll_Logo.png/512px-Crunchyroll_Logo.png'">
+                    <div class="platform-badge">1 200 ANIMÉS</div>
+                </div>
+
+                <div class="platform-card" data-platform="paramount" onclick="filterByPlatform('67|4330', 'Paramount+')">
+                    <div id="yt-paramount" class="platform-hover-youtube" data-video-id="Wl62SgYdj_o"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Paramount%2B_logo.svg" alt="Paramount+" class="platform-logo" onerror="this.outerHTML='<h3 class=\'platform-text-logo\'>Paramount+</h3>'">
+                    <div class="platform-badge">502 FILMS & SÉRIES</div>
+                </div>
+            </div>
+        <div id="platform-results-section" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+                <div class="lane-title mb-0" id="platform-results-title">CONTENU DE LA PLATEFORME</div>
+            </div>
+            <div id="platform-results" class="movie-grid mb-5"></div>
             <hr class="border-secondary opacity-25 my-5">
         </div>
 
@@ -169,7 +231,13 @@
             <div class="lane-title mb-0">BIENTÔT AU CINÉMA</div>
             <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('upcoming-movies')">VOIR PLUS <i class="ph ph-plus"></i></button>
         </div>
-        <div id="upcoming-movies" class="movie-grid"></div>
+        <div id="upcoming-movies" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0">PERSONNALITÉS POPULAIRES</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('popular-persons')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="popular-persons" class="movie-grid"></div>
     </section>
 </main>
 
@@ -190,7 +258,8 @@
         'trending-movies': { page: 1, endpoint: '/trending/movie/week', params: '', type: 'movie' },
         'trending-series': { page: 1, endpoint: '/trending/tv/week', params: '', type: 'tv' },
         'now-playing-movies': { page: 1, endpoint: '/movie/now_playing', params: '&region=FR', type: 'movie' },
-        'upcoming-movies': { page: 1, endpoint: '/movie/upcoming', params: '&region=FR', type: 'movie' }
+        'upcoming-movies': { page: 1, endpoint: '/movie/upcoming', params: '&region=FR', type: 'movie' },
+        'popular-persons': { page: 1, endpoint: '/person/popular', params: '', type: 'person' }
     };
 
     async function loadPremiumHome() {
@@ -208,11 +277,12 @@
     }
 
     async function loadDefaultLanes() {
-        const [movies, series, nowPlaying, upcoming] = await Promise.all([
-            fetch(`${BASE_URL}${laneStates['trending-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
-            fetch(`${BASE_URL}${laneStates['trending-series'].endpoint}?api_key=${API_KEY}&language=fr-FR&page=1`).then(r => r.json()),
-            fetch(`${BASE_URL}${laneStates['now-playing-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`).then(r => r.json()),
-            fetch(`${BASE_URL}${laneStates['upcoming-movies'].endpoint}?api_key=${API_KEY}&language=fr-FR&region=FR&page=1`).then(r => r.json())
+        const [movies, series, nowPlaying, upcoming, persons] = await Promise.all([
+            fetch(`${BASE_URL}${laneStates['trending-movies'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['trending-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['now-playing-movies'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&region=FR&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['upcoming-movies'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&region=FR&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['popular-persons'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json())
         ]);
 
         if(movies.results && movies.results[0]) {
@@ -226,6 +296,7 @@
         if (series.results) renderLane(series.results, 'trending-series', 'tv');
         if (nowPlaying.results) renderLane(nowPlaying.results, 'now-playing-movies', 'movie');
         if (upcoming.results) renderLane(upcoming.results, 'upcoming-movies', 'movie');
+        if (persons.results) renderLane(persons.results, 'popular-persons', 'person');
     }
 
     async function loadMore(laneId) {
@@ -242,7 +313,7 @@
 
         state.page++;
         try {
-            const res = await fetch(`${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=fr-FR${state.params}&page=${state.page}`).then(r => r.json());
+            const res = await fetch(`${BASE_URL}${state.endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}${state.params}&page=${state.page}`).then(r => r.json());
             if (res.results && res.results.length > 0) {
                 appendCards(res.results, laneId, state.type);
             } else {
@@ -263,9 +334,10 @@
         if (!container) return;
         let html = generateCardsHTML(data, type);
 
-        if (laneStates[elementId]) {
+        if (laneStates[elementId] || elementId === 'platform-results') {
+            const onClickAttr = elementId === 'platform-results' ? 'loadMorePlatformResults()' : `loadMore('${elementId}')`;
             html += `
-                <div class="premium-card d-flex align-items-center justify-content-center view-more-card" style="background: rgba(255,255,255,0.03); border: 2px dashed var(--border); cursor: pointer;" onclick="loadMore('${elementId}')">
+                <div class="premium-card d-flex align-items-center justify-content-center view-more-card" style="background: rgba(255,255,255,0.03); border: 2px dashed var(--border); cursor: pointer;" onclick="${onClickAttr}">
                     <div class="text-center">
                         <i class="ph ph-plus-circle fs-1 mb-2 text-accent"></i>
                         <div class="fw-bold small">VOIR PLUS</div>
@@ -292,6 +364,12 @@
     }
 
     function generateCardsHTML(data, type) {
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+        data = data.filter(item => {
+            if (includeAdult) return true;
+            return item.adult !== true;
+        });
+
         const pathPrefix = "PROJET_TM/Films/";
         return data.map(item => {
             const itemType = type === 'multi' ? item.media_type : type;
@@ -344,6 +422,9 @@
                             <div class="x-small opacity-50">MON PROFIL</div>
                         </a>
                     </div>
+                    <a href="PROJET_TM/profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres">
+                        <i class="ph ph-gear fs-5"></i>
+                    </a>
                     <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
                 </div>`;
         } else {
@@ -367,7 +448,8 @@
             const query = e.target.value.trim();
             if (query.length < 2) { searchSection.style.display = 'none'; return; }
             searchTimeout = setTimeout(async () => {
-                const res = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=fr-FR&query=${encodeURIComponent(query)}`).then(r => r.json());
+                const includeAdult = localStorage.getItem("include_adult") === "true";
+                const res = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&query=${encodeURIComponent(query)}&include_adult=${includeAdult}`).then(r => r.json());
                 if (res.results) {
                     searchSection.style.display = 'block';
                     renderLane(res.results, 'search-results', 'multi');
@@ -381,7 +463,8 @@
             const year = selYear.value;
             const studio = selStudio.value;
 
-            let queryParams = `api_key=${API_KEY}&language=fr-FR&sort_by=popularity.desc`;
+            const includeAdult = localStorage.getItem("include_adult") === "true";
+            let queryParams = `api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=popularity.desc&include_adult=${includeAdult}`;
             if (genre) queryParams += `&with_genres=${genre}`;
             if (year) queryParams += type === 'movie' ? `&primary_release_year=${year}` : `&first_air_date_year=${year}`;
             if (studio) queryParams += type === 'movie' ? `&with_companies=${studio}` : `&with_networks=${studio}`;
@@ -415,7 +498,157 @@
         else nav.classList.remove('scrolled');
     };
 
-    document.addEventListener('DOMContentLoaded', loadPremiumHome);
+    // --- Streaming Platform Filter ---
+    window.currentPlatformFilter = { page: 1, companyId: null, loading: false };
+
+    const providerMap = {
+        '213': '8', // Netflix
+        '1024': '119', // Prime Video
+        '49|3186': '384|1899', // HBO Max
+        '2739': '337', // Disney+
+        '2552': '350', // Apple TV+
+        '1112': '283', // Crunchyroll
+        '67|4330': '531' // Paramount+
+    };
+
+    async function getUserRegion() {
+        let region = localStorage.getItem('user_region');
+        if (!region) {
+            try {
+                const res = await fetch('https://get.geojs.io/v1/ip/country.json').then(r => r.json());
+                region = res.country || 'FR';
+                localStorage.setItem('user_region', region);
+            } catch(e) {
+                region = 'FR';
+            }
+        }
+        return region;
+    }
+
+    window.filterByPlatform = async function(companyId, platformName) {
+        window.currentPlatformFilter = { page: 1, companyId: companyId, loading: false };
+        const section = document.getElementById('platform-results-section');
+        const titleEl = document.getElementById('platform-results-title');
+        
+        section.style.display = 'block';
+        titleEl.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span> Chargement ${platformName}...`;
+        section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+        const adultParam = `&include_adult=${includeAdult}`;
+        const region = await getUserRegion();
+        const providerId = providerMap[companyId] || companyId;
+        
+        try {
+            const moviesRes = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=popularity.desc&with_watch_providers=${providerId}&watch_region=${region}${adultParam}&page=1`).then(r => r.json());
+            const tvRes = await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=popularity.desc&with_watch_providers=${providerId}&watch_region=${region}${adultParam}&page=1`).then(r => r.json());
+            
+            let combined = [];
+            if(moviesRes.results) combined = combined.concat(moviesRes.results.map(m => ({...m, media_type: 'movie'})));
+            if(tvRes.results) combined = combined.concat(tvRes.results.map(s => ({...s, media_type: 'tv'})));
+            
+            combined.sort((a, b) => b.popularity - a.popularity);
+            
+            titleEl.textContent = `CONTENU SUR ${platformName.toUpperCase()} (${region})`;
+            renderLane(combined, 'platform-results', 'multi');
+            
+        } catch(e) {
+            console.error(e);
+            titleEl.textContent = `Erreur lors du chargement de ${platformName}`;
+        }
+    }
+
+    window.loadMorePlatformResults = async function() {
+        if (!window.currentPlatformFilter.companyId || window.currentPlatformFilter.loading) return;
+        window.currentPlatformFilter.loading = true;
+        
+        const container = document.getElementById('platform-results');
+        const vCard = container ? container.querySelector('.view-more-card') : null;
+        if (vCard) vCard.innerHTML = `<div class="text-center"><span class="spinner-border text-accent mb-2"></span><div class="fw-bold small">CHARGEMENT...</div></div>`;
+        
+        window.currentPlatformFilter.page++;
+        const page = window.currentPlatformFilter.page;
+        const companyId = window.currentPlatformFilter.companyId;
+        
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+        const adultParam = `&include_adult=${includeAdult}`;
+        const region = await getUserRegion();
+        const providerId = providerMap[companyId] || companyId;
+        
+        try {
+            const moviesRes = await fetch(`${BASE_URL}/discover/movie?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=popularity.desc&with_watch_providers=${providerId}&watch_region=${region}${adultParam}&page=${page}`).then(r => r.json());
+            const tvRes = await fetch(`${BASE_URL}/discover/tv?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=popularity.desc&with_watch_providers=${providerId}&watch_region=${region}${adultParam}&page=${page}`).then(r => r.json());
+            
+            let combined = [];
+            if(moviesRes.results) combined = combined.concat(moviesRes.results.map(m => ({...m, media_type: 'movie'})));
+            if(tvRes.results) combined = combined.concat(tvRes.results.map(s => ({...s, media_type: 'tv'})));
+            
+            if (combined.length > 0) {
+                combined.sort((a, b) => b.popularity - a.popularity);
+                appendCards(combined, 'platform-results', 'multi');
+                if (vCard) vCard.innerHTML = `<div class="text-center"><i class="ph ph-plus-circle fs-1 mb-2 text-accent"></i><div class="fw-bold small">VOIR PLUS</div></div>`;
+            } else {
+                if (vCard) vCard.remove();
+            }
+        } catch(e) {
+            console.error(e);
+            if (vCard) vCard.innerHTML = `<div class="text-center"><i class="ph ph-plus-circle fs-1 mb-2 text-accent"></i><div class="fw-bold small">VOIR PLUS</div></div>`;
+        }
+        window.currentPlatformFilter.loading = false;
+    }
+
+    // Load YouTube Iframe API
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    const ytPlayers = {};
+
+    window.onYouTubeIframeAPIReady = function() {
+        document.querySelectorAll('.platform-hover-youtube').forEach(div => {
+            const videoId = div.dataset.videoId;
+            const platformId = div.id;
+            
+            ytPlayers[platformId] = new YT.Player(platformId, {
+                videoId: videoId,
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'mute': 1,
+                    'modestbranding': 1,
+                    'loop': 1,
+                    'playlist': videoId,
+                    'rel': 0,
+                    'showinfo': 0,
+                    'playsinline': 1,
+                    'enablejsapi': 1
+                }
+            });
+        });
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPremiumHome();
+        
+        document.querySelectorAll('.platform-card').forEach(card => {
+            const platform = card.dataset.platform;
+            const playerId = 'yt-' + platform;
+
+            card.addEventListener('mouseenter', () => {
+                if (ytPlayers[playerId] && typeof ytPlayers[playerId].seekTo === 'function') {
+                    ytPlayers[playerId].seekTo(0);
+                    ytPlayers[playerId].playVideo();
+                }
+            });
+
+            card.addEventListener('mouseleave', () => {
+                if (ytPlayers[playerId] && typeof ytPlayers[playerId].pauseVideo === 'function') {
+                    ytPlayers[playerId].pauseVideo();
+                }
+            });
+        });
+    });
 </script>
 <script src="PROJET_TM/theme.js"></script>
 </body>

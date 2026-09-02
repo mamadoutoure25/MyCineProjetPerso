@@ -70,7 +70,7 @@ async function chargerCollection(id) {
   try {
     showLoading(true)
 
-    const response = await fetch(`${CONFIG.BASE_URL}/collection/${id}?api_key=${CONFIG.API_KEY}&language=fr-FR`)
+    const response = await fetch(`${CONFIG.BASE_URL}/collection/${id}?api_key=${CONFIG.API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`)
 
     if (!response.ok) {
       throw new Error("Collection non trouvée")
@@ -111,7 +111,7 @@ async function fetchCastAndCrew() {
 
     const movieResults = await Promise.all(
       collectionData.parts.map(movie =>
-        fetch(`${CONFIG.BASE_URL}/movie/${movie.id}?api_key=${CONFIG.API_KEY}&language=fr-FR&append_to_response=credits`)
+        fetch(`${CONFIG.BASE_URL}/movie/${movie.id}?api_key=${CONFIG.API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&append_to_response=credits`)
           .then(r => r.ok ? r.json() : null)
           .catch(() => null)
       )
@@ -157,19 +157,31 @@ function afficherCollection(collection) {
     heroSection.style.backgroundImage = `url(${CONFIG.IMAGE_BASE_URL}/${CONFIG.BACKDROP_SIZE}${collection.backdrop_path})`
   }
 
+  const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+  const user = auth ? (auth.userId || auth.id) : null;
+
   const poster = document.getElementById("collection-poster")
-  const customPoster = localStorage.getItem(`custom_collection_poster_${collection.id}`)
+  let customPoster = localStorage.getItem(`custom_collection_poster_${collection.id}`)
+  if (window.getCustomPoster) {
+      customPoster = window.getCustomPoster(collection.id, customPoster, 'collection');
+  }
   const resetBtn = document.getElementById("btn-reset-poster")
+  const changeBtn = document.getElementById("btn-change-poster")
+
+  if (!user) {
+      if (changeBtn) changeBtn.style.display = "none";
+      if (resetBtn) resetBtn.style.display = "none";
+  } else {
+      if (resetBtn) resetBtn.style.display = customPoster ? "inline-block" : "none";
+  }
 
   if (customPoster) {
     if (poster) poster.src = customPoster
-    if (resetBtn) resetBtn.style.display = "inline-block"
   } else if (collection.poster_path) {
     if (poster) {
       poster.src = `${CONFIG.IMAGE_BASE_URL}/${CONFIG.POSTER_SIZE}${collection.poster_path}`
       poster.alt = collection.name
     }
-    if (resetBtn) resetBtn.style.display = "none"
   }
 
   document.getElementById("collection-title").textContent = collection.name

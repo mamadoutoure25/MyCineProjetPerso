@@ -68,6 +68,20 @@ async function initPage() {
         await loadUserCustomPoster();
         const movie = await fetchData(`/movie/${id}`, "append_to_response=credits,release_dates,watch/providers,videos,images,external_ids");
         if (!movie) throw new Error("Film introuvable");
+        
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+        if (movie.adult && !includeAdult) {
+            document.body.innerHTML = `
+                <div class="d-flex flex-column align-items-center justify-content-center vh-100 bg-dark text-white text-center p-4">
+                    <i class="ph ph-warning-circle text-danger mb-3" style="font-size: 4rem;"></i>
+                    <h2 class="fw-bold mb-3">Contenu Adulte Masqué</h2>
+                    <p class="opacity-75 mb-4">Ce contenu est restreint selon vos paramètres de profil.<br>Vous pouvez modifier cela dans vos paramètres.</p>
+                    <button class="btn btn-primary rounded-pill px-4 fw-bold" onclick="history.back()">RETOUR</button>
+                </div>
+            `;
+            return;
+        }
+        
         currentMovieData = movie;
 
         renderHero(movie);
@@ -103,7 +117,7 @@ if (document.readyState === "loading") {
  * Helpers
  */
 async function fetchData(endpoint, params = "") {
-    const url = `${CONFIG.BASE}${endpoint}?api_key=${CONFIG.KEY}&language=fr-FR&${params}`;
+    const url = `${CONFIG.BASE}${endpoint}?api_key=${CONFIG.KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&${params}`;
     const res = await fetch(url);
     return res.ok ? res.json() : null;
 }
@@ -133,7 +147,14 @@ function renderHero(m) {
     const activePoster = customMoviePoster || defaultPoster;
     if (el("movie-poster-img")) el("movie-poster-img").src = activePoster;
     if (el("side-poster-item")) el("side-poster-item").classList.remove("d-none");
-    if (el("btn-reset-poster-side")) el("btn-reset-poster-side").style.display = customMoviePoster ? "inline-block" : "none";
+    
+    if (!user) {
+        if (el("change-poster-btn")) el("change-poster-btn").style.display = "none";
+        if (el("btn-change-poster-side")) el("btn-change-poster-side").style.display = "none";
+        if (el("btn-reset-poster-side")) el("btn-reset-poster-side").style.display = "none";
+    } else {
+        if (el("btn-reset-poster-side")) el("btn-reset-poster-side").style.display = customMoviePoster ? "inline-block" : "none";
+    }
 
     const year = m.release_date ? new Date(m.release_date).getFullYear() : "";
     const runtime = m.runtime ? `${m.runtime} min` : "";
@@ -608,7 +629,7 @@ function renderAuth(a) {
     if (!c) return;
     if (a) {
         const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
-        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
+        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><a href="../profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres"><i class="ph ph-gear fs-5"></i></a><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
     } else {
         c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold">CONNEXION</a>`;
     }
@@ -814,11 +835,21 @@ async function changerAfficheFilm(posterUrl) {
     customMoviePoster = posterUrl;
     localStorage.setItem(`custom_movie_poster_${id}`, posterUrl);
 
-    const imgEl = document.getElementById("movie-poster-img");
-    if (imgEl) imgEl.src = posterUrl;
+    const sideItem = document.getElementById("side-poster-item");
+    if (sideItem) sideItem.classList.remove("d-none");
+    
+    if (!user) {
+        const changePosterBtnHero = document.getElementById("change-poster-btn");
+        const changePosterBtnSide = document.getElementById("btn-change-poster-side");
+        if (changePosterBtnHero) changePosterBtnHero.style.display = "none";
+        if (changePosterBtnSide) changePosterBtnSide.style.display = "none";
+    }
 
     const resetBtn = document.getElementById("btn-reset-poster-side");
-    if (resetBtn) resetBtn.style.display = "inline-block";
+    if (resetBtn) resetBtn.style.display = (user && customMoviePoster) ? "inline-block" : "none";
+
+    const imgEl = document.getElementById("movie-poster-img");
+    if (imgEl) imgEl.src = posterUrl;
 
     // Fermer la modale si ouverte
     const modalEl = document.getElementById("posterModal");

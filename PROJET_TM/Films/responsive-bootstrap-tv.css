@@ -1,0 +1,256 @@
+/* ============================================================
+   MYCINÉ - BOOTSTRAP & ULTRA-RESPONSIVE SYSTEM (PC, TV, MOBILE)
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. VARIABLES & TYPOGRAPHIE FLUIDE
+   ------------------------------------------------------------ */
+:root {
+    --tv-focus-glow: 0 0 25px rgba(167, 139, 250, 0.8), 0 0 50px rgba(167, 139, 250, 0.4);
+    --tv-scale-hover: scale(1.08);
+    --container-max-tv: 2200px;
+}
+
+/* Typographie Adaptative Fluid (Mobile -> PC -> TV) */
+h1, .hero-title {
+    font-size: clamp(1.2rem, 2.4vw, 2.0rem);
+}
+
+h2, .section-title {
+    font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+}
+
+h3, .card-title {
+    font-size: clamp(0.9rem, 1.2vw + 0.5rem, 1.5rem);
+}
+
+/* Images et médias fluides */
+img, svg, video {
+    max-width: 100%;
+    height: auto;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+/* ------------------------------------------------------------
+   2. ACCESSIBILITÉ & NAVIGATION TV (Télécommande / D-Pad)
+   ------------------------------------------------------------ */
+:focus-visible {
+    outline: 3px solid var(--accent, #a78bfa) !important;
+    outline-offset: 4px !important;
+    box-shadow: var(--tv-focus-glow) !important;
+    transition: transform 0.2s ease, outline 0.2s ease;
+}
+
+.premium-card:focus-visible,
+.btn:focus-visible,
+.nav-link:focus-visible {
+    transform: var(--tv-scale-hover) !important;
+    z-index: 100;
+}
+
+/* ------------------------------------------------------------
+   3. SYSTEME DE GRILLE ULTRA-RESPONSIVE (.movie-grid)
+   ------------------------------------------------------------ */
+.movie-grid,
+.poster-grid {
+    display: grid;
+    gap: 20px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+/* TV & Ultra-Wide (4K / 8K / Smart TV) */
+@media (min-width: 2560px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(10, 1fr) !important;
+        gap: 28px !important;
+    }
+}
+
+@media (min-width: 2200px) and (max-width: 2559px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(9, 1fr) !important;
+        gap: 24px !important;
+    }
+}
+
+@media (min-width: 1920px) and (max-width: 2199px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(8, 1fr) !important;
+        gap: 22px !important;
+    }
+}
+
+@media (min-width: 1600px) and (max-width: 1919px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(7, 1fr) !important;
+        gap: 20px !important;
+    }
+}
+
+/* PC Desktop & Laptops */
+@media (min-width: 1366px) and (max-width: 1599px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(6, 1fr) !important;
+        gap: 20px !important;
+    }
+}
+
+@media (min-width: 1100px) and (max-width: 1365px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 18px !important;
+    }
+}
+
+@media (min-width: 850px) and (max-width: 1099px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 16px !important;
+    }
+}
+
+/* Tablettes */
+@media (min-width: 576px) and (max-width: 849px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 14px !important;
+    }
+}
+
+/* Mobile & Petits Écrans */
+@media (max-width: 575px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+        padding: 10px 0;
+    }
+
+    .movie-grid .collection-card {
+        grid-column: span 2 !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .movie-grid, .poster-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+}
+
+/* ------------------------------------------------------------
+   4. CONTENEURS BOOTSTRAP ADAPTATIFS SUR TV
+   ------------------------------------------------------------ */
+@media (min-width: 1920px) {
+    .container, .container-lg, .container-xl, .container-xxl {
+        max-width: var(--container-max-tv) !important;
+        padding-left: 40px !important;
+        padding-right: 40px !important;
+    }
+}
+
+/* ------------------------------------------------------------
+   5. BARRE DE NAVIGATION RESPONSIVE BOOTSTRAP (PC/TV/MOBILE)
+   ------------------------------------------------------------ */
+.navbar {
+    transition: background-color 0.3s ease, padding 0.3s ease;
+}
+
+@media (max-width: 991px) {
+    .navbar {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .navbar-collapse {
+        background: rgba(10, 10, 15, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        padding: 20px;
+        border-radius: 20px;
+        margin-top: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .navbar-nav {
+        align-items: center;
+        text-align: center;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 10px 0;
+        font-size: 1.1rem;
+    }
+}
+
+/* ------------------------------------------------------------
+   6. SCROLLERS HORIZONTAUX & TACTILES (.h-scroller)
+   ------------------------------------------------------------ */
+.h-scroller {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 15px 5px 25px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.h-scroller::-webkit-scrollbar {
+    display: none;
+}
+
+@media (max-width: 575px) {
+    .h-scroller {
+        gap: 12px;
+        padding-bottom: 15px;
+    }
+}
+
+/* ------------------------------------------------------------
+   7. BANNÈRES HERO & SECTION HEADERS
+   ------------------------------------------------------------ */
+@media (max-width: 767px) {
+    .hero-slider {
+        padding: 90px 0 30px !important;
+    }
+
+    .hero-info {
+        padding: 20px 15px !important;
+    }
+
+    .hero-info .d-flex {
+        flex-direction: column;
+        gap: 10px !important;
+    }
+
+    .hero-info .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ------------------------------------------------------------
+   8. COMPOSANTS DE FILTRES ET RECHERCHE RESPONSIVES
+   ------------------------------------------------------------ */
+.filters-bar, .search-filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+@media (max-width: 767px) {
+    .filters-bar, .search-filter-box {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filters-bar > *, .search-filter-box > * {
+        width: 100% !important;
+    }
+}

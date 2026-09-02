@@ -60,6 +60,9 @@ async function initialiserProfil() {
                         <div class="x-small opacity-50">MON PROFIL</div>
                     </a>
                 </div>
+                <a href="../profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres">
+                    <i class="ph ph-gear fs-5"></i>
+                </a>
                 <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.href='../connexion/connexion.html';" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button>
             </div>`;
     }
@@ -92,7 +95,7 @@ async function recupererDetails(id, type) {
     const key = `${type}_${id}`;
     if (cacheContenu.has(key)) return cacheContenu.get(key);
     try {
-        const d = await fetch(`${CONFIG.URL_BASE}/${type}/${id}?api_key=${CONFIG.CLE_API}&language=fr-FR`).then(r => r.json());
+        const d = await fetch(`${CONFIG.URL_BASE}/${type}/${id}?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.json());
         d.media_type = type; // Inject type for filtering
         cacheContenu.set(key, d);
         return d;
@@ -182,7 +185,7 @@ async function chargerActeurs(uid) {
         const res = await fetch(`favorite-actors.php?user_id=${uid}&_t=${Date.now()}`, { cache: 'no-cache' }).then(r => r.json());
         if (res.success && res.favorite_actors) {
             ETAT.acteursFavorisDetails = await Promise.all(res.favorite_actors.map(a => 
-                fetch(`${CONFIG.URL_BASE}/person/${a.tmdb_id}?api_key=${CONFIG.CLE_API}&language=fr-FR`).then(r => r.json())
+                fetch(`${CONFIG.URL_BASE}/person/${a.tmdb_id}?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.json())
             ));
             renderActeurs(ETAT.acteursFavorisDetails);
         }

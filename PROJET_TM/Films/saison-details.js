@@ -52,14 +52,27 @@ async function initPage() {
 
     try {
         const res = await Promise.allSettled([
-            fetch(`${CONFIG.BASE}/tv/${serieId}?api_key=${CONFIG.KEY}&language=fr-FR&append_to_response=credits,aggregate_credits`).then(r => r.json()),
-            fetch(`${CONFIG.BASE}/tv/${serieId}/season/${seasonNum}?api_key=${CONFIG.KEY}&language=fr-FR`).then(r => r.json()),
-            fetch(`${CONFIG.BASE}/tv/${serieId}/season/${seasonNum}/credits?api_key=${CONFIG.KEY}&language=fr-FR`).then(r => r.json())
+            fetch(`${CONFIG.BASE}/tv/${serieId}?api_key=${CONFIG.KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&append_to_response=credits,aggregate_credits`).then(r => r.json()),
+            fetch(`${CONFIG.BASE}/tv/${serieId}/season/${seasonNum}?api_key=${CONFIG.KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.json()),
+            fetch(`${CONFIG.BASE}/tv/${serieId}/season/${seasonNum}/credits?api_key=${CONFIG.KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.json())
         ]);
 
         if (res[0].status === 'fulfilled') serie = res[0].value || {};
         if (res[1].status === 'fulfilled') season = res[1].value || {};
         if (res[2].status === 'fulfilled') credits = res[2].value || { cast: [] };
+
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+        if (serie.adult && !includeAdult) {
+            document.body.innerHTML = `
+                <div class="d-flex flex-column align-items-center justify-content-center vh-100 bg-dark text-white text-center p-4">
+                    <i class="ph ph-warning-circle text-danger mb-3" style="font-size: 4rem;"></i>
+                    <h2 class="fw-bold mb-3">Contenu Adulte Masqué</h2>
+                    <p class="opacity-75 mb-4">Ce contenu est restreint selon vos paramètres de profil.<br>Vous pouvez modifier cela dans vos paramètres.</p>
+                    <button class="btn btn-primary rounded-pill px-4 fw-bold" onclick="history.back()">RETOUR</button>
+                </div>
+            `;
+            return;
+        }
 
     } catch (e) {
         console.error("Fetch error:", e);
@@ -205,7 +218,7 @@ function renderAuth(a) {
     if (!c) return;
     if (a) {
         const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
-        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
+        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><a href="../profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres"><i class="ph ph-gear fs-5"></i></a><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
     } else {
         c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold">CONNEXION</a>`;
     }

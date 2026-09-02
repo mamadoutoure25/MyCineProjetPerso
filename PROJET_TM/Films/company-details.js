@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function chargerDetailsCompagnie(companyId) {
     try {
         // Charger les détails de la société
-        const urlCompany = `${API_BASE_URL}/company/${companyId}?api_key=${API_KEY}&language=fr-FR`;
+        const urlCompany = `${API_BASE_URL}/company/${companyId}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
         const dataCompany = await fetch(urlCompany).then(r => r.json());
 
         if (dataCompany.id) {
@@ -151,7 +151,7 @@ async function chargerFilmsCompagnie(companyId) {
         if (loadingDiv) loadingDiv.style.display = 'block';
         if (containerDiv) containerDiv.style.display = 'none';
 
-        const urlFilms1 = `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=fr-FR&with_companies=${companyId}&sort_by=popularity.desc&page=1`;
+        const urlFilms1 = `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_companies=${companyId}&sort_by=popularity.desc&page=1`;
         const dataFilms1 = await fetch(urlFilms1).then(r => r.json());
 
         if (dataFilms1.results && dataFilms1.results.length > 0) {
@@ -163,7 +163,7 @@ async function chargerFilmsCompagnie(companyId) {
 
             for (currentPage = 2; currentPage <= totalPages; currentPage++) {
                 try {
-                    const urlFilmsNext = `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=fr-FR&with_companies=${companyId}&sort_by=popularity.desc&page=${currentPage}`;
+                    const urlFilmsNext = `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_companies=${companyId}&sort_by=popularity.desc&page=${currentPage}`;
                     const dataFilmsNext = await fetch(urlFilmsNext).then(r => r.json());
 
                     if (dataFilmsNext.results && dataFilmsNext.results.length > 0) {
@@ -332,7 +332,7 @@ function afficherImagesCompagnie(logos) {
  */
 async function chargerSocieteMere(parentCompanyId) {
     try {
-        const urlParent = `${API_BASE_URL}/company/${parentCompanyId}?api_key=${API_KEY}&language=fr-FR`;
+        const urlParent = `${API_BASE_URL}/company/${parentCompanyId}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
         const dataParent = await fetch(urlParent).then(r => r.json());
         cache.parentCompany = dataParent;
     } catch (error) {

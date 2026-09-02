@@ -218,7 +218,7 @@ async function recupererDonnees(url, idRequete = "") {
 
 // Gestion des genres
 async function recupererGenres() {
-    const url = `${CONFIG.URL_BASE}/genre/movie/list?api_key=${CONFIG.CLE_API}&language=fr-FR`;
+    const url = `${CONFIG.URL_BASE}/genre/movie/list?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
     const donnees = await recupererDonnees(url, "recupererGenres");
 
     if (donnees?.genres) {
@@ -276,7 +276,7 @@ async function afficherCarrouselGenres() {
 }
 
 async function getImageGenre(genreId) {
-    const url = `${CONFIG.URL_BASE}/discover/movie?api_key=${CONFIG.CLE_API}&language=fr-FR&with_genres=${genreId}&sort_by=popularity.desc&page=1`;
+    const url = `${CONFIG.URL_BASE}/discover/movie?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_genres=${genreId}&sort_by=popularity.desc&page=1`;
     const data = await recupererDonnees(url, `imageGenre_${genreId}`);
 
     if (data?.results?.length > 0) {
@@ -539,12 +539,14 @@ async function gererRechercheTempsReel(e) {
 }
 
 async function rechercherFilms(requete) {
-    const url = `${CONFIG.URL_BASE}/search/movie?api_key=${CONFIG.CLE_API}&language=fr-FR&query=${encodeURIComponent(requete)}&page=1`;
+    const includeAdult = localStorage.getItem("include_adult") === "true";
+    const url = `${CONFIG.URL_BASE}/search/movie?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&query=${encodeURIComponent(requete)}&page=1&include_adult=${includeAdult}`;
     return await recupererDonnees(url, "rechercheFilms");
 }
 
 async function rechercherPersonnes(requete) {
-    const url = `${CONFIG.URL_BASE}/search/person?api_key=${CONFIG.CLE_API}&language=fr-FR&query=${encodeURIComponent(requete)}&page=1`;
+    const includeAdult = localStorage.getItem("include_adult") === "true";
+    const url = `${CONFIG.URL_BASE}/search/person?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&query=${encodeURIComponent(requete)}&page=1&include_adult=${includeAdult}`;
     return await recupererDonnees(url, "recherchePersonnes");
 }
 
@@ -699,35 +701,35 @@ function configurerEcouteursCartesFilms() {
 async function chargerDonneesAccueil() {
     try {
         // Films en lecture actuellement
-        const urlLectureEnCours = `${CONFIG.URL_BASE}/movie/now_playing?api_key=${CONFIG.CLE_API}&language=fr-FR&region=FR`;
+        const urlLectureEnCours = `${CONFIG.URL_BASE}/movie/now_playing?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&region=FR`;
         const donneesLectureEnCours = await recupererDonnees(urlLectureEnCours, "now_playing");
         if (donneesLectureEnCours?.results) {
             afficherFilms(DOM.carrouselLectureEnCours, donneesLectureEnCours.results.slice(0, 250),true);
         }
 
         // Films tendances
-        const urlTendances = `${CONFIG.URL_BASE}/trending/movie/day?api_key=${CONFIG.CLE_API}&language=fr-FR`;
+        const urlTendances = `${CONFIG.URL_BASE}/trending/movie/day?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
         const donneesTendances = await recupererDonnees(urlTendances, "tendances");
         if (donneesTendances?.results) {
             afficherFilms(DOM.carrouselTendances, donneesTendances.results.slice(0, 250), true);
         }
 
         // Films populaires
-        const urlPopulaires = `${CONFIG.URL_BASE}/movie/popular?api_key=${CONFIG.CLE_API}&language=fr-FR`;
+        const urlPopulaires = `${CONFIG.URL_BASE}/movie/popular?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
         const donneesPopulaires = await recupererDonnees(urlPopulaires, "populaires");
         if (donneesPopulaires?.results) {
             afficherFilms(DOM.filmsPopulaires, donneesPopulaires.results.slice(0, 250));
         }
 
         // Films mieux notés
-        const urlMieuxNotes = `${CONFIG.URL_BASE}/movie/top_rated?api_key=${CONFIG.CLE_API}&language=fr-FR`;
+        const urlMieuxNotes = `${CONFIG.URL_BASE}/movie/top_rated?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
         const donneesMieuxNotes = await recupererDonnees(urlMieuxNotes, "mieux_notes");
         if (donneesMieuxNotes?.results) {
             afficherFilms(DOM.filmsMieuxNotes, donneesMieuxNotes.results.slice(0, 250));
         }
 
         // Films à venir
-        const urlAVenir = `${CONFIG.URL_BASE}/movie/upcoming?api_key=${CONFIG.CLE_API}&language=fr-FR`;
+        const urlAVenir = `${CONFIG.URL_BASE}/movie/upcoming?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
         const donneesAVenir = await recupererDonnees(urlAVenir, "a_venir");
         if (donneesAVenir?.results) {
             afficherFilms(DOM.filmsAVenir, donneesAVenir.results.slice(0, 250));
@@ -902,7 +904,7 @@ async function chargerFilmsFiltres(type) {
 
         if (type === "discover") {
             // Filtres combinés - charger 3 pages pour obtenir ~50 films
-            const urlBase = `${CONFIG.URL_BASE}/discover/movie?api_key=${CONFIG.CLE_API}&language=fr-FR&sort_by=popularity.desc`;
+            const urlBase = `${CONFIG.URL_BASE}/discover/movie?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&sort_by=popularity.desc`;
 
             if (ETAT_APPLICATION.genreActuel) {
                 url = urlBase + `&with_genres=${ETAT_APPLICATION.genreActuel}`;
@@ -931,11 +933,11 @@ async function chargerFilmsFiltres(type) {
         } else {
             // Filtres prédéfinis
             const labelsFiltres = {
-                'trending': { nom: 'Tendances', urlBase: `${CONFIG.URL_BASE}/trending/movie/day?api_key=${CONFIG.CLE_API}&language=fr-FR` },
-                'now_playing': { nom: 'Lecture en cours', urlBase: `${CONFIG.URL_BASE}/movie/now_playing?api_key=${CONFIG.CLE_API}&language=fr-FR&region=FR` },
-                'popular': { nom: 'Populaires', urlBase: `${CONFIG.URL_BASE}/movie/popular?api_key=${CONFIG.CLE_API}&language=fr-FR` },
-                'top_rated': { nom: 'Mieux notés', urlBase: `${CONFIG.URL_BASE}/movie/top_rated?api_key=${CONFIG.CLE_API}&language=fr-FR` },
-                'upcoming': { nom: 'À venir', urlBase: `${CONFIG.URL_BASE}/movie/upcoming?api_key=${CONFIG.CLE_API}&language=fr-FR` }
+                'trending': { nom: 'Tendances', urlBase: `${CONFIG.URL_BASE}/trending/movie/day?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}` },
+                'now_playing': { nom: 'Lecture en cours', urlBase: `${CONFIG.URL_BASE}/movie/now_playing?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&region=FR` },
+                'popular': { nom: 'Populaires', urlBase: `${CONFIG.URL_BASE}/movie/popular?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}` },
+                'top_rated': { nom: 'Mieux notés', urlBase: `${CONFIG.URL_BASE}/movie/top_rated?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}` },
+                'upcoming': { nom: 'À venir', urlBase: `${CONFIG.URL_BASE}/movie/upcoming?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}` }
             };
 
             if (labelsFiltres[type]) {

@@ -117,7 +117,7 @@ async function chargerSocietes() {
 
         const fetchPromises = COMPANIES_LIST.map(company =>
             Promise.all([
-                fetch(`${API_BASE_URL}/company/${company.id}?api_key=${API_KEY}&language=fr-FR`).then(r => r.ok ? r.json() : null).catch(() => null),
+                fetch(`${API_BASE_URL}/company/${company.id}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.ok ? r.json() : null).catch(() => null),
                 fetch(`${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_companies=${company.id}&page=1`).then(r => r.ok ? r.json() : null).catch(() => null)
             ]).then(([data, dataFilms]) => {
                 if (data && data.id) {

@@ -178,7 +178,7 @@ async function recupererDonnees(url, idRequete) {
  * Fonctions de récupération des données
  */
 async function recupererGenres() {
-  const url = `${CONFIG.URL_BASE}/genre/tv/list?api_key=${CONFIG.CLE_API}&language=fr-FR`
+  const url = `${CONFIG.URL_BASE}/genre/tv/list?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`
   const donnees = await recupererDonnees(url, "recupererGenres")
   if (donnees) {
     ETAT_APPLICATION.genres = donnees.genres
@@ -210,19 +210,19 @@ async function recupererSocietes() {
 }
 
 async function recupererSeries(type, page = 1) {
-  const url = `${CONFIG.URL_BASE}/tv/${type}?api_key=${CONFIG.CLE_API}&language=fr-FR&page=${page}`
+  const url = `${CONFIG.URL_BASE}/tv/${type}?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=${page}`
   console.log(`Requête API pour ${type}: ${url}`)
   return await recupererDonnees(url, `recupererSeries-${type}-${page}`)
 }
 
 async function recupererTendances(page = 1) {
-  const url = `${CONFIG.URL_BASE}/trending/tv/week?api_key=${CONFIG.CLE_API}&language=fr-FR&page=${page}`
+  const url = `${CONFIG.URL_BASE}/trending/tv/week?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=${page}`
   console.log(`Requête API pour tendances: ${url}`)
   return await recupererDonnees(url, `recupererTendances-${page}`)
 }
 
 async function recupererSeriesFiltresCombines(idGenre, annee, idSociete, page = 1) {
-  let url = `${CONFIG.URL_BASE}/discover/tv?api_key=${CONFIG.CLE_API}&language=fr-FR&page=${page}`
+  let url = `${CONFIG.URL_BASE}/discover/tv?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=${page}`
   if (idGenre) url += `&with_genres=${idGenre}`
   if (annee) {
     if (annee.includes("-")) {
@@ -240,12 +240,13 @@ async function recupererSeriesFiltresCombines(idGenre, annee, idSociete, page = 
 }
 
 async function rechercherSeries(requete, page = 1) {
-  const url = `${CONFIG.URL_BASE}/search/tv?api_key=${CONFIG.CLE_API}&language=fr-FR&query=${encodeURIComponent(requete)}&page=${page}`
+  const includeAdult = localStorage.getItem("include_adult") === "true";
+  const url = `${CONFIG.URL_BASE}/search/tv?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&query=${encodeURIComponent(requete)}&page=${page}&include_adult=${includeAdult}`
   return await recupererDonnees(url, `rechercherSeries-${requete}-${page}`)
 }
 
 async function recupererDetailsSerie(id) {
-  const url = `${CONFIG.URL_BASE}/tv/${id}?api_key=${CONFIG.CLE_API}&language=fr-FR&append_to_response=credits,videos,watch/providers`
+  const url = `${CONFIG.URL_BASE}/tv/${id}?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&append_to_response=credits,videos,watch/providers`
   return await recupererDonnees(url, `recupererDetailsSerie-${id}`)
 }
 

@@ -90,7 +90,7 @@ async function chargerActeursFavoris(userId) {
 
     const details = await Promise.all(
         list.map(async (a) => {
-            const r = await fetch(`${CONFIG.URL_BASE}/person/${a.id}?api_key=${CONFIG.CLE_API}&language=fr-FR`);
+            const r = await fetch(`${CONFIG.URL_BASE}/person/${a.id}?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`);
             return r.ok ? await r.json() : null;
         })
     );

@@ -16,6 +16,17 @@ const CONFIG = {
 
 const id = new URLSearchParams(window.location.search).get("id");
 let user = null;
+let currentSerieData = null;
+let customSeriePoster = null;
+
+function getAuthHeaders() {
+    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
+    const headers = { 'Content-Type': 'application/json' };
+    if (auth && auth.token) {
+        headers['Authorization'] = `Bearer ${auth.token}`;
+    }
+    return headers;
+}
 
 async function initPage() {
     const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
@@ -26,12 +37,34 @@ async function initPage() {
 
     try {
         const [serie, contentRatings] = await Promise.all([
-            fetch(`${CONFIG.BASE}/tv/${id}?api_key=${CONFIG.KEY}&language=fr-FR&append_to_response=credits,aggregate_credits,watch/providers,videos,images,external_ids`).then(r => r.json()),
+            fetch(`${CONFIG.BASE}/tv/${id}?api_key=${CONFIG.KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&append_to_response=credits,aggregate_credits,watch/providers,videos,images,external_ids`).then(r => r.json()),
             fetch(`${CONFIG.BASE}/tv/${id}/content_ratings?api_key=${CONFIG.KEY}`).then(r => r.json())
         ]);
         
         serie.content_ratings = contentRatings;
         
+        const includeAdult = localStorage.getItem("include_adult") === "true";
+        if (serie.adult && !includeAdult) {
+            document.body.innerHTML = `
+                <div class="d-flex flex-column align-items-center justify-content-center vh-100 bg-dark text-white text-center p-4">
+                    <i class="ph ph-warning-circle text-danger mb-3" style="font-size: 4rem;"></i>
+                    <h2 class="fw-bold mb-3">Contenu Adulte Masqué</h2>
+                    <p class="opacity-75 mb-4">Ce contenu est restreint selon vos paramètres de profil.<br>Vous pouvez modifier cela dans vos paramètres.</p>
+                    <button class="btn btn-primary rounded-pill px-4 fw-bold" onclick="history.back()">RETOUR</button>
+                </div>
+            `;
+            return;
+        }
+
+        currentSerieData = serie;
+        
+        // Initialiser customSeriePoster depuis posterSync s'il est là
+        if (typeof window.getCustomPoster === 'function') {
+            customSeriePoster = window.getCustomPoster(id, null, 'tv');
+        } else {
+            customSeriePoster = localStorage.getItem(`custom_movie_poster_${id}`) || null;
+        }
+
         renderHero(serie);
         renderSeasons(serie.seasons);
         const castList = (serie.credits?.cast && serie.credits.cast.length > 0)
@@ -65,6 +98,23 @@ function renderHero(s) {
     document.getElementById("breadcrumb-title").textContent = s.name;
     document.getElementById("serie-overview").textContent = s.overview || "Synopsis non disponible.";
     document.getElementById("hero-backdrop").src = CONFIG.ORIG + s.backdrop_path;
+
+    const defaultPoster = s.poster_path ? CONFIG.W500 + s.poster_path : CONFIG.EMPTY_POSTER;
+    const activePoster = customSeriePoster || defaultPoster;
+    const imgEl = document.getElementById("serie-poster-img");
+    if (imgEl) imgEl.src = activePoster;
+    
+    const sidePosterItem = document.getElementById("side-poster-item");
+    if (sidePosterItem) sidePosterItem.classList.remove("d-none");
+    
+    if (!user) {
+        if (document.getElementById("change-poster-btn")) document.getElementById("change-poster-btn").style.display = "none";
+        if (document.getElementById("btn-change-poster-side")) document.getElementById("btn-change-poster-side").style.display = "none";
+        if (document.getElementById("btn-reset-poster-side")) document.getElementById("btn-reset-poster-side").style.display = "none";
+    } else {
+        const resetBtn = document.getElementById("btn-reset-poster-side");
+        if (resetBtn) resetBtn.style.display = customSeriePoster ? "inline-block" : "none";
+    }
 
     const year = s.first_air_date ? new Date(s.first_air_date).getFullYear() : "";
     const seasons = s.number_of_seasons ? `${s.number_of_seasons} Saisons` : "";
@@ -104,7 +154,7 @@ function renderHero(s) {
         statsCert.textContent = cert ? cert : "Tous publics";
     }
 
-    const studio = s.production_companies?.[0];
+    const studio = (s.networks && s.networks.length > 0) ? s.networks[0] : s.production_companies?.[0];
     if (studio) {
         document.getElementById("studio-tag").innerHTML = `<div class="studio-icon">${studio.logo_path ? `<img src="${CONFIG.W500}${studio.logo_path}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span>${studio.name[0]}</span>`}</div><span class="fw-bold">${studio.name.toUpperCase()}</span>`;
     }
@@ -242,17 +292,31 @@ function renderGallery(imgs) {
         const c = document.getElementById(gridId);
         if (!c) return;
         if (!items?.length) return (c.innerHTML = "<p class='p-5 opacity-50 text-center w-100'>Aucun média disponible.</p>");
-        c.innerHTML = items.slice(0, 12).map((im, i) => `
-            <div class="premium-card ${isPost ? '' : 'collection-card'}">
-                <img src="${CONFIG.HD}${im.file_path}" loading="lazy">
-                <div class="card-details">
-                     <div class="d-flex gap-3 justify-content-center w-100 mb-3">
-                        <button class="btn-circle" onclick="openModal('img', '${CONFIG.ORIG}${im.file_path}', 'Aperçu')"><i class="ph ph-magnifying-glass-plus"></i></button>
-                        <button class="btn-circle" onclick="downloadImg('${CONFIG.ORIG}${im.file_path}', 'img-${i}.jpg')"><i class="ph ph-download-simple"></i></button>
+        c.innerHTML = items.slice(0, 18).map((im, i) => {
+            const fullUrl = `${CONFIG.HD}${im.file_path}`;
+            const originalUrl = `${CONFIG.ORIG}${im.file_path}`;
+            const isSelected = isPost && customSeriePoster && im.file_path && customSeriePoster.includes(im.file_path);
+
+            return `
+                <div class="premium-card ${isSelected ? 'border-primary' : ''} ${isPost ? '' : 'collection-card'}" style="position: relative;">
+                    <img src="${fullUrl}" loading="lazy" style="border-radius: 16px; width: 100%; aspect-ratio: ${isPost ? '2/3' : '16/9'}; object-fit: cover;">
+                    ${isSelected ? `<div class="position-absolute top-0 start-0 m-2 badge bg-primary rounded-pill px-3 py-1.5 fw-bold shadow"><i class="ph-fill ph-check-circle me-1"></i> Actuelle</div>` : ''}
+                    <div class="card-details">
+                        <div class="d-flex flex-column gap-2 justify-content-center align-items-center w-100 mt-auto">
+                            ${isPost ? (
+                                isSelected 
+                                    ? `<span class="badge bg-primary rounded-pill px-3 py-1.5 fw-bold mb-1"><i class="ph-fill ph-check-circle me-1"></i> Affiche Sélectionnée</span>`
+                                    : `<button class="btn btn-sm btn-primary rounded-pill px-3 py-1.5 x-small fw-bold shadow-sm mb-1" onclick="changerAfficheSerie('${originalUrl}')" title="Définir comme affiche principale"><i class="ph ph-check me-1"></i> Choisir cette affiche</button>`
+                            ) : ''}
+                            <div class="d-flex gap-2 justify-content-center align-items-center mt-1">
+                                <button class="btn btn-sm btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="openModal('img', '${originalUrl}', 'Aperçu HD')" title="Aperçu / Zoomer"><i class="ph ph-eye fs-5 text-dark"></i></button>
+                                <button class="btn btn-sm btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" onclick="downloadImg('${originalUrl}', 'serie-media-${i + 1}.jpg')" title="Télécharger HD"><i class="ph ph-download-simple fs-5 text-dark"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join("");
+            `;
+        }).join("");
     };
     renderGrid(imgs?.backdrops, "grid-backdrops");
     renderGrid(imgs?.posters, "grid-posters", true);
@@ -324,8 +388,24 @@ function renderTechnical(s) {
 
     const studioCont = document.getElementById("serie-production-companies");
     if (studioCont) {
+        let studiosHtml = "";
+        
+        // Ajouter les réseaux (Networks)
+        if (s.networks && s.networks.length > 0) {
+            studiosHtml += s.networks.slice(0, 3).map(c => `
+                <a href="network-details.html?id=${c.id}" class="studio-item-card" style="border-color: rgba(167, 139, 250, 0.4);" title="Voir les séries de ${c.name}">
+                    <div class="studio-logo-box">
+                        ${c.logo_path ? `<img src="${CONFIG.W500}${c.logo_path}" alt="${c.name}">` : `<span class="text-dark fw-black" style="font-size:0.8rem;">${c.name.charAt(0)}</span>`}
+                    </div>
+                    <span class="studio-name" style="color: var(--accent);">${c.name}</span>
+                </a>
+            `).join("");
+        }
+        
+        // Ajouter les sociétés de production
         if (s.production_companies && s.production_companies.length > 0) {
-            studioCont.innerHTML = s.production_companies.slice(0, 4).map(c => `
+            const maxComps = (s.networks && s.networks.length > 0) ? 2 : 4;
+            studiosHtml += s.production_companies.slice(0, maxComps).map(c => `
                 <a href="company-details.html?id=${c.id}" class="studio-item-card" title="Voir les productions de ${c.name}">
                     <div class="studio-logo-box">
                         ${c.logo_path ? `<img src="${CONFIG.W500}${c.logo_path}" alt="${c.name}">` : `<span class="text-dark fw-black" style="font-size:0.8rem;">${c.name.charAt(0)}</span>`}
@@ -333,6 +413,10 @@ function renderTechnical(s) {
                     <span class="studio-name">${c.name}</span>
                 </a>
             `).join("");
+        }
+
+        if (studiosHtml) {
+            studioCont.innerHTML = studiosHtml;
         } else {
             studioCont.innerHTML = `<div class="x-small text-muted p-2">Non communiquée</div>`;
         }
@@ -388,7 +472,7 @@ function renderAuth(a) {
     if (!c) return;
     if (a) {
         const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
-        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
+        c.innerHTML = `<div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><a href="profilUser.html" class="text-theme text-decoration-none"><div class="fw-bold small">${pseudo}</div><div class="x-small opacity-50">MON PROFIL</div></a></div><a href="../profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres"><i class="ph ph-gear fs-5"></i></a><button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button></div>`;
     } else {
         c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold">CONNEXION</a>`;
     }
@@ -536,6 +620,94 @@ function initRating() {
 
 window.downloadImg = downloadImg;
 window.openModal = openModal;
+
+function ouvrirModalSelectAffiche() {
+  const postTabBtn = document.querySelector('button[data-bs-target="#tab-post"]');
+  if (postTabBtn) {
+    const tab = new bootstrap.Tab(postTabBtn);
+    tab.show();
+  }
+  const tabSection = document.getElementById("tab-post") || document.querySelector('.tab-content');
+  if (tabSection) {
+    tabSection.scrollIntoView({ behavior: "smooth" });
+  }
+  notify("Sélectionnez 'Choisir cette affiche' sur l'affiche de votre choix ci-dessous", "info");
+}
+
+async function changerAfficheSerie(posterUrl) {
+    if (!id || !posterUrl) return;
+    customSeriePoster = posterUrl;
+    localStorage.setItem(`custom_movie_poster_${id}`, posterUrl);
+
+    const imgEl = document.getElementById("serie-poster-img");
+    if (imgEl) imgEl.src = posterUrl;
+
+    const resetBtn = document.getElementById("btn-reset-poster-side");
+    if (resetBtn) resetBtn.style.display = "inline-block";
+
+    notify("Affiche de la série mise à jour avec succès !", "success");
+
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const uid = auth ? (auth.userId || auth.id) : user;
+    if (uid || (auth && auth.token)) {
+        try {
+            await fetch('./user_posters.php', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    user_id: uid,
+                    tmdb_id: parseInt(id),
+                    media_type: 'tv',
+                    poster_path: posterUrl
+                })
+            });
+        } catch (e) {
+            console.error("Erreur d'enregistrement de l'affiche:", e);
+        }
+    }
+
+    if (currentSerieData?.images) {
+        renderGallery(currentSerieData.images);
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function resetAfficheSerie() {
+    if (!id) return;
+    customSeriePoster = null;
+    localStorage.removeItem(`custom_movie_poster_${id}`);
+
+    const defaultPoster = currentSerieData?.poster_path ? CONFIG.W500 + currentSerieData.poster_path : CONFIG.EMPTY_POSTER;
+    const imgEl = document.getElementById("serie-poster-img");
+    if (imgEl) imgEl.src = defaultPoster;
+
+    const resetBtn = document.getElementById("btn-reset-poster-side");
+    if (resetBtn) resetBtn.style.display = "none";
+
+    notify("Affiche réinitialisée à l'originale", "info");
+
+    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+    const uid = auth ? (auth.userId || auth.id) : user;
+    if (uid || (auth && auth.token)) {
+        try {
+            await fetch(`./user_posters.php?user_id=${uid || ''}&tmdb_id=${id}&media_type=tv`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+        } catch (e) {
+            console.error("Erreur de réinitialisation:", e);
+        }
+    }
+
+    if (currentSerieData?.images) {
+        renderGallery(currentSerieData.images);
+    }
+}
+
+window.ouvrirModalSelectAffiche = ouvrirModalSelectAffiche;
+window.changerAfficheSerie = changerAfficheSerie;
+window.resetAfficheSerie = resetAfficheSerie;
 
 async function loadAwardsData(imdbId, containerId, title) {
     const grid = document.getElementById(containerId);

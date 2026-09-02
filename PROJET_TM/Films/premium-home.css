@@ -5,14 +5,14 @@
     --glass: rgba(20, 20, 20, 0.7);
     --border: rgba(255, 255, 255, 0.1);
     --text-main: #ffffff;
-    --nav-bg: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+    --nav-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
     --nav-scrolled: #050505;
     --card-details-bg: linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.4) 50%, transparent 100%);
-    --hero-overlay-top: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    --hero-overlay-top: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
     --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, transparent 100%);
     --card-bg: #111111;
-    --filter-select-bg: rgba(255,255,255,0.05);
-    --filter-select-hover: rgba(255,255,255,0.1);
+    --filter-select-bg: rgba(255, 255, 255, 0.05);
+    --filter-select-hover: rgba(255, 255, 255, 0.1);
     --filter-option-bg: #111111;
 }
 
@@ -23,14 +23,14 @@
     --glass: rgba(255, 255, 255, 0.9);
     --border: rgba(0, 0, 0, 0.1);
     --text-main: #1a1a1a;
-    --nav-bg: linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, transparent 100%);
+    --nav-bg: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, transparent 100%);
     --nav-scrolled: #ffffff;
     --card-details-bg: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
-    --hero-overlay-top: linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
+    --hero-overlay-top: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), transparent);
     --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, transparent 100%);
     --card-bg: #ffffff;
-    --filter-select-bg: rgba(0,0,0,0.05);
-    --filter-select-hover: rgba(0,0,0,0.1);
+    --filter-select-bg: rgba(0, 0, 0, 0.05);
+    --filter-select-hover: rgba(0, 0, 0, 0.1);
     --filter-option-bg: #ffffff;
 }
 
@@ -105,45 +105,69 @@ body {
 
 .hero-overlay-top {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 25%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 25%;
     background: var(--hero-overlay-top);
     pointer-events: none;
 }
 
 .hero-overlay-bottom {
     position: absolute;
-    bottom: 0; left: 0; width: 100%; height: 35%;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35%;
     background: var(--hero-overlay-bottom);
     pointer-events: none;
 }
 
-.hero-info {
+.home-hero-info {
     position: absolute;
-    bottom: 8%;
+    bottom: 10%;
     left: 5%;
-    max-width: 650px;
+    max-width: 600px;
     z-index: 10;
-    padding: 24px 28px;
-    background: rgba(18, 18, 18, 0.55);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    padding: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
-[data-theme="light"] .hero-info {
-    background: rgba(255, 255, 255, 0.75);
-    border-color: rgba(0, 0, 0, 0.12);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+[data-theme="light"] .home-hero-info {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .hero-title {
-    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-size: clamp(2rem, 4.5vw, 3.8rem);
     font-weight: 900;
-    margin-bottom: 15px;
-    line-height: 1;
-    letter-spacing: -2px;
+    margin-bottom: 12px;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, rgb(198, 7, 7) 40%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.9));
+}
+
+.home-hero-info p,
+.home-hero-info .hero-desc {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+    margin-bottom: 20px;
+    max-width: 550px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* --- Netflix-style Lanes --- */
@@ -199,7 +223,7 @@ body {
 .premium-card:hover {
     transform: scale(1.06) translateY(-10px);
     border-color: var(--accent);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(167, 139, 250, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(167, 139, 250, 0.2);
 }
 
 .premium-card img {
@@ -354,7 +378,8 @@ body {
     transition: 0.3s;
 }
 
-.premium-select:hover, .premium-select:focus {
+.premium-select:hover,
+.premium-select:focus {
     border-color: var(--accent);
     background: var(--filter-select-hover);
 }
@@ -398,7 +423,9 @@ body {
     box-shadow: 0 0 20px var(--accent-glow);
 }
 
-.text-accent { color: var(--accent) !important; }
+.text-accent {
+    color: var(--accent) !important;
+}
 
 /* --- Ultra-Responsive Movie Grid (Dynamic columns based on screen width) --- */
 .movie-grid {
@@ -416,35 +443,63 @@ body {
 }
 
 @media (min-width: 2560px) {
-    .movie-grid { grid-template-columns: repeat(10, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(10, 1fr);
+    }
 }
+
 @media (min-width: 2200px) and (max-width: 2559px) {
-    .movie-grid { grid-template-columns: repeat(9, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(9, 1fr);
+    }
 }
+
 @media (min-width: 1920px) and (max-width: 2199px) {
-    .movie-grid { grid-template-columns: repeat(8, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(8, 1fr);
+    }
 }
+
 @media (min-width: 1650px) and (max-width: 1919px) {
-    .movie-grid { grid-template-columns: repeat(7, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
 }
+
 @media (min-width: 1400px) and (max-width: 1649px) {
-    .movie-grid { grid-template-columns: repeat(6, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
 }
+
 @media (min-width: 1150px) and (max-width: 1399px) {
-    .movie-grid { grid-template-columns: repeat(5, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
 }
+
 @media (min-width: 900px) and (max-width: 1149px) {
-    .movie-grid { grid-template-columns: repeat(4, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
+
 @media (min-width: 650px) and (max-width: 899px) {
-    .movie-grid { grid-template-columns: repeat(3, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
+
 @media (max-width: 649px) {
-    .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
 }
 
 /* --- 10 Stars Rating System --- */
-#star-rating, .star-rating {
+#star-rating,
+.star-rating {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -455,7 +510,8 @@ body {
     width: 100%;
 }
 
-#star-rating .star, .star-rating .star {
+#star-rating .star,
+.star-rating .star {
     cursor: pointer;
     transition: transform 0.2s ease, color 0.2s ease;
     font-size: 1.15rem;
@@ -469,13 +525,15 @@ body {
     flex: 0 0 auto;
 }
 
-#star-rating .star i, .star-rating .star i {
+#star-rating .star i,
+.star-rating .star i {
     font-size: 1.15rem;
     pointer-events: none;
     display: block;
 }
 
-#star-rating .star:hover, .star-rating .star:hover {
+#star-rating .star:hover,
+.star-rating .star:hover {
     transform: scale(1.2);
 }
 
@@ -509,6 +567,7 @@ body {
 [data-theme="light"] .star-rating .star i.star-empty {
     color: rgba(0, 0, 0, 0.45) !important;
 }
+
 .search-hero {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -575,7 +634,8 @@ body {
     transition: 0.3s;
 }
 
-.premium-select:hover, .premium-select:focus {
+.premium-select:hover,
+.premium-select:focus {
     border-color: var(--accent);
     background: var(--filter-select-hover);
 }
@@ -619,7 +679,9 @@ body {
     box-shadow: 0 0 20px var(--accent-glow);
 }
 
-.text-accent { color: var(--accent) !important; }
+.text-accent {
+    color: var(--accent) !important;
+}
 
 /* --- Ultra-Responsive Movie Grid (Dynamic columns based on screen width) --- */
 .movie-grid {
@@ -637,35 +699,63 @@ body {
 }
 
 @media (min-width: 2560px) {
-    .movie-grid { grid-template-columns: repeat(10, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(10, 1fr);
+    }
 }
+
 @media (min-width: 2200px) and (max-width: 2559px) {
-    .movie-grid { grid-template-columns: repeat(9, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(9, 1fr);
+    }
 }
+
 @media (min-width: 1920px) and (max-width: 2199px) {
-    .movie-grid { grid-template-columns: repeat(8, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(8, 1fr);
+    }
 }
+
 @media (min-width: 1650px) and (max-width: 1919px) {
-    .movie-grid { grid-template-columns: repeat(7, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
 }
+
 @media (min-width: 1400px) and (max-width: 1649px) {
-    .movie-grid { grid-template-columns: repeat(6, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
 }
+
 @media (min-width: 1150px) and (max-width: 1399px) {
-    .movie-grid { grid-template-columns: repeat(5, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
 }
+
 @media (min-width: 900px) and (max-width: 1149px) {
-    .movie-grid { grid-template-columns: repeat(4, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
+
 @media (min-width: 650px) and (max-width: 899px) {
-    .movie-grid { grid-template-columns: repeat(3, 1fr); }
+    .movie-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
+
 @media (max-width: 649px) {
-    .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
 }
 
 /* --- 10 Stars Rating System --- */
-#star-rating, .star-rating {
+#star-rating,
+.star-rating {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -676,7 +766,8 @@ body {
     width: 100%;
 }
 
-#star-rating .star, .star-rating .star {
+#star-rating .star,
+.star-rating .star {
     cursor: pointer;
     transition: transform 0.2s ease, color 0.2s ease;
     font-size: 1.15rem;
@@ -690,13 +781,15 @@ body {
     flex: 0 0 auto;
 }
 
-#star-rating .star i, .star-rating .star i {
+#star-rating .star i,
+.star-rating .star i {
     font-size: 1.15rem;
     pointer-events: none;
     display: block;
 }
 
-#star-rating .star:hover, .star-rating .star:hover {
+#star-rating .star:hover,
+.star-rating .star:hover {
     transform: scale(1.2);
 }
 
@@ -737,7 +830,7 @@ body {
 .studio-logo-box {
     background: #ffffff !important;
     border-radius: 12px !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
     width: 44px !important;
     height: 44px !important;
     min-width: 44px !important;
@@ -876,7 +969,7 @@ body {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .actor-role {
@@ -887,5 +980,190 @@ body {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     opacity: 0.95;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* ============================================================
+   STREAMING PLATFORMS SECTION & HOVER INTRO EFFECTS
+   ============================================================ */
+.platforms-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+@media (max-width: 1200px) {
+    .platforms-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .platforms-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+.platform-card {
+    background: linear-gradient(135deg, rgba(45, 48, 55, 0.6) 0%, rgba(20, 22, 28, 0.8) 100%) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 12px !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 120px !important;
+    max-height: 120px !important;
+    width: 100% !important;
+    cursor: pointer !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+    box-sizing: border-box !important;
+}
+
+.platform-hover-video {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    opacity: 0 !important;
+    z-index: 1 !important;
+    transition: opacity 0.5s ease !important;
+    pointer-events: none !important;
+    border-radius: 12px !important;
+}
+
+.platform-hover-youtube,
+.platform-card iframe {
+    position: absolute !important;
+    top: -50% !important;
+    left: -50% !important;
+    width: 200% !important;
+    height: 200% !important;
+    object-fit: cover !important;
+    opacity: 0 !important;
+    z-index: 1 !important;
+    transition: opacity 0.5s ease !important;
+    pointer-events: none !important;
+    border-radius: 12px !important;
+}
+
+.platform-card:hover .platform-hover-video,
+.platform-card:hover .platform-hover-youtube,
+.platform-card:hover iframe {
+    opacity: 0.6 !important;
+}
+.platform-logo {
+    max-width: 110px !important;
+    max-height: 42px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    transition: transform 0.35s ease !important;
+    display: block !important;
+    margin: 0 auto !important;
+    z-index: 2 !important;
+}
+
+.platform-card[data-platform="disney"] .platform-logo,
+.platform-card[data-platform="prime"] .platform-logo,
+.platform-card[data-platform="apple"] .platform-logo,
+.platform-card[data-platform="hbomax"] .platform-logo,
+.platform-card[data-platform="crunchyroll"] .platform-logo {
+    filter: brightness(0) invert(1) !important; /* Make colored/black logos pure white */
+}
+
+.platform-badge {
+    position: absolute !important;
+    bottom: 8px !important;
+    left: 0 !important;
+    right: 0 !important;
+    text-align: center !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+    transition: all 0.3s ease !important;
+    z-index: 3 !important;
+    background: transparent !important;
+}
+
+.platform-card:hover .platform-badge {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+.platform-card:hover .platform-logo {
+    transform: scale(1.1) translateY(-8px) !important;
+}
+
+.platform-text-logo {
+    color: white !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    margin: 0 !important;
+    z-index: 2 !important;
+    transition: transform 0.3s ease !important;
+}
+
+.platform-card:hover .platform-text-logo {
+    transform: scale(1.1) translateY(-8px) !important;
+}
+
+/* Hover Intro Effects per platform */
+.platform-card[data-platform="netflix"]:hover {
+    transform: scale(1.05) !important;
+    border-color: rgba(229, 9, 20, 0.8) !important;
+    box-shadow: 0 15px 35px rgba(229, 9, 20, 0.3), inset 0 0 50px rgba(229, 9, 20, 0.1) !important;
+}
+
+.platform-card[data-platform="prime"]:hover {
+    transform: scale(1.05) !important;
+    border-color: rgba(0, 168, 225, 0.8) !important;
+    box-shadow: 0 15px 35px rgba(0, 168, 225, 0.3), inset 0 0 50px rgba(0, 168, 225, 0.1) !important;
+}
+
+.platform-card[data-platform="paramount"]:hover {
+    transform: scale(1.05) !important;
+    border-color: rgba(0, 100, 255, 0.8) !important;
+    box-shadow: 0 15px 35px rgba(0, 100, 255, 0.3), inset 0 0 50px rgba(0, 100, 255, 0.1) !important;
+}
+
+.platform-card[data-platform="disney"]:hover {
+    transform: scale(1.05) !important;
+    border-color: rgba(17, 60, 207, 0.8) !important;
+    box-shadow: 0 15px 35px rgba(17, 60, 207, 0.3), inset 0 0 50px rgba(0, 214, 254, 0.2) !important;
+}
+
+.platform-card[data-platform="marvel"]:hover {
+    transform: scale(1.05) !important;
+    border-color: rgba(237, 29, 36, 0.8) !important;
+    box-shadow: 0 15px 35px rgba(237, 29, 36, 0.3), inset 0 0 50px rgba(237, 29, 36, 0.1) !important;
+}
+
+.platform-card[data-platform="apple"]:hover {
+    transform: scale(1.05) !important;
+    border-color: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 15px 35px rgba(255, 255, 255, 0.2), inset 0 0 50px rgba(255, 255, 255, 0.1) !important;
+}
+
+.platform-card[data-platform="hbomax"]:hover {
+    transform: scale(1.05) !important;
+    border-color: rgba(90, 46, 133, 0.8) !important;
+    box-shadow: 0 15px 35px rgba(90, 46, 133, 0.3), inset 0 0 50px rgba(90, 46, 133, 0.2) !important;
+}
+
+.platform-card[data-platform="crunchyroll"]:hover {
+    transform: scale(1.05) !important;
+    border-color: rgba(244, 117, 33, 0.8) !important;
+    box-shadow: 0 15px 35px rgba(244, 117, 33, 0.3), inset 0 0 50px rgba(244, 117, 33, 0.2) !important;
 }

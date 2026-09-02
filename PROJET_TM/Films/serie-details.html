@@ -18,9 +18,11 @@
         .hero-slider {
             position: relative;
             min-height: auto;
+            height: auto !important;
+            max-height: none !important;
             display: flex;
             align-items: flex-start !important;
-            padding: 200px 5% 60px !important;
+            padding: 105px 5% 50px !important;
             overflow: hidden;
             background: #09090b;
         }
@@ -62,6 +64,7 @@
         @media (max-width: 991px) {
             .hero-container {
                 grid-template-columns: 1fr;
+                gap: 25px;
             }
         }
 
@@ -275,6 +278,28 @@
             letter-spacing: 1.5px;
             color: rgba(255, 255, 255, 0.45);
             margin-bottom: 4px;
+        }
+
+        [data-theme="light"] .stat-label {
+            color: #6b7280 !important;
+        }
+
+        #serie-poster-img {
+            width: 100% !important;
+            max-width: 180px !important;
+            height: auto !important;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+        }
+
+        [data-theme="light"] #btn-change-poster-side {
+            color: #4b5563 !important;
+            border-color: #d1d5db !important;
+            background-color: #f3f4f6 !important;
+        }
+        
+        [data-theme="light"] #btn-change-poster-side:hover {
+            background-color: #e5e7eb !important;
         }
 
         .stat-value {
@@ -592,6 +617,46 @@
         }
 
         /* Luxury Golden Medallion Awards Plaque Design */
+        /* Fix dimensions logos studios de production */
+        .studio-icon img,
+        div.studio-icon img {
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            max-width: 36px !important;
+            max-height: 36px !important;
+            object-fit: contain !important;
+            border-radius: 6px !important;
+            background: #ffffff !important;
+            padding: 2px !important;
+            filter: none !important;
+            display: inline-block !important;
+        }
+
+        .studio-icon {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            max-width: 36px !important;
+            max-height: 36px !important;
+            background: #ffffff !important;
+            border-radius: 8px !important;
+            padding: 3px !important;
+            overflow: hidden !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+        }
+
+        .studio-icon span {
+            color: #000000 !important;
+            font-weight: 900 !important;
+            font-size: 0.9rem !important;
+        }
+
         .awards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -777,18 +842,33 @@
                 <div id="serie-tags" class="d-flex align-items-center gap-3 fw-bold opacity-85 mb-3" style="font-size: 0.85rem; letter-spacing: 1px;"></div>
                 <p id="serie-overview" class="hero-desc"></p>
                 
-                <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <a id="watch-trailer" href="#" class="btn btn-light rounded-pill px-4 py-3 fw-black shadow-lg" style="letter-spacing: 1px; font-size: 0.85rem;">
+                <div class="d-flex align-items-center gap-3 flex-wrap" style="flex-direction: row !important;">
+                    <a id="watch-trailer" href="#" class="btn btn-light rounded-pill px-4 py-3 fw-black shadow-lg" style="letter-spacing: 1px; font-size: 0.85rem; width: auto !important;">
                         <i class="ph-fill ph-play me-2 fs-5"></i> BANDE-ANNONCE
                     </a>
                     <button id="add-to-favorites" class="btn-circle" title="Ajouter aux favoris"><i class="ph ph-heart"></i></button>
                     <button id="add-to-watchlist" class="btn-circle" title="Ajouter à la Watchlist"><i class="ph ph-plus"></i></button>
                     <button id="mark-as-watched" class="btn-circle" title="Marquer comme vu"><i class="ph ph-eye"></i></button>
+                    <button id="change-poster-btn" class="btn-circle" title="Changer l'affiche de la série" onclick="ouvrirModalSelectAffiche()"><i class="ph ph-image"></i></button>
                 </div>
             </div>
 
             <!-- Glassmorphic Side Panel -->
             <div class="side-panel">
+                <div class="side-item text-center mb-3 d-none" id="side-poster-item">
+                    <div class="d-flex flex-column align-items-center">
+                        <img id="serie-poster-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 3'%3E%3C/svg%3E" alt="Affiche de la série" class="img-fluid rounded-4 shadow-lg" style="border: 1px solid var(--border);" onerror="this.onerror=null; this.src='https://via.placeholder.com/500x750?text=No+Poster';">
+                        <div class="mt-2 text-center d-flex align-items-center justify-content-center gap-2">
+                            <button id="btn-change-poster-side" class="btn btn-sm btn-outline-light rounded-pill px-3 py-1.5 x-small fw-bold shadow-sm" onclick="ouvrirModalSelectAffiche()">
+                                <i class="ph ph-image-square me-1"></i> Changer d'affiche
+                            </button>
+                            <button id="btn-reset-poster-side" class="btn btn-sm btn-link text-danger text-decoration-none x-small" onclick="resetAfficheSerie()" style="display: none;">
+                                Réinitialiser
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="side-item">
                     <div class="side-label"><i class="ph-fill ph-star"></i> Votre Évaluation</div>
                     <div id="star-rating" class="d-flex gap-1 mb-2">
@@ -856,16 +936,6 @@
                 <div>
                     <div class="stat-label">Note Communautaire</div>
                     <div id="stats-vote-average" class="stat-value text-accent">...</div>
-                </div>
-            </div>
-
-            <div class="glass-stat-card">
-                <div class="stat-icon-wrapper">
-                    <i class="ph ph-shield-check"></i>
-                </div>
-                <div>
-                    <div class="stat-label">Classification</div>
-                    <div id="stats-certification" class="stat-value" style="color: #f472b6;">...</div>
                 </div>
             </div>
         </div>
@@ -991,6 +1061,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="posterSync.js"></script>
 <script src="serie-details.js?v=9"></script>
 <script src="../theme.js"></script>
 </body>

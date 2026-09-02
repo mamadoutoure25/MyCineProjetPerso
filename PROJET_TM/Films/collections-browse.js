@@ -166,7 +166,7 @@ function updateThemeButtonLabel(theme, button) {
 async function loadCollections() {
   try {
     const fetchPromises = POPULAR_COLLECTIONS.map(id =>
-      fetch(`${COLLECTIONS_CONFIG.BASE_URL}/collection/${id}?api_key=${COLLECTIONS_CONFIG.API_KEY}&language=fr-FR`)
+      fetch(`${COLLECTIONS_CONFIG.BASE_URL}/collection/${id}?api_key=${COLLECTIONS_CONFIG.API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`)
         .then(res => res.ok ? res.json() : null)
         .catch(() => null)
     )

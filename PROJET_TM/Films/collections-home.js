@@ -41,7 +41,7 @@ async function loadHomeCollections() {
     for (const collectionId of HOME_POPULAR_COLLECTIONS) {
       try {
         const response = await fetch(
-          `${COLLECTIONS_HOME_CONFIG.BASE_URL}/collection/${collectionId}?api_key=${COLLECTIONS_HOME_CONFIG.API_KEY}&language=fr-FR`
+          `${COLLECTIONS_HOME_CONFIG.BASE_URL}/collection/${collectionId}?api_key=${COLLECTIONS_HOME_CONFIG.API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`
         )
 
         if (response.ok) {
