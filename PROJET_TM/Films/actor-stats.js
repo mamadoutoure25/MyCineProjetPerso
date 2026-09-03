@@ -21,6 +21,19 @@ const GENRE_COLORS = [
     '#f87171', '#818cf8', '#fb7185', '#34d399', '#fbbf24'
 ];
 
+const COUNTRY_CODES = {
+    'USA': 'US', 'United States': 'US', 'UK': 'GB', 'United Kingdom': 'GB', 'England': 'GB',
+    'Scotland': 'GB', 'Wales': 'GB', 'Northern Ireland': 'GB', 'France': 'FR', 'Canada': 'CA',
+    'Australia': 'AU', 'Germany': 'DE', 'West Germany': 'DE', 'Italy': 'IT', 'Spain': 'ES',
+    'Mexico': 'MX', 'Japan': 'JP', 'South Korea': 'KR', 'China': 'CN', 'India': 'IN',
+    'Brazil': 'BR', 'Russia': 'RU', 'Soviet Union': 'RU', 'Ireland': 'IE', 'New Zealand': 'NZ',
+    'Sweden': 'SE', 'Norway': 'NO', 'Denmark': 'DK', 'Finland': 'FI', 'Netherlands': 'NL',
+    'Belgium': 'BE', 'Switzerland': 'CH', 'Austria': 'AT', 'South Africa': 'ZA', 'Argentina': 'AR',
+    'Hong Kong': 'HK', 'Taiwan': 'TW', 'Puerto Rico': 'PR', 'Philippines': 'PH', 'Turkey': 'TR',
+    'Greece': 'GR', 'Poland': 'PL', 'Czech Republic': 'CZ', 'Czechoslovakia': 'CZ', 'Hungary': 'HU',
+    'Romania': 'RO', 'Israel': 'IL', 'Egypt': 'EG', 'Morocco': 'MA', 'Iceland': 'IS'
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
     const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
     const loadingScreen = document.getElementById("loading-screen");
@@ -165,6 +178,9 @@ function initActorStats(actors) {
     let totalAge = 0, countAge = 0;
     const genderMap = { 'Hommes': 0, 'Femmes': 0, 'Autres': 0 };
     const ageRanges = { "Moins de 30": 0, "30-45": 0, "45-60": 0, "60+": 0 };
+    const countryData = {};
+    const countryActors = {};
+    const countryNames = {};
 
     actors.forEach(a => {
         if (a.gender === 1) genderMap['Femmes']++;
@@ -180,6 +196,18 @@ function initActorStats(actors) {
             else if (age <= 60) ageRanges["45-60"]++;
             else ageRanges["60+"]++;
         }
+
+        if (a.place_of_birth) {
+            let parts = a.place_of_birth.split(',');
+            let country = parts[parts.length - 1].trim();
+            let code = COUNTRY_CODES[country];
+            if (code) {
+                countryData[code] = (countryData[code] || 0) + 1;
+                if (!countryActors[code]) countryActors[code] = [];
+                countryActors[code].push(a);
+                countryNames[code] = country;
+            }
+        }
     });
 
     document.getElementById('actor-avg-age').textContent = countAge > 0 ? Math.round(totalAge / countAge) + " ans" : "N/A";
@@ -188,9 +216,99 @@ function initActorStats(actors) {
 
     renderDoughnutChart('actorGenderChart', Object.keys(genderMap), Object.values(genderMap), [CHART_COLORS.blue, CHART_COLORS.secondary, CHART_COLORS.gray]);
     renderBarChart('actorAgeChart', Object.keys(ageRanges), Object.values(ageRanges), CHART_COLORS.orange);
+    renderWorldMap(countryData, countryActors, countryNames);
 }
 
 // --- NEW STYLED CHARTS ---
+
+function renderWorldMap(data, countryActors, countryNames) {
+    const mapEl = document.getElementById('actorWorldMap');
+    if (!mapEl) return;
+    mapEl.innerHTML = "";
+    
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light' || document.body.classList.contains('light-theme');
+    const baseColor = isLight ? '#e5e7eb' : 'rgba(255,255,255,0.05)';
+    const strokeColor = isLight ? '#ffffff' : '#111111';
+    
+    const activeCodes = Object.keys(data);
+
+    const mapOptions = {
+        selector: '#actorWorldMap',
+        map: 'world',
+        backgroundColor: 'transparent',
+        zoomOnScroll: false,
+        regionStyle: {
+            initial: {
+                fill: baseColor,
+                stroke: strokeColor,
+                strokeWidth: 1,
+                fillOpacity: 1
+            },
+            hover: { fill: CHART_COLORS.secondary, fillOpacity: 0.8 }
+        },
+        onRegionTooltipShow(event, tooltip, code) {
+            const count = data[code] || 0;
+            if (count > 0) {
+                tooltip.text(tooltip.text() + ` - ${count} star${count > 1 ? 's' : ''} (Cliquez pour voir)`);
+            } else {
+                tooltip.text(tooltip.text());
+            }
+        },
+        onRegionClick(event, code) {
+            try {
+                const list = countryActors[code];
+                if (list && list.length > 0) {
+                    const regionName = countryNames[code] || code;
+                    showCountryActors(regionName, list);
+                }
+            } catch (e) {
+                console.error("Map click error: ", e);
+            }
+        }
+    };
+
+    if (Object.keys(data).length > 0) {
+        const colorValues = {};
+        Object.keys(data).forEach(code => {
+            const count = data[code];
+            if (count < 5) {
+                colorValues[code] = 'tier1';
+            } else if (count <= 20) {
+                colorValues[code] = 'tier2';
+            } else if (count <= 50) {
+                colorValues[code] = 'tier3';
+            } else {
+                colorValues[code] = 'tier4';
+            }
+        });
+
+        mapOptions.series = {
+            regions: [{
+                attribute: 'fill',
+                scale: {
+                    'tier1': '#2e1065', // Très sombre (presque noir)
+                    'tier2': '#5b21b6', // Mauve foncé
+                    'tier3': '#a78bfa', // Mauve clair
+                    'tier4': '#f472b6'  // Rose
+                },
+                values: colorValues
+            }]
+        };
+    }
+
+    window.worldMapInstance = new jsVectorMap(mapOptions);
+
+    if (!window.mapTabListenerAdded) {
+        document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', (e) => {
+                if (e.target.dataset.bsTarget === '#tab-actors' && window.worldMapInstance) {
+                    window.worldMapInstance.updateSize();
+                }
+            });
+        });
+        window.mapTabListenerAdded = true;
+    }
+}
 
 function renderRadarChart(id, labels, data, color) {
     const ctx = document.getElementById(id);
@@ -212,9 +330,9 @@ function renderRadarChart(id, labels, data, color) {
         options: {
             scales: {
                 r: {
-                    angleLines: { color: 'rgba(255,255,255,0.1)' },
-                    grid: { color: 'rgba(255,255,255,0.1)' },
-                    pointLabels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } },
+                    angleLines: { color: 'var(--border)' },
+                    grid: { color: 'var(--border)' },
+                    pointLabels: { color: 'var(--text-secondary)', font: { size: 10 } },
                     ticks: { display: false }
                 }
             },
@@ -272,15 +390,15 @@ function renderLineChart(id, labels, data, color, moviesByYear = null) {
                     display: true,
                     beginAtZero: true,
                     ticks: {
-                        color: 'rgba(255,255,255,0.7)',
+                        color: 'var(--text-secondary)',
                         font: { size: 10, weight: '600' },
                         precision: 0
                     },
-                    grid: { color: 'rgba(255,255,255,0.05)' }
+                    grid: { color: 'var(--border)' }
                 },
                 x: {
-                    ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 10, weight: '600' } },
-                    grid: { color: 'rgba(255,255,255,0.05)' }
+                    ticks: { color: 'var(--text-secondary)', font: { size: 10, weight: '600' } },
+                    grid: { color: 'var(--border)' }
                 }
             },
             plugins: {
@@ -308,27 +426,76 @@ function renderLineChart(id, labels, data, color, moviesByYear = null) {
 function showYearDetails(year, count, moviesList) {
     const titleEl = document.getElementById("yearDetailTitle");
     const contentEl = document.getElementById("yearDetailContent");
-    if (titleEl) titleEl.textContent = `Films de votre collection sortis en ${year} (${count})`;
+    if (titleEl) titleEl.innerHTML = `Films de votre collection sortis en <span class="text-accent">${year}</span> (${count})`;
 
     if (contentEl) {
+        contentEl.style.display = 'block'; // Override HTML grid
+        
+        const hoverStyles = `
+            <style>
+                .cinematic-card { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid transparent; }
+                .cinematic-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(167,139,250,0.25) !important; border-color: var(--accent); z-index: 2; }
+            </style>
+        `;
+
         if (!moviesList || moviesList.length === 0) {
             contentEl.innerHTML = `<p class="text-center opacity-50 py-4 w-100">Aucun détail disponible pour cette année.</p>`;
         } else {
-            contentEl.innerHTML = moviesList.map(m => `
-                <div class="premium-card text-center p-2" style="cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px;" onclick="window.location.href='movie-details.html?id=${m.id}'">
-                    <img src="${m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : 'https://via.placeholder.com/220x330?text=Affiche'}" loading="lazy" style="width: 100%; border-radius: 12px; aspect-ratio: 2/3; object-fit: cover;">
-                    <div class="card-details mt-2">
-                        <div class="card-title text-truncate small fw-bold text-white">${m.title}</div>
-                        <div class="card-meta x-small opacity-75 mt-1">⭐ ${m.vote_average ? m.vote_average.toFixed(1) : 'N/A'}</div>
-                    </div>
+            contentEl.innerHTML = hoverStyles + `
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 10px;">
+                    ${moviesList.map(m => `
+                        <div class="cinematic-card" onclick="window.location.href='movie-details.html?id=${m.id}'" style="width: 140px; position: relative; border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.4); background: var(--bg-card);">
+                            <img src="${m.poster_path ? 'https://image.tmdb.org/t/p/w500' + m.poster_path : 'https://via.placeholder.com/220x330?text=Affiche'}" loading="lazy" style="width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block;">
+                            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 12px 12px; background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.8) 40%, transparent 100%); text-align: center;">
+                                <div style="color: #ffffff; font-weight: 700; font-size: 0.8rem; text-shadow: 0 2px 4px rgba(0,0,0,0.8); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${m.title}</div>
+                                <div style="color: var(--accent); font-size: 0.75rem; font-weight: 800; margin-top: 6px;">⭐ ${m.vote_average ? m.vote_average.toFixed(1) : 'N/A'}</div>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
-            `).join('');
+            `;
         }
     }
 
     const modalEl = document.getElementById('yearDetailModal');
     if (modalEl) {
-        const modal = new bootstrap.Modal(modalEl);
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
+}
+
+function showCountryActors(countryName, actorsList) {
+    const titleEl = document.getElementById("yearDetailTitle");
+    const contentEl = document.getElementById("yearDetailContent");
+    if (titleEl) titleEl.innerHTML = `🌍 Talents originaires de : <span class="text-accent">${countryName}</span> (${actorsList.length})`;
+
+    if (contentEl) {
+        contentEl.style.display = 'block'; // Override HTML grid
+        
+        const hoverStyles = `
+            <style>
+                .cinematic-card { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid transparent; }
+                .cinematic-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(167,139,250,0.25) !important; border-color: var(--accent); z-index: 2; }
+            </style>
+        `;
+
+        contentEl.innerHTML = hoverStyles + `
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 10px;">
+                ${actorsList.map(a => `
+                    <div class="cinematic-card" onclick="window.location.href='actor-details.html?id=${a.id}'" style="width: 140px; position: relative; border-radius: 16px; overflow: hidden; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.4); background: var(--bg-card);">
+                        <img src="${a.profile_path ? 'https://image.tmdb.org/t/p/w500' + a.profile_path : 'https://via.placeholder.com/220x330?text=Photo'}" loading="lazy" style="width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block;">
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 12px 12px; background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.8) 40%, transparent 100%); text-align: center;">
+                            <div style="color: #ffffff; font-weight: 700; font-size: 0.85rem; text-shadow: 0 2px 4px rgba(0,0,0,0.8); line-height: 1.2;">${a.name}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    const modalEl = document.getElementById('yearDetailModal');
+    if (modalEl) {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
         modal.show();
     }
 }
@@ -336,6 +503,10 @@ function showYearDetails(year, count, moviesList) {
 function renderPolarChart(id, labels, data, colors) {
     const ctx = document.getElementById(id);
     if (!ctx) return;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light' || document.body.classList.contains('light-theme');
+    const textColor = isLight ? '#475569' : '#cbd5e1';
+    const gridColor = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+
     new Chart(ctx, {
         type: 'polarArea',
         data: {
@@ -343,8 +514,8 @@ function renderPolarChart(id, labels, data, colors) {
             datasets: [{ data: data, backgroundColor: colors.map(c => c + 'AA'), borderWidth: 0 }]
         },
         options: {
-            scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false } } },
-            plugins: { legend: { position: 'right', labels: { color: '#fff', boxWidth: 12, font: { size: 10 } } } }
+            scales: { r: { grid: { color: gridColor }, ticks: { display: false } } },
+            plugins: { legend: { position: 'right', labels: { color: textColor, boxWidth: 12, font: { size: 10, family: "'Inter', sans-serif" } } } }
         }
     });
 }
@@ -352,12 +523,16 @@ function renderPolarChart(id, labels, data, colors) {
 function renderDoughnutChart(id, labels, data, colors) {
     const ctx = document.getElementById(id);
     if (!ctx) return;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light' || document.body.classList.contains('light-theme');
+    const textColor = isLight ? '#475569' : '#cbd5e1';
+    const cardBg = isLight ? '#ffffff' : '#1e293b';
+
     new Chart(ctx, {
         type: 'doughnut',
-        data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderWidth: 0 }] },
+        data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderWidth: 4, borderColor: cardBg, borderRadius: 8, hoverOffset: 5 }] },
         options: {
             cutout: '75%',
-            plugins: { legend: { position: 'bottom', labels: { color: '#fff', padding: 20 } } }
+            plugins: { legend: { position: 'bottom', labels: { color: textColor, padding: 20, font: { weight: '600', family: "'Inter', sans-serif" } } } }
         }
     });
 }
@@ -365,17 +540,20 @@ function renderDoughnutChart(id, labels, data, colors) {
 function renderBarChart(id, labels, data, color) {
     const ctx = document.getElementById(id);
     if (!ctx) return;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light' || document.body.classList.contains('light-theme');
+    const textColor = isLight ? '#475569' : '#cbd5e1';
+
     new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
-            datasets: [{ data: data, backgroundColor: color, borderRadius: 8 }]
+            datasets: [{ data: data, backgroundColor: color, borderRadius: 8, barPercentage: 0.6 }]
         },
         options: {
             indexAxis: 'y',
             scales: {
-                x: { grid: { display: false }, ticks: { display: false } },
-                y: { grid: { display: false }, ticks: { color: '#fff', font: { weight: '600' } } }
+                x: { grid: { display: false, drawBorder: false }, ticks: { display: false } },
+                y: { grid: { display: false, drawBorder: false }, ticks: { color: textColor, font: { weight: '600', family: "'Inter', sans-serif" } } }
             },
             plugins: { legend: { display: false } }
         }

@@ -366,6 +366,7 @@
             <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-watch">WATCHLIST</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-done">DÉJÀ VUS</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-actors">ACTEURS</button></li>
+            <li class="nav-item" role="presentation"><a href="actor-stats.html" class="nav-link"><i class="ph ph-chart-pie me-1"></i>STATISTIQUES</a></li>
         </ul>
 
         <!-- Tab Content -->
@@ -519,9 +520,11 @@
                         </select>
                         <select id="filter-actor-age" class="btn-outline-premium bg-theme" onchange="appliquerFiltresActeurs()">
                             <option value="">Tous les âges</option>
-                            <option value="0-30">- 30 ans</option>
-                            <option value="30-50">30-50 ans</option>
-                            <option value="50-100">+ 50 ans</option>
+                            <option value="0-20">&le; 20 ans</option>
+                            <option value="21-40">21 - 40 ans</option>
+                            <option value="41-60">41 - 60 ans</option>
+                            <option value="61-80">61 - 80 ans</option>
+                            <option value="81-120">+ 80 ans</option>
                         </select>
                         <select id="sort-actor" class="btn-outline-premium bg-theme" onchange="appliquerFiltresActeurs()">
                             <option value="name-asc">Nom (A-Z)</option>
@@ -529,7 +532,6 @@
                             <option value="age-asc">Âge (Croissant)</option>
                             <option value="age-desc">Âge (Décroissant)</option>
                         </select>
-                        <a href="actor-stats.html" class="btn-outline-premium"><i class="ph ph-chart-pie me-2"></i>STATISTIQUES</a>
                     </div>
                 </div>
                 <div id="actors-favorites" class="movie-grid"></div>

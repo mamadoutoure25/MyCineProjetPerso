@@ -236,9 +236,11 @@ function appliquerFiltresActeurs() {
         results = results.filter(a => {
             if (!a.birthday) return false;
             const age = calculerAge(a.birthday);
-            if (ageRange === "0-30") return age < 30;
-            if (ageRange === "30-50") age >= 30 && age <= 50;
-            if (ageRange === "50-100") age > 50;
+            if (ageRange === "0-20") return age <= 20;
+            if (ageRange === "21-40") return age > 20 && age <= 40;
+            if (ageRange === "41-60") return age > 40 && age <= 60;
+            if (ageRange === "61-80") return age > 60 && age <= 80;
+            if (ageRange === "81-120") return age > 80;
             return true;
         });
     }
