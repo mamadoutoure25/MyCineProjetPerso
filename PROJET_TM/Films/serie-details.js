@@ -67,9 +67,9 @@ async function initPage() {
 
         renderHero(serie);
         renderSeasons(serie.seasons);
-        const castList = (serie.credits?.cast && serie.credits.cast.length > 0)
-            ? serie.credits.cast
-            : (serie.aggregate_credits?.cast || []);
+        const castList = (serie.aggregate_credits?.cast && serie.aggregate_credits.cast.length > 0)
+            ? serie.aggregate_credits.cast
+            : (serie.credits?.cast || []);
         renderCast(castList);
         renderSoundtrack(serie);
         renderVideos(serie.videos?.results);
@@ -189,7 +189,10 @@ function renderCast(cast) {
     if (!cont || !cast) return;
     
     cont.innerHTML = cast.slice(0, 24).map(a => {
-        const role = a.character || (a.roles && a.roles[0] && a.roles[0].character) || "N/A";
+        let role = a.character || (a.roles && a.roles[0] && a.roles[0].character) || "N/A";
+        const episodeCount = a.total_episode_count ? ` (${a.total_episode_count} ép.)` : "";
+        if (episodeCount) role += episodeCount;
+        
         return `
             <div class="actor-card small-actor-card" onclick="window.location.href='actor-details.html?id=${a.id}'">
                 <img src="${a.profile_path ? CONFIG.ACTOR + a.profile_path : CONFIG.EMPTY_ACTOR}" loading="lazy" onerror="this.src='${CONFIG.EMPTY_POSTER}'">
@@ -357,6 +360,7 @@ function renderProviders(providerResults) {
         350: `https://tv.apple.com/search?term=${searchQuery}`, // Apple TV+
         2: `https://tv.apple.com/search?term=${searchQuery}`, // Apple iTunes
         3: `https://play.google.com/store/search?q=${searchQuery}&c=movies`, // Google Play Movies
+        35: `https://www.rakuten.tv/be/search?q=${searchQuery}`, // Rakuten TV
     };
     
     cont.innerHTML = stream.map(p => {
@@ -509,7 +513,7 @@ async function initLists() {
                 });
                 if (response.status === 401) {
                     if (window.clearAuth) window.clearAuth();
-                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    customAlert("Votre session a expiré. Veuillez vous connecter.", "danger");
                     window.location.href = "../connexion/connexion.html";
                     return;
                 }
@@ -588,7 +592,7 @@ function initRating() {
                 const response = await fetch('./notes.php', { method: "POST", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id: currentUid, film_id: id, media_type:'tv', note: v}) });
                 if (response.status === 401) {
                     if (window.clearAuth) window.clearAuth();
-                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    customAlert("Votre session a expiré. Veuillez vous connecter.", "danger");
                     window.location.href = "../connexion/connexion.html";
                     return;
                 }
@@ -607,7 +611,7 @@ function initRating() {
                 const response = await fetch('./notes.php', { method: "DELETE", headers: {'Content-Type':'application/json'}, body: JSON.stringify({user_id: currentUid, film_id: id, media_type:'tv'}) });
                 if (response.status === 401) {
                     if (window.clearAuth) window.clearAuth();
-                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    customAlert("Votre session a expiré. Veuillez vous connecter.", "danger");
                     window.location.href = "../connexion/connexion.html";
                     return;
                 }

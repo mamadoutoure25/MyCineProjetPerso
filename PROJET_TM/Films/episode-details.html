@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>MyCiné - Saison Experience</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="premium-home.css">
+    <link rel="stylesheet" href="theme-variables.css">
+    <link rel="stylesheet" href="theme-variables.css">
+    <script src="../connexion/authUtils.js"></script>
+    <style>
+        .hero-slider {
+            position: relative;
+            min-height: auto;
+            height: auto !important;
+            max-height: none !important;
+            display: flex;
+            align-items: flex-start !important;
+            padding: 105px 5% 50px !important;
+            overflow: hidden;
+            background: #09090b;
+        }
+
+        .hero-backdrop {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            filter: brightness(0.8);
+            transition: transform 0.8s ease, filter 0.3s ease;
+        }
+
+        [data-theme="dark"] .hero-backdrop {
+            filter: brightness(0.65);
+        }
+
+        .hero-overlay-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.15) 0%, transparent 60%),
+                        linear-gradient(to bottom, rgba(9, 9, 11, 0.3) 0%, #09090b 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr minmax(260px, 340px);
+            gap: 40px;
+            align-items: flex-start !important;
+        }
+
+        @media (max-width: 991px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hero-info {
+            position: relative;
+            z-index: 10;
+            max-width: 750px;
+            padding: 30px 35px;
+            background: rgba(18, 18, 22, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(167, 139, 250, 0.15);
+        }
+
+        [data-theme="light"] .hero-info {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .hero-title {
+            font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        [data-theme="light"] .hero-title {
+            background: linear-gradient(135deg, #111827 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 25px;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        [data-theme="light"] .hero-desc {
+            color: rgba(31, 41, 55, 0.9);
+        }
+
+        .season-photo-frame {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            aspect-ratio: 2/3;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(167, 139, 250, 0.2);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease;
+        }
+
+        .season-photo-frame:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(167, 139, 250, 0.6);
+        }
+
+        .season-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Glassmorphic Quick Stats Bar */
+        .season-stats-section {
+            padding: 35px 5% 15px;
+            margin-top: -10px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .glass-stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 22px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-stat-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(167, 139, 250, 0.35);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 25px rgba(167, 139, 250, 0.15);
+        }
+
+        .stat-icon-wrapper {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(244, 114, 182, 0.15));
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #a78bfa;
+            flex-shrink: 0;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 4px;
+        }
+
+        [data-theme="light"] .stat-label {
+            color: #6b7280 !important;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .section-header-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .section-bar {
+            width: 5px;
+            height: 26px;
+            background: linear-gradient(to bottom, #a78bfa, #f472b6);
+            border-radius: 3px;
+        }
+
+        /* Episode Premium Card */
+        .ep-card-premium {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            margin-bottom: 24px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .ep-card-premium {
+                flex-direction: column;
+            }
+        }
+
+        .ep-card-premium:hover {
+            transform: translateX(12px) scale(1.01);
+            border-color: #a78bfa;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(167, 139, 250, 0.2);
+        }
+
+        .ep-thumb-wrap {
+            width: 320px;
+            aspect-ratio: 16/9;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+            background: #121215;
+        }
+
+        @media (max-width: 768px) {
+            .ep-thumb-wrap {
+                width: 100%;
+            }
+        }
+
+        .ep-thumb-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .ep-card-premium:hover .ep-thumb-wrap img {
+            transform: scale(1.08);
+        }
+
+        .ep-badge-chip {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            color: #000000;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .ep-content {
+            padding: 28px 32px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .ep-meta-top {
+            color: #a78bfa;
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .ep-title-main {
+            font-weight: 900;
+            font-size: 1.35rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            line-height: 1.25;
+        }
+
+        .ep-desc-main {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.98rem;
+            line-height: 1.65;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        [data-theme="light"] .ep-desc-main {
+            color: rgba(55, 65, 81, 0.85);
+        }
+
+        .ep-footer-meta {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            opacity: 0.75;
+        }
+
+        /* Distribution Grille Ultra-Responsive */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        @media (min-width: 1920px) { .movie-grid { grid-template-columns: repeat(8, 1fr); } }
+        @media (min-width: 1400px) and (max-width: 1919px) { .movie-grid { grid-template-columns: repeat(6, 1fr); } }
+        @media (min-width: 1100px) and (max-width: 1399px) { .movie-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (min-width: 800px) and (max-width: 1099px) { .movie-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 500px) and (max-width: 799px) { .movie-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 499px) { .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+        .small-actor-card {
+            position: relative;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            aspect-ratio: 2/3;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #121215;
+        }
+
+        .small-actor-card:hover {
+            transform: translateY(-8px) scale(1.04);
+            border-color: #a78bfa;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        }
+
+        .small-actor-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s ease;
+        }
+
+        .small-actor-card:hover img { transform: scale(1.08); }
+
+        .actor-hover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.3) 60%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+        }
+
+        .small-actor-card:hover .actor-hover-overlay { opacity: 1; }
+
+        .actor-name { font-size: 0.85rem; font-weight: 800; color: #ffffff; margin-bottom: 4px; line-height: 1.2; }
+        .actor-role { font-size: 0.72rem; color: #a78bfa; font-weight: 700; }
+
+        .tech-footer {
+            padding: 50px 5%;
+            background: #050507;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top px-5">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #fff;">M</div>
+            MYCINÉ
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="ph ph-list fs-2 text-theme"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold active text-theme" href="../../series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/distributors-browse.html">DISTRIBUTEURS</a></li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
+                <i class="ph ph-moon fs-4" id="theme-icon"></i>
+            </button>
+            <div id="auth-section">
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+            </div>
+            <script>
+                (function() {
+                    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
+                    if (auth) {
+                        const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+                        const c = document.getElementById("auth-section");
+                        if (c) {
+                            c.innerHTML = `
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end d-none d-md-block">
+                                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                                            <div class="fw-bold small">${pseudo}</div>
+                                            <div class="x-small opacity-50">MON PROFIL</div>
+                                        </a>
+                                    </div>
+                                    <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                                </div>`;
+                        }
+                    }
+                })();
+            </script>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <!-- Cinematic Hero Header -->
+    <header class="hero-slider">
+        <img id="season-backdrop" src="" class="hero-backdrop">
+        <div class="hero-overlay-gradient"></div>
+        
+        <div class="hero-container">
+            <div class="hero-info">
+                <nav aria-label="breadcrumb" class="mb-3 opacity-60">
+                    <ol class="breadcrumb m-0" style="font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;">
+                        <li class="breadcrumb-item"><a href="../../index.html" class="text-theme text-decoration-none">MYCINÉ</a></li>
+                        <li class="breadcrumb-item"><a href="../../series.html" class="text-theme text-decoration-none">SÉRIES</a></li>
+                        <li class="breadcrumb-item"><a id="serie-link" href="#" class="text-theme text-decoration-none">SÉRIE</a></li>
+                        <li class="breadcrumb-item active text-theme" id="breadcrumb-season">SAISON</li>
+                    </ol>
+                </nav>
+
+                <h1 id="season-title" class="hero-title">...</h1>
+                <div id="season-tags" class="d-flex align-items-center gap-3 fw-bold opacity-85 mb-3" style="font-size: 0.85rem; letter-spacing: 1px;"></div>
+                <p id="season-overview" class="hero-desc"></p>
+
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <a id="back-to-serie-btn" href="#" class="btn btn-light rounded-pill px-4 py-3 fw-black shadow-lg" style="letter-spacing: 1px; font-size: 0.85rem;">
+                        <i class="ph ph-arrow-left me-2 fs-5"></i> RETOUR À LA SÉRIE
+                    </a>
+                </div>
+            </div>
+
+            <div class="d-none d-lg-block">
+                <div class="season-photo-frame">
+                    <img id="season-poster" src="" alt="Affiche Saison">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Glassmorphic Quick Stats Section -->
+    <section class="season-stats-section">
+        <div class="section-header-bar mb-4">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">APERCU DE L'ÉPISODE</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-calendar-blank"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Date de diffusion</div>
+                    <div id="stats-episode-date" class="stat-value text-accent">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-clock"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Durée</div>
+                    <div id="stats-episode-runtime" class="stat-value">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-star"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Note Moyenne</div>
+                    <div id="stats-episode-rating" class="stat-value" style="color: #f472b6;">...</div>
+                </div>
+            </div>
+
+            <div class="glass-stat-card" style="cursor: pointer;" onclick="if(window.openEpisodeVideos) window.openEpisodeVideos()">
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-play-circle"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Vidéos de l'épisode</div>
+                    <div class="stat-value">Regarder <i class="ph ph-arrow-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Crew Section -->
+    <section class="content-lane">
+        <div class="section-header-bar">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">ÉQUIPE TECHNIQUE</div>
+        </div>
+        <div id="episode-crew" class="movie-grid mt-4"></div>
+    </section>
+
+    <!-- Guest Stars Section -->
+    <section class="content-lane pt-0">
+        <div class="section-header-bar">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">ACTEURS INVITÉS (GUEST STARS)</div>
+        </div>
+        <div id="episode-guest-stars" class="movie-grid mt-4"></div>
+    </section>
+
+    <!-- Images Section -->
+    <section class="content-lane pt-0">
+        <div class="section-header-bar">
+            <div class="section-bar"></div>
+            <div class="lane-title mb-0" style="font-size: 1.3rem; letter-spacing: 1.5px;">IMAGES DE L'ÉPISODE</div>
+        </div>
+        <div id="episode-gallery" class="movie-grid mt-4"></div>
+    </section>
+</main>
+
+<div class="modal fade" id="episodeMediaModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content" style="background: #000; border-radius: 30px; overflow: hidden; border: 1px solid var(--border);">
+            <div class="modal-header border-0 px-4 pt-4"><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="document.getElementById('episodeMediaModalContent').innerHTML=''"></button></div>
+            <div class="modal-body p-4 text-center"><div id="episodeMediaModalContent"></div></div>
+        </div>
+    </div>
+</div>
+
+<footer class="tech-footer text-center">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-2">
+            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900; color: #fff;">M</div>
+            <span class="fw-black text-theme" style="letter-spacing: 1px;">MYCINÉ SAISON EXPERIENCE</span>
+        </div>
+        <p class="m-0 x-small opacity-50">© 2026 MYCINÉ EXPERIENCE - TOUS DROITS RÉSERVÉS</p>
+    </div>
+</footer>
+
+<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 1100;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="episode-details.js?v=1"></script>
+<script src="../theme.js"></script>
+</body>
+</html>

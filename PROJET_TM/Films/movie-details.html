@@ -776,7 +776,7 @@
 
 <main>
     <!-- Cinematic Hero Section -->
-    <header class="hero-slider">
+    <header class="hero-slider" style="margin: 85px 40px 40px; border-radius: 30px; overflow: hidden; width: calc(100% - 80px);">
         <img id="hero-backdrop" src="" class="hero-backdrop">
         <div class="hero-overlay-gradient"></div>
         
@@ -1041,11 +1041,34 @@
 <script src="posterSync.js"></script>
 <script src="movie-details.js?v=11"></script>
 <script>
-    window.onscroll = () => {
-        const nav = document.querySelector('.navbar');
-        if (window.scrollY > 50) nav.classList.add('scrolled');
-        else nav.classList.remove('scrolled');
-    };
+    function renderAuth(a) {
+        const c = document.getElementById("auth-section");
+        if (!c) return;
+        const pathPrefix = ""; // already in PROJET_TM/Films
+        if (a) {
+            const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+            c.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                            <div class="fw-bold small">${pseudo}</div>
+                            <div class="x-small opacity-50">MON PROFIL</div>
+                        </a>
+                    </div>
+                    <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.href='../connexion/connexion.html';" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                </div>
+            `;
+        } else {
+            c.innerHTML = `
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm" style="padding: 8px 20px;">CONNEXION</a>
+            `;
+        }
+    }
+
+    (function() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+        renderAuth(auth);
+    })();
 </script>
 <script src="../theme.js"></script>
 </body>

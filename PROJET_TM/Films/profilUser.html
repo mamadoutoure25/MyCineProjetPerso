@@ -303,9 +303,10 @@
             <div id="auth-section">
                 <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
+            <script src="../connexion/authUtils.js"></script>
             <script>
                 (function() {
-                    const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+                    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
                     if (auth) {
                         const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
                         const c = document.getElementById("auth-section");
@@ -318,10 +319,7 @@
                                             <div class="x-small opacity-50">MON PROFIL</div>
                                         </a>
                                     </div>
-                                    <a href="../profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres">
-                                        <i class="ph ph-gear fs-5"></i>
-                                    </a>
-                                    <button onclick="sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); window.location.href='../connexion/connexion.html';" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button>
+                                    <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
                                 </div>`;
                         }
                     }
@@ -546,11 +544,34 @@
 <script src="posterSync.js"></script>
 <script src="profilUser.js"></script>
 <script>
-    window.onscroll = () => {
-        const nav = document.querySelector('.navbar');
-        if (window.scrollY > 50) nav.classList.add('scrolled');
-        else nav.classList.remove('scrolled');
-    };
+    function renderAuth(a) {
+        const c = document.getElementById("auth-section");
+        if (!c) return;
+        const pathPrefix = ""; // already in PROJET_TM/Films
+        if (a) {
+            const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+            c.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                            <div class="fw-bold small">${pseudo}</div>
+                            <div class="x-small opacity-50">MON PROFIL</div>
+                        </a>
+                    </div>
+                    <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.href='../connexion/connexion.html';" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                </div>
+            `;
+        } else {
+            c.innerHTML = `
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm" style="padding: 8px 20px;">CONNEXION</a>
+            `;
+        }
+    }
+
+    (function() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+        renderAuth(auth);
+    })();
 </script>
 <script src="../theme.js"></script>
 </body>

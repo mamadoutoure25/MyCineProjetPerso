@@ -35,14 +35,14 @@
     --border-light: rgba(255, 255, 255, 0.2);
 
     /* ===== OVERLAYS & GRADIENTS ===== */
-    --nav-bg: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+    --nav-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
     --nav-scrolled: #050505;
     --card-details-bg: linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.4) 50%, transparent 100%);
-    --hero-overlay-top: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
-    --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, rgba(5,5,5,0) 100%);
-    
-    --filter-select-bg: rgba(255,255,255,0.05);
-    --filter-select-hover: rgba(255,255,255,0.1);
+    --hero-overlay-top: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+    --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, rgba(5, 5, 5, 0) 100%);
+
+    --filter-select-bg: rgba(255, 255, 255, 0.05);
+    --filter-select-hover: rgba(255, 255, 255, 0.1);
     --filter-option-bg: #111111;
 
     --shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.5);
@@ -54,7 +54,7 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease;
     --card-transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    
+
     --card-bg: #111111;
     --background: #050505;
     --background-secondary: #121212;
@@ -82,14 +82,14 @@
     --glass-border: rgba(0, 0, 0, 0.1);
     --border-light: rgba(0, 0, 0, 0.2);
 
-    --nav-bg: linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, transparent 100%);
+    --nav-bg: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, transparent 100%);
     --nav-scrolled: #ffffff;
     --card-details-bg: linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
-    --hero-overlay-top: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
-    --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, rgba(248,249,250,0) 100%);
-    
-    --filter-select-bg: rgba(0,0,0,0.05);
-    --filter-select-hover: rgba(0,0,0,0.1);
+    --hero-overlay-top: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+    --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, rgba(248, 249, 250, 0) 100%);
+
+    --filter-select-bg: rgba(0, 0, 0, 0.05);
+    --filter-select-hover: rgba(0, 0, 0, 0.1);
     --filter-option-bg: #ffffff;
 
     --card-bg: #ffffff;
@@ -133,11 +133,18 @@ body {
 }
 
 /* Theme Utilities */
-.text-theme { color: var(--text-primary) !important; }
-.bg-theme { background-color: var(--bg-card) !important; }
+.text-theme {
+    color: var(--text-primary) !important;
+}
+
+.bg-theme {
+    background-color: var(--bg-card) !important;
+}
 
 /* ===== GLOBAL RESET & CROSS BROWSER COMPATIBILITY ===== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -151,10 +158,10 @@ html {
 .hero-slider {
     position: relative;
     width: 100%;
-    min-height: 68vh;
+    min-height: 45vh;
     display: flex;
     align-items: flex-start;
-    padding: 105px 0 50px;
+    padding: 50px 0 50px;
     background: #050505;
     overflow: hidden;
 }
@@ -173,7 +180,7 @@ html {
     position: absolute;
     inset: 0;
     background: linear-gradient(to right, #050505 0%, rgba(5, 5, 5, 0.85) 45%, rgba(5, 5, 5, 0.35) 75%, transparent 100%),
-                linear-gradient(to top, #050505 0%, rgba(5, 5, 5, 0.4) 40%, transparent 100%);
+        linear-gradient(to top, #050505 0%, rgba(5, 5, 5, 0.4) 40%, transparent 100%);
     pointer-events: none;
     z-index: 1;
 }
@@ -247,7 +254,8 @@ html {
 }
 
 /* Side Poster Card */
-.side-panel, .poster-side-card {
+.side-panel,
+.poster-side-card {
     position: relative;
     z-index: 10;
     width: 100%;
@@ -268,7 +276,8 @@ html {
     gap: 16px;
 }
 
-#movie-poster-img, .poster-side-card img {
+#movie-poster-img,
+.poster-side-card img {
     width: 100%;
     aspect-ratio: 2/3;
     object-fit: cover;

@@ -61,6 +61,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
             <ul class="navbar-nav gap-4">
+                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../index.html">ACCUEIL</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold active text-theme" href="../../PROJET_TM/Films/films.html">FILMS</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../series.html">SÉRIES</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="../../PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
@@ -73,7 +74,7 @@
                 <i class="ph ph-moon fs-4" id="theme-icon"></i>
             </button>
             <div id="auth-section">
-                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
             <script src="../connexion/authUtils.js"></script>
             <script>
@@ -91,9 +92,6 @@
                                             <div class="x-small opacity-50">MON PROFIL</div>
                                         </a>
                                     </div>
-                                    <a href="../profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres">
-                                        <i class="ph ph-gear fs-5"></i>
-                                    </a>
                                     <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
                                 </div>`;
                         }
@@ -105,21 +103,66 @@
 </nav>
 
 <main>
+
     <!-- Cinematic Hero -->
-    <section class="hero-slider" id="hero-showcase">
-        <div class="hero-slide active">
-            <img src="https://image.tmdb.org/t/p/original/5m0v89Yp9YmN4V1V19x0j91V19X.jpg" class="hero-backdrop" id="films-hero-img">
-            <div class="hero-overlay-top"></div>
-            <div class="hero-overlay-bottom"></div>
-            <div class="home-hero-info">
-                <h1 class="hero-title">BIBLIOTHÈQUE</h1>
-                <p class="opacity-75 mb-4 fs-5">Explorez des milliers de films, des blockbusters aux trésors cachés.</p>
-                <div class="d-flex gap-3">
-                    <button class="btn btn-light rounded-pill px-5 py-3 fw-black" onclick="document.getElementById('films-search').focus()"><i class="ph ph-magnifying-glass me-2"></i> RECHERCHER</button>
-                </div>
+    <section class="prime-hero-card" id="films-hero-card" style="height: 75vh; min-height: 600px; position: relative; overflow: hidden; cursor: pointer;">
+        <img src="https://image.tmdb.org/t/p/original/5m0v89Yp9YmN4V1V19x0j91V19X.jpg" class="hero-backdrop" id="films-hero-img" alt="Films Hero" style="transition: opacity 0.5s;">
+        <div id="hero-video-container" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 56.25vw; min-height: 100%; min-width: 177.77vh; z-index: 1; opacity: 0; transition: opacity 0.8s; pointer-events: none;"></div>
+        <div class="hero-overlay" style="z-index: 2;"></div>
+        <div class="prime-hero-content" style="z-index: 3;">
+            <h1 class="hero-title text-white fw-bold mb-2">BIBLIOTHÈQUE DE FILMS</h1>
+            <p class="hero-desc text-light opacity-75 mb-3" style="font-size: 1.1rem;">Explorez des milliers de films, des blockbusters aux trésors cachés.</p>
+            <div class="d-flex gap-3 mt-4">
+                <button class="btn-prime-solid fw-bold rounded-pill" onclick="document.getElementById('films-search').focus()">
+                    <i class="ph ph-magnifying-glass me-2"></i> RECHERCHER
+                </button>
+                <button class="btn-prime-outline fw-bold rounded-pill text-white" onclick="toggleHeroMute(event)" style="z-index: 10;">
+                    <i class="ph ph-speaker-slash me-2" id="hero-mute-icon"></i> <span id="hero-mute-text">SON DÉSACTIVÉ</span>
+                </button>
             </div>
         </div>
     </section>
+
+    <script>
+        const heroCard = document.getElementById('films-hero-card');
+        const videoContainer = document.getElementById('hero-video-container');
+        let hoverTimeout;
+        let trailerId = 'By2Q9VwU5Xk'; // Trailer fallback
+        let isHeroMuted = true;
+        
+        function toggleHeroMute(e) {
+            e.stopPropagation();
+            isHeroMuted = !isHeroMuted;
+            const icon = document.getElementById('hero-mute-icon');
+            const text = document.getElementById('hero-mute-text');
+            icon.className = isHeroMuted ? 'ph ph-speaker-slash me-2' : 'ph ph-speaker-high me-2';
+            text.innerText = isHeroMuted ? 'SON DÉSACTIVÉ' : 'SON ACTIVÉ';
+            
+            const iframe = document.getElementById('hero-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: isHeroMuted ? 'mute' : 'unMute', args: []}), '*');
+            }
+        }
+
+        heroCard.addEventListener('mouseenter', () => {
+            // Délai avant de lancer la vidéo (comme Apple TV)
+            hoverTimeout = setTimeout(() => {
+                videoContainer.innerHTML = `<iframe id="hero-iframe" width="100%" height="100%" src="https://www.youtube.com/embed/${trailerId}?autoplay=1&mute=${isHeroMuted ? 1 : 0}&controls=0&modestbranding=1&showinfo=0&rel=0&loop=1&playlist=${trailerId}&enablejsapi=1" frameborder="0" allow="autoplay" style="pointer-events: none;"></iframe>`;
+                videoContainer.style.opacity = '1';
+            }, 600);
+        });
+
+        heroCard.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
+            videoContainer.style.opacity = '0';
+            // On supprime l'iframe après la transition pour arrêter le son/vidéo
+            setTimeout(() => {
+                if(videoContainer.style.opacity === '0') {
+                    videoContainer.innerHTML = '';
+                }
+            }, 800);
+        });
+    </script>
 
     <!-- Contenu Principal avec Lanes Netflix-style -->
     <section class="content-lane">
@@ -138,10 +181,15 @@
                         <select id="filter-genre" class="premium-select">
                             <option value="">Tous les genres</option>
                             <option value="28">Action</option>
+                            <option value="12">Aventure</option>
+                            <option value="16">Animation</option>
                             <option value="35">Comédie</option>
+                            <option value="99">Documentaire</option>
                             <option value="18">Drame</option>
-                            <option value="878">S-Fiction</option>
                             <option value="27">Horreur</option>
+                            <option value="10749">Romance</option>
+                            <option value="878">Science-Fiction</option>
+                            <option value="37">Western</option>
                         </select>
                     </div>
 
@@ -183,6 +231,7 @@
                         <label class="filter-label">Trier</label>
                         <select id="filter-sort" class="premium-select">
                             <option value="popularity.desc">Populaires</option>
+                            <option value="primary_release_date.desc">Plus récents</option>
                             <option value="vote_average.desc">Mieux notés</option>
                             <option value="revenue.desc">Box-Office (Plus grand > Plus petit)</option>
                             <option value="revenue.asc">Box-Office (Plus petit > Plus grand)</option>
@@ -259,6 +308,30 @@
     const IMG_URL = "https://image.tmdb.org/t/p/w500";
     const BACKDROP_URL = "https://image.tmdb.org/t/p/original";
 
+    function renderAuth(a) {
+        const c = document.getElementById("auth-section");
+        if (!c) return;
+        const pathPrefix = ""; // already in PROJET_TM/Films
+        if (a) {
+            const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+            c.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                            <div class="fw-bold small">${pseudo}</div>
+                            <div class="x-small opacity-50">MON PROFIL</div>
+                        </a>
+                    </div>
+                    <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                </div>
+            `;
+        } else {
+            c.innerHTML = `
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm" style="padding: 8px 20px;">CONNEXION</a>
+            `;
+        }
+    }
+
     const laneStates = {
         'top-rated-films': { page: 1, endpoint: '/movie/top_rated', params: '' },
         'now-playing-films': { page: 1, endpoint: '/movie/now_playing', params: '&region=FR' },
@@ -303,6 +376,9 @@
     }
 
     async function initFilmsPage() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+        renderAuth(auth);
+
         try {
             await fetchUserCustomPosters();
             await loadDefaultLanes();
@@ -321,7 +397,14 @@
             ]);
 
             if (topRated.results && topRated.results[0]) {
-                document.getElementById('films-hero-img').src = BACKDROP_URL + topRated.results[0].backdrop_path;
+                const topItem = topRated.results[0];
+                document.getElementById('films-hero-img').src = BACKDROP_URL + topItem.backdrop_path;
+                fetch(`${BASE_URL}/movie/${topItem.id}/videos?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`)
+                    .then(r => r.json())
+                    .then(vData => {
+                        const trailer = vData.results?.find(v => v.type === 'Trailer') || vData.results?.[0];
+                        if (trailer) trailerId = trailer.key;
+                    }).catch(e => console.error("Erreur trailer dynamique:", e));
             }
 
             if (topRated.results) renderLane(topRated.results, 'top-rated-films');

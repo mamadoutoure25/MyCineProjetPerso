@@ -162,7 +162,7 @@ function renderEpisodes(eps) {
 
     try {
         cont.innerHTML = eps.map(e => `
-            <div class="ep-card-premium">
+            <div class="ep-card-premium" style="cursor: pointer;" onclick="window.location.href='episode-details.html?serieId=${serieId}&season=${seasonNum}&episode=${e.episode_number}'">
                 <div class="ep-thumb-wrap">
                     <img src="${e.still_path ? CONFIG.HD + e.still_path : CONFIG.EMPTY_THUMB}" loading="lazy" onerror="this.src='${CONFIG.EMPTY_THUMB}'">
                     <div class="ep-badge-chip">ÉPISODE ${e.episode_number}</div>
@@ -176,6 +176,11 @@ function renderEpisodes(eps) {
                         <span><i class="ph ph-clock me-2"></i>${e.runtime ? e.runtime + ' MIN' : 'N/A'}</span>
                         ${e.vote_average ? `<span class="text-accent"><i class="ph-fill ph-star me-1"></i>${e.vote_average.toFixed(1)}</span>` : ''}
                     </div>
+                    <div class="mt-4">
+                        <button class="btn btn-sm rounded-pill px-4 py-2 ep-btn-watch" onclick="event.stopPropagation(); openEpisodeVideos(${e.episode_number})">
+                            <i class="ph ph-play-circle me-1 fs-6"></i> VIDÉOS
+                        </button>
+                    </div>
                 </div>
             </div>
         `).join("");
@@ -184,6 +189,45 @@ function renderEpisodes(eps) {
         cont.innerHTML = "<p class='opacity-50 fs-6 py-4'>Erreur lors du rendu des épisodes.</p>";
     }
 }
+
+window.openEpisodeVideos = async function(episodeNum) {
+    try {
+        const url = `${CONFIG.BASE}/tv/${serieId}/season/${seasonNum}/episode/${episodeNum}/videos?api_key=${CONFIG.KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`;
+        let res = await fetch(url).then(r => r.json());
+        
+        let videos = res.results || [];
+        if (videos.length === 0) {
+            const urlEn = `${CONFIG.BASE}/tv/${serieId}/season/${seasonNum}/episode/${episodeNum}/videos?api_key=${CONFIG.KEY}`;
+            const resEn = await fetch(urlEn).then(r => r.json());
+            videos = resEn.results || [];
+        }
+
+        if (videos.length === 0) {
+            customAlert("Aucune vidéo disponible pour cet épisode.");
+            return;
+        }
+
+        const video = videos.find(v => v.type === "Trailer" || v.type === "Teaser" || v.type === "Recap") || videos[0];
+        
+        if (video.site === "YouTube") {
+            const modalContent = document.getElementById("episodeMediaModalContent");
+            if (modalContent) {
+                modalContent.innerHTML = `<div class="ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/${video.key}?autoplay=1&controls=1&modestbranding=1" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div><div class="text-start mt-3"><h5 class="fw-bold">${video.name}</h5><p class="opacity-50 small mb-0">${video.type}</p></div>`;
+                const modal = new bootstrap.Modal(document.getElementById('episodeMediaModal'));
+                modal.show();
+                
+                document.getElementById('episodeMediaModal').addEventListener('hidden.bs.modal', function () {
+                    modalContent.innerHTML = '';
+                }, { once: true });
+            }
+        } else {
+            customAlert("Format vidéo non supporté.", "danger");
+        }
+    } catch (e) {
+        console.error("Erreur vidéos:", e);
+        customAlert("Erreur lors de la récupération des vidéos.", "danger");
+    }
+};
 
 function renderCast(cast) {
     const cont = document.getElementById("season-cast");

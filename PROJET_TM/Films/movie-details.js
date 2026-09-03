@@ -432,6 +432,7 @@ const providerLinks = {
     350: `https://tv.apple.com/search?term=${searchQuery}`, // Apple TV+
     2: `https://tv.apple.com/search?term=${searchQuery}`, // Apple iTunes
     3: `https://play.google.com/store/search?q=${searchQuery}&c=movies`, // Google Play Movies
+    35: `https://www.rakuten.tv/be/search?q=${searchQuery}`, // Rakuten TV
 };
     
     cont.innerHTML = stream.map(p => {
@@ -666,7 +667,7 @@ async function initLists() {
                 });
                 if (res.status === 401) {
                     if (window.clearAuth) window.clearAuth();
-                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    customAlert("Votre session a expiré. Veuillez vous connecter.", "danger");
                     window.location.href = "../connexion/connexion.html";
                     return;
                 }
@@ -755,7 +756,7 @@ function initRating() {
                 });
                 if (response.status === 401) {
                     if (window.clearAuth) window.clearAuth();
-                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    customAlert("Votre session a expiré. Veuillez vous connecter.", "danger");
                     window.location.href = "../connexion/connexion.html";
                     return;
                 }
@@ -778,7 +779,7 @@ function initRating() {
                 });
                 if (response.status === 401) {
                     if (window.clearAuth) window.clearAuth();
-                    alert("Votre session a expiré. Veuillez vous connecter.");
+                    customAlert("Votre session a expiré. Veuillez vous connecter.", "danger");
                     window.location.href = "../connexion/connexion.html";
                     return;
                 }

@@ -79,7 +79,7 @@
             <ul class="navbar-nav gap-4">
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="index.html">ACCUEIL</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="PROJET_TM/Films/films.html">FILMS</a></li>
-                <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="series.html">SÉRIES</a></li>
+                <li class="nav-item"><a class="nav-link fw-bold active text-theme" href="series.html">SÉRIES</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="PROJET_TM/Films/collections-browse.html">COLLECTIONS</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="PROJET_TM/Films/companies-browse.html">STUDIOS</a></li>
                 <li class="nav-item"><a class="nav-link fw-bold opacity-50 text-theme" href="PROJET_TM/Films/distributors-browse.html">DISTRIBUTEURS</a></li>
@@ -108,9 +108,6 @@
                                             <div class="x-small opacity-50">MON PROFIL</div>
                                         </a>
                                     </div>
-                                    <a href="PROJET_TM/profil/settings.html" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" title="Paramètres">
-                                        <i class="ph ph-gear fs-5"></i>
-                                    </a>
                                     <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
                                 </div>`;
                         }
@@ -122,17 +119,66 @@
 </nav>
 
 <main>
+
     <!-- Cinematic Header for Series -->
-    <header class="hero-slider" style="height: 60vh;">
-        <div class="hero-slide active">
-            <img src="https://image.tmdb.org/t/p/original/969UmUNbWpS5S6uO0pPA6p8AZ9H.jpg" class="hero-backdrop" id="series-hero-img">
-            <div class="hero-overlay-bottom"></div>
-            <div class="home-hero-info">
-                <h1 class="hero-title">SÉRIES TV</h1>
-                <p class="opacity-75 fs-5">Plongez dans les meilleures productions télévisuelles du moment.</p>
+    <section class="prime-hero-card" id="series-hero-card" style="height: 75vh; min-height: 600px; position: relative; overflow: hidden; cursor: pointer;">
+        <img src="https://image.tmdb.org/t/p/original/5cvnxEHT3e39DvT6ARw4GNCFrB0.jpg" class="hero-backdrop" id="series-hero-img" alt="Series Hero" style="transition: opacity 0.5s;">
+        <div id="hero-video-container" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 56.25vw; min-height: 100%; min-width: 177.77vh; z-index: 1; opacity: 0; transition: opacity 0.8s; pointer-events: none;"></div>
+        <div class="hero-overlay" style="z-index: 2;"></div>
+        <div class="prime-hero-content" style="z-index: 3;">
+            <h1 class="hero-title text-white fw-bold mb-2">SÉRIES TV</h1>
+            <p class="hero-desc text-light opacity-75 mb-3" style="font-size: 1.1rem;">Plongez dans les meilleures productions télévisuelles du moment.</p>
+            <div class="d-flex gap-3 mt-4">
+                <button class="btn-prime-solid fw-bold rounded-pill" onclick="document.getElementById('series-search').focus()">
+                    <i class="ph ph-magnifying-glass me-2"></i> RECHERCHER
+                </button>
+                <button class="btn-prime-outline fw-bold rounded-pill text-white" onclick="toggleHeroMute(event)" style="z-index: 10;">
+                    <i class="ph ph-speaker-slash me-2" id="hero-mute-icon"></i> <span id="hero-mute-text">SON DÉSACTIVÉ</span>
+                </button>
             </div>
         </div>
-    </header>
+    </section>
+
+    <script>
+        const seriesHeroCard = document.getElementById('series-hero-card');
+        const seriesVideoContainer = document.getElementById('hero-video-container');
+        let seriesHoverTimeout;
+        let seriesTrailerId = 'fXmAurh012s'; // Trailer fallback
+        let isHeroMuted = true;
+        
+        function toggleHeroMute(e) {
+            e.stopPropagation();
+            isHeroMuted = !isHeroMuted;
+            const icon = document.getElementById('hero-mute-icon');
+            const text = document.getElementById('hero-mute-text');
+            icon.className = isHeroMuted ? 'ph ph-speaker-slash me-2' : 'ph ph-speaker-high me-2';
+            text.innerText = isHeroMuted ? 'SON DÉSACTIVÉ' : 'SON ACTIVÉ';
+            
+            const iframe = document.getElementById('hero-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: isHeroMuted ? 'mute' : 'unMute', args: []}), '*');
+            }
+        }
+
+        seriesHeroCard.addEventListener('mouseenter', () => {
+            // Délai avant de lancer la vidéo (comme Apple TV)
+            seriesHoverTimeout = setTimeout(() => {
+                seriesVideoContainer.innerHTML = `<iframe id="hero-iframe" width="100%" height="100%" src="https://www.youtube.com/embed/${seriesTrailerId}?autoplay=1&mute=${isHeroMuted ? 1 : 0}&controls=0&modestbranding=1&showinfo=0&rel=0&loop=1&playlist=${seriesTrailerId}&enablejsapi=1" frameborder="0" allow="autoplay" style="pointer-events: none;"></iframe>`;
+                seriesVideoContainer.style.opacity = '1';
+            }, 600);
+        });
+
+        seriesHeroCard.addEventListener('mouseleave', () => {
+            clearTimeout(seriesHoverTimeout);
+            seriesVideoContainer.style.opacity = '0';
+            // On supprime l'iframe après la transition pour arrêter le son/vidéo
+            setTimeout(() => {
+                if(seriesVideoContainer.style.opacity === '0') {
+                    seriesVideoContainer.innerHTML = '';
+                }
+            }, 800);
+        });
+    </script>
 
     <section class="content-lane">
         <div class="d-flex flex-column align-items-center mb-5" style="margin-top: -50px; position: relative; z-index: 100;">
@@ -148,10 +194,16 @@
                         <select id="filter-genre" class="premium-select">
                             <option value="">Tous les genres</option>
                             <option value="10759">Action & Aventure</option>
-                            <option value="18">Drame</option>
+                            <option value="16">Animation</option>
                             <option value="35">Comédie</option>
                             <option value="80">Crime</option>
-                            <option value="10765">S-Fiction</option>
+                            <option value="99">Documentaire</option>
+                            <option value="18">Drame</option>
+                            <option value="10751">Familial</option>
+                            <option value="9648">Mystère</option>
+                            <option value="10765">Science-Fiction & Fantastique</option>
+                            <option value="10768">Guerre & Politique</option>
+                            <option value="37">Western</option>
                         </select>
                     </div>
 
@@ -200,6 +252,7 @@
                         <label class="filter-label">Trier</label>
                         <select id="filter-sort" class="premium-select">
                             <option value="popularity.desc">Populaires</option>
+                            <option value="first_air_date.desc">Plus récentes</option>
                             <option value="vote_average.desc">Mieux notées</option>
                         </select>
                     </div>
@@ -249,6 +302,30 @@
     const IMG_URL = "https://image.tmdb.org/t/p/w500";
     const BACKDROP_URL = "https://image.tmdb.org/t/p/original";
 
+    function renderAuth(a) {
+        const c = document.getElementById("auth-section");
+        if (!c) return;
+        const pathPrefix = "PROJET_TM/Films/";
+        if (a) {
+            const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+            c.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <a href="${pathPrefix}profilUser.html" class="text-decoration-none text-theme">
+                            <div class="fw-bold small">${pseudo}</div>
+                            <div class="x-small opacity-50">MON PROFIL</div>
+                        </a>
+                    </div>
+                    <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                </div>
+            `;
+        } else {
+            c.innerHTML = `
+                <a href="PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm" style="padding: 8px 20px;">CONNEXION</a>
+            `;
+        }
+    }
+
     const laneStates = {
         'popular-series': { page: 1, endpoint: '/tv/popular', params: '' },
         'top-rated-series': { page: 1, endpoint: '/tv/top_rated', params: '' },
@@ -256,6 +333,9 @@
     };
 
     async function loadSeriesHome() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+        renderAuth(auth);
+
         try {
             await loadDefaultSeriesLanes();
             setupSeriesSearchAndFilters();
@@ -270,7 +350,15 @@
         ]);
 
         if (popular.results && popular.results[0]) {
-            document.getElementById('series-hero-img').src = BACKDROP_URL + popular.results[0].backdrop_path;
+            const topItem = popular.results[0];
+            document.getElementById('series-hero-img').src = BACKDROP_URL + topItem.backdrop_path;
+            
+            fetch(`${BASE_URL}/tv/${topItem.id}/videos?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`)
+                .then(r => r.json())
+                .then(vData => {
+                    const trailer = vData.results?.find(v => v.type === 'Trailer') || vData.results?.[0];
+                    if (trailer) seriesTrailerId = trailer.key;
+                }).catch(e => console.error("Erreur trailer dynamique:", e));
         }
 
         renderLane(popular.results, 'popular-series');

@@ -12,13 +12,6 @@
     <link rel="stylesheet" href="premium-home.css">
     <link rel="stylesheet" href="theme-variables.css">
     <style>
-        .collections-hero {
-            padding: 140px 5% 60px;
-            background: linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-            border-bottom: 1px solid var(--border);
-            text-align: center;
-        }
-
         .btn-outline-premium {
             background: transparent;
             border: 1px solid var(--border);
@@ -100,19 +93,89 @@
                 <i class="ph ph-moon fs-4" id="theme-icon"></i>
             </button>
             <div id="auth-section">
-                <a href="../../PROJET_TM/connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>
             </div>
+            <script src="../connexion/authUtils.js"></script>
+            <script>
+                (function() {
+                    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
+                    if (auth) {
+                        const pseudo = auth.pseudo || auth.username || auth.name || (auth.user && (auth.user.pseudo || auth.user.username)) || "Utilisateur";
+                        const c = document.getElementById("auth-section");
+                        if (c) {
+                            c.innerHTML = `
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-end d-none d-md-block">
+                                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                                            <div class="fw-bold small">${pseudo}</div>
+                                            <div class="x-small opacity-50">MON PROFIL</div>
+                                        </a>
+                                    </div>
+                                    <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
+                                </div>`;
+                        }
+                    }
+                })();
+            </script>
         </div>
     </div>
 </nav>
 
-<!-- Hero Section -->
-<header class="collections-hero">
-    <div class="container-fluid">
-        <h1 class="hero-title mb-2" style="font-size: 3.5rem;">COLLECTIONS DE FILMS</h1>
-        <p class="opacity-50 fs-5">Découvrez les franchises cinématographiques les plus populaires</p>
-    </div>
-</header>
+    <!-- Cinematic Hero -->
+    <section class="prime-hero-card" id="collections-hero-card" style="height: 75vh; min-height: 600px; position: relative; overflow: hidden; cursor: pointer;">
+        <img src="https://image.tmdb.org/t/p/original/vI3aUGUjcpe2F2hH2gZJ2R7N23O.jpg" onerror="this.src='https://image.tmdb.org/t/p/original/5m0v89Yp9YmN4V1V19x0j91V19X.jpg'" class="hero-backdrop" id="collections-hero-img" alt="Collections Hero" style="transition: opacity 0.5s;">
+        <div id="hero-video-container" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 56.25vw; min-height: 100%; min-width: 177.77vh; z-index: 1; opacity: 0; transition: opacity 0.8s; pointer-events: none;"></div>
+        <div class="hero-overlay" style="z-index: 2;"></div>
+        <div class="prime-hero-content text-center" style="z-index: 3;">
+            <h1 class="hero-title text-white fw-bold mb-2">COLLECTIONS</h1>
+            <p class="hero-desc text-light opacity-75 mb-3" style="font-size: 1.1rem;">Découvrez les franchises cinématographiques les plus populaires</p>
+            <div class="d-flex justify-content-center mt-4">
+                <button class="btn-prime-outline fw-bold rounded-pill text-white" onclick="toggleHeroMute(event)" style="z-index: 10;">
+                    <i class="ph ph-speaker-slash me-2" id="hero-mute-icon"></i> <span id="hero-mute-text">SON DÉSACTIVÉ</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const collHeroCard = document.getElementById('collections-hero-card');
+        const collVideoContainer = document.getElementById('hero-video-container');
+        let collHoverTimeout;
+        const collTrailerId = 'TcMBFSGVi1c'; // Avengers Endgame Trailer
+        let isHeroMuted = true;
+        
+        function toggleHeroMute(e) {
+            e.stopPropagation();
+            isHeroMuted = !isHeroMuted;
+            const icon = document.getElementById('hero-mute-icon');
+            const text = document.getElementById('hero-mute-text');
+            icon.className = isHeroMuted ? 'ph ph-speaker-slash me-2' : 'ph ph-speaker-high me-2';
+            text.innerText = isHeroMuted ? 'SON DÉSACTIVÉ' : 'SON ACTIVÉ';
+            
+            const iframe = document.getElementById('hero-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: isHeroMuted ? 'mute' : 'unMute', args: []}), '*');
+            }
+        }
+        collHeroCard.addEventListener('mouseenter', () => {
+            // Délai avant de lancer la vidéo (comme Apple TV)
+            collHoverTimeout = setTimeout(() => {
+                collVideoContainer.innerHTML = `<iframe id="hero-iframe" width="100%" height="100%" src="https://www.youtube.com/embed/${collTrailerId}?autoplay=1&mute=${isHeroMuted ? 1 : 0}&controls=0&modestbranding=1&showinfo=0&rel=0&loop=1&playlist=${collTrailerId}&enablejsapi=1" frameborder="0" allow="autoplay" style="pointer-events: none;"></iframe>`;
+                collVideoContainer.style.opacity = '1';
+            }, 600);
+        });
+
+        collHeroCard.addEventListener('mouseleave', () => {
+            clearTimeout(collHoverTimeout);
+            collVideoContainer.style.opacity = '0';
+            // On supprime l'iframe après la transition pour arrêter le son/vidéo
+            setTimeout(() => {
+                if(collVideoContainer.style.opacity === '0') {
+                    collVideoContainer.innerHTML = '';
+                }
+            }, 800);
+        });
+    </script>
 
 <main class="section-wrapper">
     <div class="section-header-premium">
@@ -159,23 +222,34 @@
         else nav.classList.remove('scrolled');
     };
     
-    // Auth section basic logic
-    const auth = typeof window.getValidAuth === 'function' ? window.getValidAuth() : null;
-    const c = document.getElementById("auth-section");
-    if (auth) {
-        c.innerHTML = `
-            <div class="d-flex align-items-center gap-3">
-                <div class="text-end d-none d-md-block">
-                    <a href="profilUser.html" class="text-decoration-none text-theme">
-                        <div class="fw-bold small">${auth.username || auth.pseudo}</div>
-                        <div class="x-small opacity-50">MON PROFIL</div>
-                    </a>
+    function renderAuth(a) {
+        const c = document.getElementById("auth-section");
+        if (!c) return;
+        const pathPrefix = ""; // already in PROJET_TM/Films
+        if (a) {
+            const pseudo = a.pseudo || a.username || a.name || (a.user && (a.user.pseudo || a.user.username)) || "Utilisateur";
+            c.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <a href="profilUser.html" class="text-decoration-none text-theme">
+                            <div class="fw-bold small">${pseudo}</div>
+                            <div class="x-small opacity-50">MON PROFIL</div>
+                        </a>
+                    </div>
+                    <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.href='../connexion/connexion.html';" class="btn btn-outline-danger rounded-pill px-4 btn-sm fw-bold">QUITTER</button>
                 </div>
-                <button onclick="if(window.clearAuth) window.clearAuth(); else { sessionStorage.removeItem('auth'); localStorage.removeItem('lastAuth'); } window.location.reload();" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-bold">QUITTER</button>
-            </div>`;
-    } else {
-        c.innerHTML = `<a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm">CONNEXION</a>`;
+            `;
+        } else {
+            c.innerHTML = `
+                <a href="../connexion/connexion.html" class="btn btn-primary rounded-pill px-4 fw-bold btn-sm" style="padding: 8px 20px;">CONNEXION</a>
+            `;
+        }
     }
+
+    (function() {
+        const auth = JSON.parse(sessionStorage.getItem("auth") || localStorage.getItem("lastAuth") || "null");
+        renderAuth(auth);
+    })();
 </script>
 <script src="posterSync.js"></script>
 <script src="../theme.js"></script>

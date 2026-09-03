@@ -1,19 +1,22 @@
 :root {
     --accent: #a78bfa;
-    --bg-black: #050505;
-    --bg-card: #121212;
-    --glass: rgba(20, 20, 20, 0.7);
-    --border: rgba(255, 255, 255, 0.1);
+    --prime: #2dd4bf;
+    /* Mint/Teal from PrimeVision */
+    --bg-black: #111111;
+    /* Slightly lighter dark for PrimeVision */
+    --bg-card: #1c1c1c;
+    --glass: rgba(28, 28, 28, 0.7);
+    --border: rgba(255, 255, 255, 0.05);
     --text-main: #ffffff;
-    --nav-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-    --nav-scrolled: #050505;
-    --card-details-bg: linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.4) 50%, transparent 100%);
-    --hero-overlay-top: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+    --nav-bg: linear-gradient(to bottom, rgba(17, 17, 17, 0.8) 0%, transparent 100%);
+    --nav-scrolled: #111111;
+    --card-details-bg: linear-gradient(to top, rgba(17, 17, 17, 0.95) 0%, rgba(17, 17, 17, 0.4) 50%, transparent 100%);
+    --hero-overlay-top: linear-gradient(to bottom, rgba(17, 17, 17, 0.8), transparent);
     --hero-overlay-bottom: linear-gradient(to top, var(--bg-black) 0%, transparent 100%);
-    --card-bg: #111111;
+    --card-bg: #1c1c1c;
     --filter-select-bg: rgba(255, 255, 255, 0.05);
     --filter-select-hover: rgba(255, 255, 255, 0.1);
-    --filter-option-bg: #111111;
+    --filter-option-bg: #1c1c1c;
 }
 
 [data-theme="light"] {
@@ -39,6 +42,276 @@ body {
     color: var(--text-main);
     font-family: 'Inter', sans-serif;
     margin: 0;
+    min-height: 100vh;
+}
+
+@media (max-width: 991px) {
+    /* Legacy mobile overrides if any */
+}
+
+/* Navbar Height Adjustments */
+.navbar {
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+    min-height: 60px;
+}
+
+/* --- PrimeVision Layout --- */
+.text-prime {
+    color: var(--prime) !important;
+}
+
+.bg-prime {
+    background-color: var(--prime) !important;
+}
+
+.prime-sidebar {
+    background: #151515;
+    border-right: 1px solid var(--border);
+    padding: 30px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-brand {
+    font-size: 1.5rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 50px;
+    padding-left: 10px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--prime);
+}
+
+.nav-item.active i {
+    color: var(--prime);
+}
+
+.nav-item i {
+    font-size: 1.4rem;
+}
+
+.sidebar-continue {
+    margin-top: auto;
+    padding-top: 40px;
+}
+
+.continue-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 15px;
+    padding-left: 10px;
+}
+
+.continue-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.continue-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.continue-item img {
+    width: 60px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.continue-info h5 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+}
+
+.continue-info span {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.continue-play {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prime-main {
+    padding: 0 0 50px 0;
+    overflow-x: hidden;
+}
+
+.prime-search {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.prime-search input {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 100%;
+    outline: none;
+}
+
+.prime-search i {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-icon {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.btn-icon:hover {
+    border-color: var(--prime);
+    color: var(--prime);
+}
+
+.user-avatar img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-card);
+}
+
+.prime-hero-card {
+    position: relative;
+    border-radius: 30px;
+    overflow: hidden;
+    min-height: 350px;
+    height: 50vh;
+    width: calc(100% - 80px);
+    margin: 85px 40px 40px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.hero-backdrop {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    filter: brightness(0.8);
+    transition: transform 10s ease;
+}
+
+.prime-hero-card:hover .hero-backdrop {
+    transform: scale(1.05);
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(17, 17, 17, 0.9) 0%, rgba(17, 17, 17, 0.4) 50%, transparent 100%);
+    pointer-events: none;
+}
+
+.prime-hero-content {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    z-index: 10;
+    max-width: 600px;
+}
+
+.btn-prime-solid {
+    background: var(--text-main);
+    color: var(--bg-black);
+    border: none;
+    padding: 12px 30px;
+    transition: 0.3s;
+}
+
+.btn-prime-solid:hover {
+    transform: translateY(-3px);
+}
+
+.btn-prime-outline {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 12px 30px;
+    transition: 0.3s;
+}
+
+.btn-prime-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-prime-icon {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.btn-prime-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 /* --- Premium Navbar --- */
@@ -1056,18 +1329,26 @@ body {
     border-radius: 12px !important;
 }
 
-.platform-card:hover .platform-hover-video,
-.platform-card:hover .platform-hover-youtube,
-.platform-card:hover iframe {
-    opacity: 0.6 !important;
+.platform-card.is-playing .platform-hover-video,
+.platform-card.is-playing .platform-hover-youtube,
+.platform-card.is-playing iframe {
+    opacity: 1 !important;
 }
+
+.platform-card.is-playing .platform-logo,
+.platform-card.is-playing .platform-badge {
+    opacity: 0 !important;
+}
+
 .platform-logo {
+    position: relative !important;
+    z-index: 2 !important;
     max-width: 110px !important;
     max-height: 42px !important;
     width: auto !important;
     height: auto !important;
     object-fit: contain !important;
-    transition: transform 0.35s ease !important;
+    transition: transform 0.35s ease, opacity 0.3s ease !important;
     display: block !important;
     margin: 0 auto !important;
     z-index: 2 !important;
@@ -1078,11 +1359,13 @@ body {
 .platform-card[data-platform="apple"] .platform-logo,
 .platform-card[data-platform="hbomax"] .platform-logo,
 .platform-card[data-platform="crunchyroll"] .platform-logo {
-    filter: brightness(0) invert(1) !important; /* Make colored/black logos pure white */
+    filter: brightness(0) invert(1) !important;
+    /* Make colored/black logos pure white */
 }
 
 .platform-badge {
-    position: absolute !important;
+    position: relative !important;
+    z-index: 2 !important;
     bottom: 8px !important;
     left: 0 !important;
     right: 0 !important;
