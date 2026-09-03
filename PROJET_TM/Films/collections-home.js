@@ -6,9 +6,9 @@
 
 // Configuration API TMDB
 const COLLECTIONS_HOME_CONFIG = {
-  API_KEY: "04c35731a5ee918f014970082a0088b1",
-  BASE_URL: "https://api.themoviedb.org/3",
-  IMAGE_BASE_URL: "https://image.tmdb.org/t/p",
+  BASE_URL: window.TMDB_CONFIG?.BASE_URL || "https://api.themoviedb.org/3",
+  API_KEY: window.TMDB_CONFIG?.API_KEY || window.TMDB_CONFIG.API_KEY,
+  IMAGE_BASE_URL: window.TMDB_CONFIG?.IMG_BASE || "https://image.tmdb.org/t/p",
   POSTER_SIZE: "w500",
   BACKDROP_SIZE: "w1280",
 }

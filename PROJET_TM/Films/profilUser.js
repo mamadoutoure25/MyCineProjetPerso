@@ -2,7 +2,7 @@
 
 const CONFIG = {
     URL_BASE: "https://api.themoviedb.org/3",
-    CLE_API: "04c35731a5ee918f014970082a0088b1",
+    CLE_API: window.TMDB_CONFIG.API_KEY,
     URL_IMAGE: "https://image.tmdb.org/t/p/w500",
     URL_ORIG: "https://image.tmdb.org/t/p/original",
     AFFICHE_PAR_DEFAUT: "https://via.placeholder.com/500x750?text=Aucune+affiche",

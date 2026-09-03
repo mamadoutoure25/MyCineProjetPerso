@@ -4,7 +4,7 @@
  */
 
 const CONFIG = {
-    KEY: "04c35731a5ee918f014970082a0088b1",
+    KEY: window.TMDB_CONFIG.API_KEY,
     BASE: "https://api.themoviedb.org/3",
     W500: "https://image.tmdb.org/t/p/w500",
     HD: "https://image.tmdb.org/t/p/w780",

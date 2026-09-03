@@ -4,7 +4,7 @@
 
 // Configuration de l'application
 const CONFIG = {
-    CLE_API: '04c35731a5ee918f014970082a0088b1',
+    CLE_API: window.TMDB_CONFIG.API_KEY,
     URL_BASE: 'https://api.themoviedb.org/3',
     URL_IMAGE: 'https://image.tmdb.org/t/p/w500',
     URL_ARRIERE_PLAN: 'https://image.tmdb.org/t/p/original',

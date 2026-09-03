@@ -2,7 +2,6 @@
  * distributor-details.js - Page dédiée au catalogue des films et séries d'un distributeur / plateforme
  */
 
-const API_KEY = '04c35731a5ee918f014970082a0088b1';
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 const BACKDROP_URL = 'https://image.tmdb.org/t/p/original';
