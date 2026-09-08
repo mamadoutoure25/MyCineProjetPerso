@@ -271,10 +271,35 @@
 
 
         <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
-            <div class="lane-title mb-0">SÉRIES LES PLUS POPULAIRES</div>
+            <div class="lane-title mb-0">TENDANCES ACTUELLES</div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('trending-series')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="trending-series" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="lane-title mb-0" id="popular-series-title">SÉRIES LES PLUS POPULAIRES</div>
             <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('popular-series')">VOIR PLUS <i class="ph ph-plus"></i></button>
         </div>
         <div id="popular-series" class="movie-grid mb-5"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
+            <div class="d-flex align-items-center gap-3">
+                <div class="lane-title mb-0">TOP PAR PAYS</div>
+                <select id="country-select" class="premium-select border-secondary text-theme" style="width: auto; padding: 4px 12px; font-size: 0.9rem;" onchange="loadCountrySeries(this.value)">
+                    <option value="FR">France</option>
+                    <option value="US">États-Unis</option>
+                    <option value="GB">Royaume-Uni</option>
+                    <option value="KR">Corée du Sud</option>
+                    <option value="JP">Japon</option>
+                    <option value="ES">Espagne</option>
+                    <option value="CA">Canada</option>
+                    <option value="DE">Allemagne</option>
+                    <option value="BE">Belgique</option>
+                </select>
+            </div>
+            <button class="btn btn-link text-accent fw-bold text-decoration-none small" onclick="loadMore('country-series')">VOIR PLUS <i class="ph ph-plus"></i></button>
+        </div>
+        <div id="country-series" class="movie-grid mb-5"></div>
 
         <div class="d-flex justify-content-between align-items-center mb-4 pe-5">
             <div class="lane-title mb-0">MIEUX NOTÉES</div>
@@ -328,9 +353,11 @@
     }
 
     const laneStates = {
+        'trending-series': { page: 1, endpoint: '/trending/tv/week', params: '' },
         'popular-series': { page: 1, endpoint: '/tv/popular', params: '' },
         'top-rated-series': { page: 1, endpoint: '/tv/top_rated', params: '' },
-        'action-series': { page: 1, endpoint: '/discover/tv', params: '&with_genres=10759' }
+        'action-series': { page: 1, endpoint: '/discover/tv', params: '&with_genres=10759' },
+        'country-series': { page: 1, endpoint: '/discover/tv', params: '&with_origin_country=FR&sort_by=popularity.desc' }
     };
 
     async function loadSeriesHome() {
@@ -344,10 +371,12 @@
     }
 
     async function loadDefaultSeriesLanes() {
-        const [popular, topRated, action] = await Promise.all([
+        const [trending, popular, topRated, action, country] = await Promise.all([
+            fetch(`${BASE_URL}${laneStates['trending-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json()),
             fetch(`${BASE_URL}${laneStates['popular-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json()),
             fetch(`${BASE_URL}${laneStates['top-rated-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&page=1`).then(r => r.json()),
-            fetch(`${BASE_URL}${laneStates['action-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_genres=10759&page=1`).then(r => r.json())
+            fetch(`${BASE_URL}${laneStates['action-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}&with_genres=10759&page=1`).then(r => r.json()),
+            fetch(`${BASE_URL}${laneStates['country-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}${laneStates['country-series'].params}&page=1`).then(r => r.json())
         ]);
 
         if (popular.results && popular.results[0]) {
@@ -362,9 +391,24 @@
                 }).catch(e => console.error("Erreur trailer dynamique:", e));
         }
 
+        renderLane(trending.results, 'trending-series');
         renderLane(popular.results, 'popular-series');
         renderLane(topRated.results, 'top-rated-series');
         renderLane(action.results, 'action-series');
+        renderLane(country.results, 'country-series');
+    }
+
+    async function loadCountrySeries(countryCode) {
+        laneStates['country-series'].params = `&with_origin_country=${countryCode}&sort_by=popularity.desc`;
+        laneStates['country-series'].page = 1;
+        const container = document.getElementById('country-series');
+        if (!container) return;
+        container.innerHTML = '<div class="text-center w-100 py-4"><span class="spinner-border text-accent"></span></div>';
+        
+        try {
+            const res = await fetch(`${BASE_URL}${laneStates['country-series'].endpoint}?api_key=${API_KEY}&language=${localStorage.getItem('user_lang') || 'fr-FR'}${laneStates['country-series'].params}&page=1`).then(r => r.json());
+            renderLane(res.results, 'country-series');
+        } catch(e) { console.error(e); }
     }
 
     async function loadMore(laneId) {
@@ -500,12 +544,12 @@
             laneStates['popular-series'].page = 1;
 
             const res = await fetch(`${BASE_URL}/discover/tv?${queryParams}`).then(r => r.json());
-            const titleEl = document.querySelector('.lane-title');
+            const titleEl = document.getElementById('popular-series-title');
             if (titleEl) {
                 titleEl.textContent = (genreId || year || platform || origin) ? "SÉRIES FILTRÉES" : "SÉRIES LES PLUS POPULAIRES";
+                titleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             renderLane(res.results, 'popular-series');
-            titleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
     }
 

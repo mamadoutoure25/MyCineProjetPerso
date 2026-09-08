@@ -58,6 +58,9 @@ async function chargerDetailsReseau(networkId) {
 
             // Charger les images/logos de la société
             await chargerImagesReseau(networkId);
+            
+            // Afficher la carte du siège social
+            await afficherCarteStudio(datanetwork.headquarters, datanetwork.name);
         } else {
             afficherErreur('Société non trouvée');
         }
@@ -526,6 +529,69 @@ function effacerFiltres() {
 }
 
 
+
+/**
+ * Afficher la carte du studio (Géocodage + Leaflet)
+ */
+async function afficherCarteStudio(headquarters, nomStudio) {
+    const mapSection = document.getElementById('map-section');
+    const locName = document.getElementById('map-location-name');
+    const mapDiv = document.getElementById('studio-map');
+    
+    if (!mapSection || !mapDiv) return;
+
+    mapSection.style.display = 'block'; // Toujours afficher la section
+
+    if (!headquarters || !headquarters.trim()) {
+        locName.textContent = "Lieu non renseigné";
+        mapDiv.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100 opacity-50"><p class="mb-0 fw-bold"><i class="ph ph-map-pin-line fs-4 me-2"></i>Localisation inconnue</p></div>';
+        return;
+    }
+
+    locName.textContent = "Recherche en cours...";
+    mapDiv.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><div class="spinner-border text-accent" role="status"></div></div>';
+
+    try {
+        // Géocodage via Nominatim API avec User-Agent via paramètres
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(headquarters)}&limit=1`);
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+
+            locName.textContent = headquarters;
+            mapDiv.innerHTML = ''; // Clear loading
+
+            // Initialisation de la carte si ce n'est pas déjà fait
+            if (window.studioMap) {
+                window.studioMap.remove();
+            }
+
+            window.studioMap = L.map('studio-map').setView([lat, lon], 12);
+
+            // Leaflet dark mode tile layer or standard
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(window.studioMap);
+
+            L.marker([lat, lon]).addTo(window.studioMap)
+                .bindPopup(`<b>${nomStudio || 'Siège Social'}</b><br>${headquarters}`)
+                .openPopup();
+                
+            // Fix map size after display
+            setTimeout(() => { window.studioMap.invalidateSize(); }, 500);
+        } else {
+            console.warn("Localisation non trouvée sur la carte pour:", headquarters);
+            locName.textContent = headquarters;
+            mapDiv.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100 opacity-50"><p class="mb-0 fw-bold text-center"><i class="ph ph-warning fs-4 mb-2 d-block"></i>Impossible de localiser sur la carte :<br>' + headquarters + '</p></div>';
+        }
+    } catch (e) {
+        console.error("Erreur lors de la récupération de la localisation", e);
+        locName.textContent = headquarters;
+        mapDiv.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100 text-danger"><p class="mb-0 fw-bold"><i class="ph ph-warning-circle fs-4 me-2"></i>Erreur de chargement de la carte</p></div>';
+    }
+}
 
 // Export des fonctions globales
 window.afficherDetailsserie = afficherDetailsserie;
