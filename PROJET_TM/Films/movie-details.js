@@ -91,6 +91,7 @@ async function initPage() {
         renderGallery(movie.images);
         renderProviders(movie["watch/providers"]?.results);
         renderTechnical(movie);
+        renderReleaseDates(movie);
         loadAwardsData(movie.external_ids?.imdb_id, "awards-display-grid", movie.title);
         
         if (movie.belongs_to_collection) {
@@ -473,19 +474,7 @@ function renderTechnical(m) {
         }
     }
 
-    const releaseCont = document.getElementById("movie-release-dates");
-    if (releaseCont) {
-        const target = ["BE", "FR", "US"];
-        releaseCont.innerHTML = (m.release_dates?.results || [])
-            .filter(r => target.includes(r.iso_3166_1))
-            .slice(0, 3)
-            .map(r => `
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="tech-label">${r.iso_3166_1}</span>
-                    <span class="fw-bold small text-accent">${new Date(r.release_dates[0].release_date).toLocaleDateString()}</span>
-                </div>
-            `).join("");
-    }
+    renderReleaseDates(m);
 
     const idsCont = document.getElementById("external-links");
     if (idsCont && m.external_ids) {
@@ -507,6 +496,147 @@ function renderTechnical(m) {
             <div class="tech-value">${m.original_title || m.title}</div>
             ${comp ? `<div class="mt-2 text-accent fw-bold small"><i class="ph-fill ph-music-notes me-1"></i> Musique : <a href="actor-details.html?id=${comp.id}" class="text-accent text-decoration-none border-bottom border-accent">${comp.name}</a></div>` : ''}
         `;
+    }
+}
+
+/**
+ * Rendu des dates de sortie pour Belgique, France et USA
+ */
+function renderReleaseDates(m) {
+    const targets = [
+        {
+            code: "BE",
+            name: "Belgique",
+            flag: "🇧🇪",
+            gradient: "linear-gradient(135deg, #ef4444, #f59e0b)",
+            bgTint: "rgba(239, 68, 68, 0.08)",
+            certBg: "#ef4444"
+        },
+        {
+            code: "FR",
+            name: "France",
+            flag: "🇫🇷",
+            gradient: "linear-gradient(135deg, #3b82f6, #06b6d4)",
+            bgTint: "rgba(59, 130, 246, 0.08)",
+            certBg: "#3b82f6"
+        },
+        {
+            code: "US",
+            name: "États-Unis",
+            flag: "🇺🇸",
+            gradient: "linear-gradient(135deg, #8b5cf6, #ec4899)",
+            bgTint: "rgba(139, 92, 246, 0.08)",
+            certBg: "#8b5cf6"
+        }
+    ];
+
+    const typeMapping = {
+        1: { label: "Première", icon: "ph-film-strip" },
+        2: { label: "Sortie limitée", icon: "ph-film-slate" },
+        3: { label: "Sortie cinéma", icon: "ph-popcorn" },
+        4: { label: "Sortie numérique / VOD", icon: "ph-monitor-play" },
+        5: { label: "Support physique", icon: "ph-disc" },
+        6: { label: "Diffusion TV", icon: "ph-television" }
+    };
+
+    const monthNamesFr = ["JAN", "FÉV", "MAR", "AVR", "MAI", "JUIN", "JUIL", "AOÛT", "SEPT", "OCT", "NOV", "DÉC"];
+    const results = m.release_dates?.results || [];
+
+    const countryDataList = targets.map(target => {
+        const countryResult = results.find(r => r.iso_3166_1 === target.code);
+        const releases = countryResult?.release_dates || [];
+
+        // Priorité : Sortie cinéma (3), puis limitée (2), puis première (1), puis toute sortie valide
+        let mainRelease = null;
+        if (releases.length > 0) {
+            mainRelease = releases.find(d => d.type === 3 && d.release_date)
+                || releases.find(d => d.type === 2 && d.release_date)
+                || releases.find(d => d.type === 1 && d.release_date)
+                || releases.find(d => d.release_date)
+                || releases[0];
+        }
+
+        // Certification
+        let certification = mainRelease?.certification || "";
+        if (!certification && releases.length > 0) {
+            const withCert = releases.find(d => d.certification && d.certification.trim() !== "");
+            if (withCert) certification = withCert.certification;
+        }
+
+        let formattedDateShort = "Non communiquée";
+        let formattedDateFull = "Date non communiquée";
+        let day = "--";
+        let month = "N/A";
+        let year = "";
+        let typeInfo = { label: "Sortie non communiquée", icon: "ph-calendar-x" };
+
+        if (mainRelease && mainRelease.release_date) {
+            const d = new Date(mainRelease.release_date);
+            if (!isNaN(d.getTime())) {
+                day = String(d.getDate()).padStart(2, '0');
+                month = monthNamesFr[d.getMonth()];
+                year = String(d.getFullYear());
+                formattedDateShort = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                formattedDateFull = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                typeInfo = typeMapping[mainRelease.type] || { label: "Sortie officielle", icon: "ph-calendar-check" };
+            }
+        }
+
+        return {
+            ...target,
+            hasData: Boolean(mainRelease && mainRelease.release_date),
+            day,
+            month,
+            year,
+            formattedDateShort,
+            formattedDateFull,
+            typeInfo,
+            certification,
+            releasesCount: releases.length
+        };
+    });
+
+    // 1. Rendu des Cards dans la section principale
+    const cardsCont = document.getElementById("movie-release-dates-cards");
+    const section = document.getElementById("release-dates-section");
+    if (cardsCont) {
+        cardsCont.innerHTML = countryDataList.map(item => `
+            <div class="release-date-card" style="background-color: ${item.bgTint};">
+                <div class="release-date-header">
+                    <div class="release-date-badge" style="background: ${item.gradient};">
+                        <span class="release-date-day">${item.day}</span>
+                        <span class="release-date-month">${item.month}</span>
+                    </div>
+                    <div class="release-date-info">
+                        <h4 class="release-date-country">
+                            <span>${item.flag}</span>
+                            <span>${item.name}</span>
+                        </h4>
+                        <p class="release-date-type">
+                            <i class="ph ${item.typeInfo.icon}"></i>
+                            <span>${item.typeInfo.label}</span>
+                        </p>
+                    </div>
+                    ${item.certification ? `<div class="release-date-cert" style="background: ${item.certBg};">${item.certification}</div>` : ''}
+                </div>
+                <div class="release-date-footer">
+                    <span class="release-date-year">${item.formattedDateFull}</span>
+                    ${item.releasesCount > 1 ? `<span class="release-date-extra">+${item.releasesCount - 1} autre${item.releasesCount > 2 ? 's' : ''}</span>` : ''}
+                </div>
+            </div>
+        `).join("");
+        if (section) section.style.display = "block";
+    }
+
+    // 2. Rendu dans la Fiche Technique (Footer)
+    const techCont = document.getElementById("movie-release-dates");
+    if (techCont) {
+        techCont.innerHTML = countryDataList.map(item => `
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="tech-label m-0">${item.flag} ${item.name}</span>
+                <span class="fw-bold small text-accent">${item.formattedDateShort}</span>
+            </div>
+        `).join("");
     }
 }
 

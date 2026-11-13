@@ -1872,7 +1872,153 @@ body {
     color: var(--text-primary);
 }
 
-/* Styles pour la section des dates de sortie */
+/* Styles pour la section des dates de sortie (Table & Cards) */
+.release-dates-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.release-date-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] .release-date-card {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.release-date-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent, #a78bfa);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 25px rgba(167, 139, 250, 0.2);
+}
+
+.release-date-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.release-date-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 58px;
+    height: 64px;
+    border-radius: 14px;
+    padding: 6px;
+    text-align: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    color: #ffffff;
+}
+
+.release-date-day {
+    display: block;
+    font-size: 1.45rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #ffffff;
+}
+
+.release-date-month {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 800;
+    margin-top: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.release-date-info {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.release-date-country {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.release-date-type {
+    margin: 4px 0 0 0;
+    font-size: 0.82rem;
+    color: var(--text-muted, rgba(255, 255, 255, 0.6));
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.release-date-cert {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 10px;
+    min-width: 32px;
+    height: 28px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.release-date-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: auto;
+}
+
+[data-theme="light"] .release-date-footer {
+    border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+.release-date-year {
+    color: var(--text-muted, rgba(255, 255, 255, 0.55));
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.release-date-extra {
+    color: var(--accent, #a78bfa);
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(167, 139, 250, 0.12);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
 .release-dates-table-wrapper {
     overflow-x: auto;
     border-radius: var(--radius);
