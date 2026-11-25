@@ -1,352 +1,950 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Connexion - MyCiné Premium</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-	<script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion — MyCiné Premium</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Google Fonts: Bricolage Grotesque & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Theme Variables -->
     <link rel="stylesheet" href="../Films/theme-variables.css">
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-black);
-            color: var(--text-primary);
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
+        :root {
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+
+            /* Palette sombre (défaut) */
+            --auth-bg: #07070b;
+            --auth-surface: #101018;
+            --auth-surface-glass: rgba(18, 18, 28, 0.72);
+            --auth-card-bg: rgba(20, 20, 32, 0.65);
+            --auth-border: rgba(255, 255, 255, 0.08);
+            --auth-border-focus: rgba(167, 139, 250, 0.55);
+            --auth-text: #ffffff;
+            --auth-text-muted: #94a3b8;
+            --auth-text-dim: #64748b;
+            --auth-input-bg: rgba(255, 255, 255, 0.04);
+            --auth-input-focus-bg: rgba(255, 255, 255, 0.07);
+
+            /* Accents */
+            --violet: #a78bfa;
+            --rose: #f472b6;
+            --primary-gradient: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+            --primary-glow: rgba(167, 139, 250, 0.35);
+            --gold: #fbbf24;
         }
 
-        /* Split Screen Layout */
+        [data-theme="light"] {
+            --auth-bg: #f5f5fa;
+            --auth-surface: #ffffff;
+            --auth-surface-glass: rgba(255, 255, 255, 0.85);
+            --auth-card-bg: rgba(255, 255, 255, 0.82);
+            --auth-border: rgba(0, 0, 0, 0.08);
+            --auth-border-focus: rgba(167, 139, 250, 0.7);
+            --auth-text: #0f172a;
+            --auth-text-muted: #64748b;
+            --auth-text-dim: #94a3b8;
+            --auth-input-bg: rgba(0, 0, 0, 0.03);
+            --auth-input-focus-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--auth-bg);
+            color: var(--auth-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Ambient Glow Blobs */
+        .ambient-glow-1 {
+            position: fixed;
+            top: -120px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.18) 0%, transparent 70%);
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .ambient-glow-2 {
+            position: fixed;
+            bottom: -150px;
+            right: 25%;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(244, 114, 182, 0.12) 0%, transparent 70%);
+            filter: blur(90px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Split Screen Container */
         .auth-container {
             display: flex;
+            min-height: 100vh;
             width: 100vw;
-            height: 100vh;
+            position: relative;
+            z-index: 2;
         }
 
-        /* Left Side: Cinematic Background */
+        /* ---------------- LEFT PANEL: CINEMATIC HERO ---------------- */
         .auth-hero {
-            flex: 1.2;
+            flex: 1.15;
             position: relative;
             display: none;
-        }
-        @media (min-width: 992px) {
-            .auth-hero { display: block; }
+            overflow: hidden;
+            background: #000000;
         }
 
-        .auth-hero img {
+        @media (min-width: 992px) {
+            .auth-hero {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding: 48px;
+            }
+        }
+
+        .hero-bg-wrapper {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-bg-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            animation: slowZoom 20s ease-out infinite alternate;
+            animation: slowPan 28s ease-in-out infinite alternate;
+            filter: brightness(0.82) saturate(1.15);
+        }
+
+        @keyframes slowPan {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.08) translate(-1%, -1%); }
+            100% { transform: scale(1.04) translate(1%, 0); }
         }
 
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to right, rgba(0,0,0,0.3) 0%, var(--bg-black) 100%);
-            z-index: 2;
+            background: 
+                radial-gradient(circle at 20% 20%, transparent 0%, rgba(7, 7, 11, 0.6) 80%),
+                linear-gradient(to right, rgba(7, 7, 11, 0.2) 0%, rgba(7, 7, 11, 0.85) 85%, var(--auth-bg) 100%),
+                linear-gradient(to top, rgba(7, 7, 11, 0.95) 0%, transparent 60%);
+            z-index: 1;
         }
 
-        .hero-text {
-            position: absolute;
-            bottom: 15%;
-            left: 10%;
-            z-index: 3;
-            max-width: 550px;
+        .hero-top-badge {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(18, 18, 28, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--violet);
+            box-shadow: 0 0 12px var(--violet);
+            animation: pulseDot 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.6; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 580px;
+            margin-top: auto;
         }
 
         .hero-title {
-            font-size: 3.5rem;
+            font-family: var(--font-display);
+            font-size: clamp(2.4rem, 3.8vw, 3.6rem);
             font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            text-transform: uppercase;
+            line-height: 1.08;
+            letter-spacing: -0.03em;
             color: #ffffff;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-subtitle {
-            color: rgba(255,255,255,0.9);
-            font-size: 1.2rem;
-            font-weight: 600;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 28px;
+            font-weight: 500;
         }
 
-        /* Right Side: Form */
+        .hero-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .hero-pill i {
+            color: var(--violet);
+            font-size: 1rem;
+        }
+
+        .hero-social-proof {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            border-radius: 18px;
+            background: rgba(18, 18, 28, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: fit-content;
+        }
+
+        .avatar-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar-group img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #000;
+            margin-left: -8px;
+            object-fit: cover;
+        }
+        .avatar-group img:first-child { margin-left: 0; }
+
+        .proof-text {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 600;
+        }
+
+        .proof-stars {
+            color: var(--gold);
+            font-size: 0.75rem;
+            display: flex;
+            gap: 2px;
+            margin-top: 2px;
+        }
+
+        /* ---------------- RIGHT PANEL: FORM SIDE ---------------- */
         .auth-form-side {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            background: var(--bg-black);
+            justify-content: space-between;
+            padding: 32px 28px;
             position: relative;
-            z-index: 5;
+            background: var(--auth-bg);
+            transition: background 0.3s ease;
         }
 
-        .auth-form-content {
-            width: 100%;
-            max-width: 420px;
+        @media (min-width: 576px) {
+            .auth-form-side {
+                padding: 40px 48px;
+            }
         }
 
-        @media (min-width: 992px) {
-            .auth-form-side { padding: 80px; }
+        @media (min-width: 1200px) {
+            .auth-form-side {
+                padding: 48px 80px;
+            }
         }
 
-        .back-btn {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
+        /* Top Bar */
+        .auth-topbar {
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-            text-transform: uppercase;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 24px;
         }
-        .back-btn:hover { color: var(--accent); }
 
         .brand-logo {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 50px;
+            gap: 12px;
             text-decoration: none;
-            color: var(--text-primary);
+            color: var(--auth-text);
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            transition: transform 0.25s ease;
         }
+
+        .brand-logo:hover {
+            transform: translateY(-2px);
+            color: var(--auth-text);
+        }
+
         .logo-box {
-            background: linear-gradient(135deg, var(--accent), var(--secondary));
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
+            background: var(--primary-gradient);
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.15rem;
             font-weight: 900;
-            color: white;
-            box-shadow: 0 10px 20px rgba(167, 139, 250, 0.3);
+            color: #ffffff;
+            box-shadow: 0 8px 20px var(--primary-glow);
+            transition: transform 0.25s ease;
         }
 
-        .form-header { margin-bottom: 40px; }
-        .form-header h2 { font-weight: 900; font-size: 2.2rem; margin-bottom: 10px; color: var(--text-primary); letter-spacing: -0.5px; }
-        .form-header p { color: var(--text-secondary); font-size: 1.05rem; }
+        .brand-logo:hover .logo-box {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-pill-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: var(--auth-input-bg);
+            border: 1px solid var(--auth-border);
+            color: var(--auth-text-muted);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .icon-pill-btn:hover {
+            background: var(--auth-border);
+            color: var(--auth-text);
+            border-color: var(--auth-border-focus);
+            transform: translateY(-1px);
+        }
+
+        /* Center Form Wrapper */
+        .auth-form-wrapper {
+            width: 100%;
+            max-width: 440px;
+            margin: auto;
+            padding: 20px 0;
+        }
+
+        .auth-card {
+            background: var(--auth-card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--auth-border);
+            border-radius: 24px;
+            padding: 36px 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 575px) {
+            .auth-card {
+                padding: 26px 20px;
+                border-radius: 20px;
+            }
+        }
+
+        .form-header {
+            margin-bottom: 28px;
+            text-align: left;
+        }
+
+        .form-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--violet);
+            margin-bottom: 8px;
+        }
+
+        .form-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.95rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            color: var(--auth-text);
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            font-size: 0.92rem;
+            color: var(--auth-text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Alerts */
+        .alert-error {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 13px 16px;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 22px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
 
         /* Inputs */
-        .form-group { margin-bottom: 25px; position: relative; }
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
         .form-label {
-            font-size: 0.75rem;
+            font-size: 0.76rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
+            color: var(--auth-text-muted);
+            margin: 0;
             display: block;
         }
-        
+
+        .forgot-link {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--violet);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .forgot-link:hover {
+            color: var(--rose);
+            text-decoration: underline;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
         .auth-input {
             width: 100%;
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            padding: 16px 20px 16px 50px;
+            background: var(--auth-input-bg);
+            border: 1.5px solid var(--auth-border);
+            padding: 14px 48px 14px 44px;
             border-radius: 14px;
-            color: var(--text-primary);
-            font-size: 1rem;
+            color: var(--auth-text);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
             font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .auth-input::placeholder { color: var(--text-muted); opacity: 0.7; }
+
+        .auth-input::placeholder {
+            color: var(--auth-text-dim);
+            font-weight: 400;
+        }
+
         .auth-input:focus {
-            background: var(--bg-card);
-            border-color: var(--accent);
+            background: var(--auth-input-focus-bg);
+            border-color: var(--violet);
             outline: none;
-            box-shadow: 0 0 0 4px var(--accent-glow);
+            box-shadow: 0 0 0 4px var(--primary-glow);
         }
-        
+
         .input-icon {
             position: absolute;
-            left: 20px;
-            top: 42px;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            transition: 0.3s;
+            left: 16px;
+            color: var(--auth-text-dim);
+            font-size: 1.15rem;
             pointer-events: none;
+            transition: color 0.25s ease;
         }
-        .auth-input:focus + .input-icon { color: var(--accent); }
+
+        .auth-input:focus ~ .input-icon {
+            color: var(--violet);
+        }
 
         .toggle-password {
             position: absolute;
-            right: 20px;
-            top: 42px;
+            right: 14px;
             background: none;
             border: none;
-            color: var(--text-muted);
+            color: var(--auth-text-dim);
             cursor: pointer;
-            font-size: 1.2rem;
-            transition: 0.3s;
-            padding: 0;
-            display: flex;
-            align-items: center;
-        }
-        .toggle-password:hover { color: var(--text-primary); }
-
-        /* Submit Button */
-        .btn-submit {
-            width: 100%;
-            background: linear-gradient(135deg, var(--accent), var(--secondary));
-            color: white;
-            border: none;
-            padding: 18px;
-            border-radius: 14px;
-            font-weight: 800;
-            font-size: 1.05rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 15px;
-            box-shadow: 0 10px 25px rgba(167, 139, 250, 0.4);
+            font-size: 1.25rem;
+            padding: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .btn-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(167, 139, 250, 0.5);
+            transition: color 0.2s ease, transform 0.2s ease;
+            border-radius: 8px;
         }
 
-        .auth-footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 0.95rem;
-            color: var(--text-secondary);
+        .toggle-password:hover {
+            color: var(--auth-text);
+            transform: scale(1.1);
         }
-        .auth-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 700;
-            transition: 0.3s;
-            margin-left: 5px;
-        }
-        .auth-link:hover { color: var(--secondary); text-decoration: underline; }
 
-        /* Error state */
         .form-error {
-            color: var(--danger, #ef4444);
-            font-size: 0.8rem;
+            color: #ef4444;
+            font-size: 0.78rem;
             font-weight: 700;
             margin-top: 6px;
             display: none;
         }
-        .alert-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: var(--danger, #ef4444);
-            padding: 15px;
-            border-radius: 12px;
+        .form-error.show {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Checkbox & Options */
+        .form-options-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 18px 0 24px;
+        }
+
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.84rem;
+            color: var(--auth-text-muted);
             font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 25px;
-            display: none;
-            display: none;
+        }
+
+        .custom-checkbox input {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid var(--auth-border);
+            border-radius: 6px;
+            background: var(--auth-input-bg);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox input:checked {
+            background: var(--violet);
+            border-color: var(--violet);
+        }
+
+        .custom-checkbox input:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            padding: 15px 24px;
+            border-radius: 14px;
+            font-family: var(--font-body);
+            font-weight: 800;
+            font-size: 0.96rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 25px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 32px rgba(167, 139, 250, 0.45);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit i {
+            transition: transform 0.25s ease;
+        }
+
+        .btn-submit:hover i {
+            transform: translateX(4px);
+        }
+
+        /* Divider & Register Prompt */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 26px 0;
+            color: var(--auth-text-dim);
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--auth-border);
+        }
+
+        .register-box {
             text-align: center;
+            font-size: 0.9rem;
+            color: var(--auth-text-muted);
+            font-weight: 500;
+        }
+
+        .register-link {
+            color: var(--violet);
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 6px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .register-link:hover {
+            color: var(--rose);
+            text-decoration: underline;
+        }
+
+        /* Footer Credits */
+        .auth-bottom-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding-top: 16px;
+            font-size: 0.75rem;
+            color: var(--auth-text-dim);
+            font-weight: 600;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .security-badge i {
+            color: #10b981;
         }
 
         /* Animations */
-        @keyframes slowZoom {
-            from { transform: scale(1); }
-            to { transform: scale(1.05); }
-        }
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(18px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .fade-in-up {
-            opacity: 0;
-            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+        .animate-fade-up {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        .delay-5 { animation-delay: 0.5s; }
+        .delay-1 { animation-delay: 0.08s; }
+        .delay-2 { animation-delay: 0.16s; }
+        .delay-3 { animation-delay: 0.24s; }
+        .delay-4 { animation-delay: 0.32s; }
+        .delay-5 { animation-delay: 0.40s; }
     </style>
+
     <script src="../../config.js"></script>
 </head>
 <body>
 
+    <!-- Ambient Glow Background Blobs -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
     <div class="auth-container">
-        <!-- Cinematic Left Panel -->
+        <!-- ==================== LEFT PANEL: CINEMATIC HERO ==================== -->
         <div class="auth-hero">
-            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=2000" alt="Cinematic Backdrop">
-            <div class="hero-overlay"></div>
-            <div class="hero-text fade-in-up">
-                <h1 class="hero-title">VOTRE PASSEPORT<br>POUR LE CINÉMA.</h1>
-                <p class="hero-subtitle">Connectez-vous pour accéder à votre collection personnelle, vos statistiques et gérer vos listes de favoris.</p>
+            <div class="hero-bg-wrapper">
+                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=2000" 
+                     alt="Cinéma MyCiné" 
+                     class="hero-bg-img"
+                     onerror="this.src='../img/ciné.jpg'">
+                <div class="hero-overlay"></div>
+            </div>
+
+            <!-- Top Floating Tag -->
+            <div class="hero-top-badge animate-fade-up">
+                <span class="pulse-dot"></span>
+                <span>MyCiné Experience</span>
+            </div>
+
+            <!-- Hero Cinematic Content -->
+            <div class="hero-content animate-fade-up delay-1">
+                <h1 class="hero-title">
+                    VOTRE PASSION.<br>
+                    <span class="gradient-text">VOTRE CINÉMA.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Connectez-vous pour explorer plus de 25 000 films et séries, gérer votre watchlist et profiter d'une expérience cinématographique sur-mesure.
+                </p>
+
+                <!-- Floating Feature Pills -->
+                <div class="hero-pills">
+                    <span class="hero-pill"><i class="ph-fill ph-film-slate"></i> Films & Séries 4K</span>
+                    <span class="hero-pill"><i class="ph-fill ph-bookmark-simple"></i> Watchlist instantanée</span>
+                    <span class="hero-pill"><i class="ph-fill ph-sparkle"></i> Recommandations IA</span>
+                </div>
+
+                <!-- Social Proof Card -->
+                <div class="hero-social-proof">
+                    <div class="avatar-group">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Membre MyCiné">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Membre MyCiné">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Membre MyCiné">
+                    </div>
+                    <div>
+                        <div class="proof-text">+25 000 cinéphiles passionnés</div>
+                        <div class="proof-stars">
+                            <i class="ph-fill ph-star"></i>
+                            <i class="ph-fill ph-star"></i>
+                            <i class="ph-fill ph-star"></i>
+                            <i class="ph-fill ph-star"></i>
+                            <i class="ph-fill ph-star"></i>
+                            <span class="ms-1 text-white fw-bold">4.9/5</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Login Form Right Panel -->
+        <!-- ==================== RIGHT PANEL: MODERN FORM ==================== -->
         <div class="auth-form-side">
-            <a href="../../index.html" class="back-btn"><i class="ph ph-x fs-4"></i> FERMER</a>
-            
-            <div class="auth-form-content">
-                <a href="../../index.html" class="brand-logo fade-in-up">
+            <!-- Top Bar Actions -->
+            <div class="auth-topbar">
+                <a href="../../index.html" class="brand-logo" title="Retour à l'accueil">
                     <div class="logo-box">M</div>
-                    <span class="fs-4 fw-black">MYCINÉ</span>
+                    <span>MYCINÉ</span>
                 </a>
 
-                <div class="form-header fade-in-up delay-1">
-                    <h2>Bon retour parmi nous.</h2>
-                    <p>Veuillez entrer vos identifiants pour continuer.</p>
-                </div>
-
-                <div id="error-message" class="alert-error"></div>
-
-                <form id="loginForm">
-                    <!-- Username Field -->
-                    <div class="form-group fade-in-up delay-2">
-                        <label for="username" class="form-label">Identifiant</label>
-                        <input type="text" id="username" class="auth-input" placeholder="Entrez votre pseudo" autocomplete="username" required>
-                        <i class="ph-fill ph-user input-icon"></i>
-                        <div class="form-error">Pseudo requis</div>
-                    </div>
-
-                    <!-- Password Field -->
-                    <div class="form-group fade-in-up delay-3">
-                        <label for="password" class="form-label">Mot de passe</label>
-                        <input type="password" id="password" class="auth-input" placeholder="••••••••" autocomplete="current-password" required>
-                        <i class="ph-fill ph-lock-key input-icon"></i>
-                        <button type="button" class="toggle-password" id="togglePassword">
-                            <i class="ph ph-eye"></i>
-                        </button>
-                        <div class="form-error">Mot de passe requis</div>
-                    </div>
-
-                    <button type="submit" class="btn-submit fade-in-up delay-4">
-                        SE CONNECTER <i class="ph-bold ph-arrow-right ms-2"></i>
+                <div class="topbar-actions">
+                    <!-- Dark/Light Theme Switcher -->
+                    <button id="theme-toggle" class="icon-pill-btn" aria-label="Changer de thème">
+                        <i id="theme-icon" class="ph ph-moon fs-5"></i>
                     </button>
-                </form>
-
-                <div class="auth-footer fade-in-up delay-5">
-                    Nouveau sur MyCiné ? <a href="inscription.html" class="auth-link">Créer un compte</a>
+                    <!-- Close / Back Home -->
+                    <a href="../../index.html" class="icon-pill-btn">
+                        <i class="ph ph-house fs-5"></i>
+                        <span class="d-none d-sm-inline">Accueil</span>
+                    </a>
                 </div>
+            </div>
+
+            <!-- Form Wrapper -->
+            <div class="auth-form-wrapper">
+                <div class="auth-card animate-fade-up delay-2">
+                    <div class="form-header">
+                        <span class="form-tag">Espace Membre</span>
+                        <h2>Bon retour !</h2>
+                        <p>Veuillez entrer vos identifiants pour continuer votre voyage cinématographique.</p>
+                    </div>
+
+                    <!-- Alert message for login errors -->
+                    <div id="error-message" class="alert-error" role="alert">
+                        <i class="ph-fill ph-warning-circle fs-5"></i>
+                        <span id="error-text">Identifiants incorrects.</span>
+                    </div>
+
+                    <form id="loginForm" novalidate>
+                        <!-- Form Group 1: Username Field -->
+                        <div class="form-group">
+                            <div class="form-label-row">
+                                <label for="username" class="form-label">Identifiant ou Pseudo</label>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="text" 
+                                       id="username" 
+                                       class="auth-input" 
+                                       placeholder="Entrez votre pseudo" 
+                                       autocomplete="username" 
+                                       required>
+                                <i class="ph-bold ph-user input-icon"></i>
+                            </div>
+                            <div class="form-error">Le nom d'utilisateur est requis</div>
+                        </div>
+
+                        <!-- Form Group 2: Password Field -->
+                        <div class="form-group">
+                            <div class="form-label-row">
+                                <label for="password" class="form-label">Mot de passe</label>
+                                <a href="#" class="forgot-link" onclick="alert('Veuillez contacter l\'administrateur pour réinitialiser votre mot de passe.'); return false;">Oublié ?</a>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="password" 
+                                       id="password" 
+                                       class="auth-input" 
+                                       placeholder="••••••••••••" 
+                                       autocomplete="current-password" 
+                                       required>
+                                <i class="ph-bold ph-lock-key input-icon"></i>
+                                <button type="button" class="toggle-password" id="togglePassword" aria-label="Afficher ou masquer le mot de passe">
+                                    <i class="ph ph-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-error">Le mot de passe est requis</div>
+                        </div>
+
+                        <!-- Remember Me Option -->
+                        <div class="form-options-row">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="rememberMe" checked>
+                                <span>Se souvenir de moi</span>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-submit">
+                            <span>SE CONNECTER</span>
+                            <i class="ph-bold ph-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="auth-divider">OU</div>
+
+                    <!-- Register Link -->
+                    <div class="register-box">
+                        <span>Nouveau sur MyCiné ?</span>
+                        <a href="inscription.html" class="register-link">
+                            Créer un compte gratuit
+                            <i class="ph-bold ph-arrow-up-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Security Footer -->
+            <div class="auth-bottom-footer">
+                <span class="security-badge">
+                    <i class="ph-fill ph-shield-check"></i>
+                    Connexion chiffrée SSL 256-bit
+                </span>
+                <span>© 2026 MyCiné</span>
             </div>
         </div>
     </div>
 
+    <!-- Toast Notification Container (used by connexion.js showToast) -->
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 9999;"></div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="connexion.js"></script>
-<script src="../theme.js"></script>
+    <script src="../theme.js"></script>
 </body>
 </html>
