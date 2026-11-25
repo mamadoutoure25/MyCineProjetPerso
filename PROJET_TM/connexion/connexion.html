@@ -8,8 +8,12 @@
     <!-- Bootstrap 5 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Phosphor Icons: Multi-CDN (jsDelivr + unpkg) pour garantir l'affichage des icônes sans carrés -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     
     <!-- Google Fonts: Bricolage Grotesque & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -391,6 +395,37 @@
             color: var(--auth-text);
             border-color: var(--auth-border-focus);
             transform: translateY(-1px);
+        }
+
+        /* SVG & Icon Alignment normalization */
+        i[class*="ph-"] {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            font-style: normal;
+        }
+
+        i[class*="ph-"] svg,
+        .icon-pill-btn svg,
+        .input-wrapper svg,
+        .btn-submit svg,
+        .register-link svg,
+        .security-badge svg,
+        .hero-pill svg,
+        .alert-error svg,
+        .proof-stars svg {
+            display: inline-block;
+            vertical-align: middle;
+            width: 1em;
+            height: 1em;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .icon-pill-btn i,
+        .icon-pill-btn svg {
+            font-size: 1.15rem;
         }
 
         /* Center Form Wrapper */
@@ -946,5 +981,53 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="connexion.js"></script>
     <script src="../theme.js"></script>
+
+    <!-- Système de secours anti-carré : garantit l'affichage des icônes même si le CDN ou la police web est bloqué sur le PC -->
+    <script>
+    (function() {
+        const svgIcons = {
+            'ph-moon': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M216.7,152.6A91.9,91.9,0,0,1,103.4,39.3,8,8,0,0,0,93,30,104,104,0,1,0,226,163,8,8,0,0,0,216.7,152.6ZM128,216A88,88,0,0,1,64.2,65.8,108.2,108.2,0,0,0,88,128a108.2,108.2,0,0,0,62.2,23.8A88.1,88.1,0,0,1,128,216Z"/></svg>',
+            'ph-sun': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.1,64.1,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.1,48.1,0,0,0,176,128ZM58.3,70.3a8,8,0,0,0,11.4-11.4L53.7,42.9A8,8,0,0,0,42.3,54.3ZM120,216v24a8,8,0,0,0,16,0V216a8,8,0,0,0-16,0Zm77.7-27.7a8,8,0,0,0-11.4,11.4l16,16a8,8,0,0,0,11.4-11.4ZM216,120H240a8,8,0,0,1,0,16H216a8,8,0,0,1,0-16ZM40,120H16a8,8,0,0,0,0,16H40a8,8,0,0,0,0-16ZM186.3,58.9a8,8,0,0,0,11.4,11.4l16-16a8,8,0,0,0-11.4-11.4ZM58.3,185.7l-16,16a8,8,0,0,0,11.4,11.4l16-16a8,8,0,0,0-11.4-11.4Z"/></svg>',
+            'ph-house': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M219.3,108.3l-80-72a15.9,15.9,0,0,0-21.4,0l-80,72a16,16,0,0,0-5.3,11.9V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V120.2A16,16,0,0,0,219.3,108.3ZM208,208H48V120.2l80-72,80,72Z"/></svg>',
+            'ph-user': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M231.9,212a120.7,120.7,0,0,0-67.1-54.2,72,72,0,1,0-73.6,0A120.7,120.7,0,0,0,24.1,212a8,8,0,1,0,13.8,8,104.1,104.1,0,0,1,180.2,0,8,8,0,1,0,13.8-8ZM72,96a56,56,0,1,1,56,56A56.1,56.1,0,0,1,72,96Z"/></svg>',
+            'ph-lock-key': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Zm-80-68a16,16,0,0,0-8,29.8V184a8,8,0,0,0,16,0V169.8A16,16,0,0,0,128,140Z"/></svg>',
+            'ph-eye': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M247.3,124.8C231.5,84.4,183.3,48,128,48S24.5,84.4,8.7,124.8a8,8,0,0,0,0,6.4C24.5,171.6,72.7,208,128,208s103.5-36.4,119.3-76.8A8,8,0,0,0,247.3,124.8ZM128,192c-46.6,0-89-29.4-103.3-64C39,93.4,81.4,64,128,64s89,29.4,103.3,64C217,162.6,174.6,192,128,192Zm0-112a48,48,0,1,0,48,48A48.1,48.1,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32.1,32.1,0,0,1,128,160Z"/></svg>',
+            'ph-eye-slash': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M53.9,34.6a8,8,0,0,0-11.8,10.8l160,176a8,8,0,0,0,11.8-10.8ZM128,80a47.8,47.8,0,0,1,33.9,14.1l-14.7,14.7A32,32,0,0,0,108.8,123L94.1,108.3A47.8,47.8,0,0,1,128,80ZM8.7,131.2a8,8,0,0,1,0-6.4C24.5,84.4,72.7,48,128,48a123.8,123.8,0,0,1,51.7,11.1,8,8,0,0,1-6.7,14.6A107.6,107.6,0,0,0,128,64C81.4,64,39,93.4,24.7,128c11.2,27.1,40.1,51.8,75.2,60.8a8,8,0,1,1-4,15.5C54.1,193.3,19.9,165.7,8.7,131.2Zm238.6-6.4c-8.9,22.8-29.2,46.5-57.5,61.9a8,8,0,0,1-7.8-14c24.6-13.4,42.5-34.1,50.7-54.7C217,93.4,174.6,64,128,64a105.1,105.1,0,0,0-13.8.9,8,8,0,0,1-2.1-15.9,122.9,122.9,0,0,1,15.9-1C183.3,48,231.5,84.4,247.3,124.8A8,8,0,0,1,247.3,124.8Z"/></svg>',
+            'ph-arrow-right': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M221.7,133.7l-72,72a8.1,8.1,0,0,1-11.4-11.4L196.7,136H40a8,8,0,0,1,0-16H196.7L138.3,61.7a8.1,8.1,0,0,1,11.4-11.4l72,72A8.1,8.1,0,0,1,221.7,133.7Z"/></svg>',
+            'ph-arrow-up-right': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M200,64V168a8,8,0,0,1-16,0V83.3L69.7,197.7a8.1,8.1,0,0,1-11.4-11.4L172.7,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></svg>',
+            'ph-warning-circle': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.2,104.2,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"/></svg>',
+            'ph-shield-check': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,82.4,89.5,117.7,93.4,119.2a8.2,8.2,0,0,0,5.2,0c3.9-1.5,93.4-36.8,93.4-119.2V56A16,16,0,0,0,208,40ZM173.7,109.7l-56,56a8.1,8.1,0,0,1-11.4,0l-24-24a8.1,8.1,0,0,1,11.4-11.4L112,148.7l50.3-50.4a8.1,8.1,0,0,1,11.4,11.4Z"/></svg>',
+            'ph-star': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M239.2,97.4A16.4,16.4,0,0,0,224.6,86l-59.4-4.1-22-55.5A16.4,16.4,0,0,0,128,16h0a16.4,16.4,0,0,0-15.2,10.4L90.8,81.9,31.4,86A16.5,16.5,0,0,0,16.8,97.4,16.8,16.8,0,0,0,22,115.8l45.2,38.4L53.9,211.7a16.2,16.2,0,0,0,6.4,16.7,16.6,16.6,0,0,0,17.8.6L128,196.4l49.9,32.6A16.6,16.6,0,0,0,185.7,230a15.8,15.8,0,0,0,10-3.6,16.3,16.3,0,0,0,6.4-16.7l-13.3-57.5,45.2-38.4A16.8,16.8,0,0,0,239.2,97.4Z"/></svg>',
+            'ph-sparkle': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M208,128a80,80,0,0,1-80,80,80,80,0,0,1-80-80,80,80,0,0,1,80-80A80,80,0,0,1,208,128Z"/></svg>',
+            'ph-film-slate': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM208,200H48V104H208Zm0-112H48V56H208Z"/></svg>',
+            'ph-bookmark-simple': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.2,6.8L128,193.3l59.8,37.5A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Z"/></svg>'
+        };
+
+        function applySvgFallback() {
+            document.querySelectorAll('i[class*="ph-"]').forEach(el => {
+                if (el.querySelector('svg')) return;
+                for (const [key, svgHtml] of Object.entries(svgIcons)) {
+                    if (el.classList.contains(key)) {
+                        el.innerHTML = svgHtml;
+                        break;
+                    }
+                }
+            });
+        }
+
+        // Vérification immédiate et différée si la police externe tarde ou est bloquée
+        applySvgFallback();
+
+        document.addEventListener('DOMContentLoaded', applySvgFallback);
+        setTimeout(applySvgFallback, 300);
+        setTimeout(applySvgFallback, 1000);
+
+        // Observer les changements dynamiques d'icônes (thème, affichage mot de passe)
+        const observer = new MutationObserver((mutations) => {
+            applySvgFallback();
+        });
+        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    })();
+    </script>
 </body>
 </html>
