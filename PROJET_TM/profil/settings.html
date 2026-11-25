@@ -3,189 +3,1022 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paramètres - MyCiné Experience</title>
-    <!-- Bootstrap CSS -->
+    <title>Paramètres — MyCiné Experience</title>
+
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="../../style.css">
-    <link rel="stylesheet" href="../connexion/connexion.css">
-    
+
+    <!-- Phosphor Icons: Multi-CDN (jsDelivr + unpkg) pour éviter tout carré ou blocage sur PC -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.css">
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+
+    <!-- Google Fonts: Bricolage Grotesque & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Theme Variables -->
+    <link rel="stylesheet" href="../Films/theme-variables.css">
+
     <style>
-        .settings-card {
-            background: rgba(18, 18, 24, 0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            color: white;
-            transition: all 0.3s ease;
+        :root {
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+
+            /* Dark Palette (Default) */
+            --page-bg: #07070b;
+            --card-surface: rgba(18, 18, 28, 0.72);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-border-hover: rgba(167, 139, 250, 0.35);
+            --item-bg: rgba(255, 255, 255, 0.035);
+            --item-bg-hover: rgba(255, 255, 255, 0.065);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+
+            /* Brand Accents */
+            --violet: #a78bfa;
+            --rose: #f472b6;
+            --brand-gradient: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+            --brand-glow: rgba(167, 139, 250, 0.3);
+            --gold: #fbbf24;
+            --danger: #ef4444;
+            --success: #10b981;
         }
 
-        [data-theme="light"] .settings-card {
-            background: rgba(255, 255, 255, 0.85);
-            border-color: rgba(0, 0, 0, 0.08);
-            color: #111827;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        [data-theme="light"] {
+            --page-bg: #f5f5fa;
+            --card-surface: rgba(255, 255, 255, 0.88);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --card-border-hover: rgba(167, 139, 250, 0.6);
+            --item-bg: rgba(0, 0, 0, 0.025);
+            --item-bg-hover: rgba(0, 0, 0, 0.05);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
         }
 
-        .switch-container {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--page-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+            position: relative;
+        }
+
+        /* Ambient background lights */
+        .ambient-glow-top {
+            position: fixed;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, rgba(244, 114, 182, 0.08) 50%, transparent 75%);
+            filter: blur(90px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---------- Navbar flottante en pilule ---------- */
+        .navbar-pill {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(1200px, calc(100% - 32px));
+            background: var(--card-surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--card-border);
+            border-radius: 999px;
+            padding: 10px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
 
-        [data-theme="light"] .switch-container {
-            background: rgba(0, 0, 0, 0.02);
-            border-color: rgba(0, 0, 0, 0.05);
+        .brand-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            transition: transform 0.2s ease;
+        }
+        .brand-logo:hover {
+            transform: translateY(-1px);
+            color: var(--text-main);
         }
 
-        .switch-container:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(167, 139, 250, 0.3);
+        .logo-box {
+            background: var(--brand-gradient);
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: #ffffff;
+            box-shadow: 0 6px 16px var(--brand-glow);
         }
 
-        [data-theme="light"] .switch-container:hover {
-            background: rgba(0, 0, 0, 0.05);
-            border-color: rgba(167, 139, 250, 0.4);
+        .nav-links-center {
+            display: none;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* Form Switch Customization */
-        .form-switch .form-check-input {
-            width: 3em;
-            height: 1.5em;
+        @media (min-width: 768px) {
+            .nav-links-center {
+                display: flex;
+            }
+        }
+
+        .nav-pill-link {
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .nav-pill-link:hover {
+            color: var(--text-main);
+            background: var(--item-bg);
+        }
+        .nav-pill-link.active {
+            color: var(--violet);
+            background: rgba(167, 139, 250, 0.12);
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-circle-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--item-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
             cursor: pointer;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: none;
-            transition: background-color 0.3s ease;
+            transition: all 0.2s ease;
+            text-decoration: none;
         }
-        
+        .icon-circle-btn:hover {
+            color: var(--text-main);
+            border-color: var(--card-border-hover);
+            background: var(--item-bg-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ---------- Main Container ---------- */
+        .settings-main {
+            position: relative;
+            z-index: 1;
+            padding-top: 108px;
+            padding-bottom: 80px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        /* Header Card */
+        .settings-header-banner {
+            background: var(--card-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .settings-header-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--brand-gradient);
+        }
+
+        .settings-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 3.2vw, 2.3rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .settings-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* Profile Mini Bar */
+        .profile-summary-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: 18px;
+            background: var(--item-bg);
+            border: 1px solid var(--card-border);
+        }
+
+        .profile-summary-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .profile-avatar-initial {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #ffffff;
+            box-shadow: 0 6px 18px var(--brand-glow);
+        }
+
+        .profile-user-name {
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .profile-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(167, 139, 250, 0.14);
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            color: var(--violet);
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .btn-view-profile {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: var(--item-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .btn-view-profile:hover {
+            background: var(--brand-gradient);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 6px 18px var(--brand-glow);
+            transform: translateY(-1px);
+        }
+
+        /* ---------- Setting Section Cards ---------- */
+        .setting-section-card {
+            background: var(--card-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 22px;
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+            transition: border-color 0.25s ease;
+        }
+
+        .setting-section-card:hover {
+            border-color: var(--card-border-hover);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .section-icon-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .badge-purple {
+            background: rgba(167, 139, 250, 0.14);
+            color: var(--violet);
+            border: 1px solid rgba(167, 139, 250, 0.25);
+        }
+
+        .badge-amber {
+            background: rgba(245, 158, 11, 0.14);
+            color: var(--gold);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .badge-rose {
+            background: rgba(244, 114, 182, 0.14);
+            color: var(--rose);
+            border: 1px solid rgba(244, 114, 182, 0.25);
+        }
+
+        .badge-cyan {
+            background: rgba(6, 182, 212, 0.14);
+            color: #06b6d4;
+            border: 1px solid rgba(6, 182, 212, 0.25);
+        }
+
+        .badge-red {
+            background: rgba(239, 68, 68, 0.14);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .section-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin: 2px 0 0;
+        }
+
+        /* Switch item container */
+        .setting-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            background: var(--item-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .setting-item-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-item-row:hover {
+            background: var(--item-bg-hover);
+            border-color: var(--card-border-hover);
+        }
+
+        .setting-item-info {
+            flex: 1;
+            padding-right: 16px;
+        }
+
+        .setting-item-title {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .setting-item-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .tag-pill-18 {
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        /* Modern Custom Switches */
+        .form-switch .form-check-input {
+            width: 3.2em;
+            height: 1.7em;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e");
+        }
+
         [data-theme="light"] .form-switch .form-check-input {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(0, 0, 0, 0.15);
         }
 
         .form-switch .form-check-input:checked {
-            background-color: #a78bfa;
-            border-color: #a78bfa;
+            background-color: var(--violet);
+            border-color: var(--violet);
+            box-shadow: 0 0 12px var(--brand-glow);
         }
-        
-        .switch-label {
+
+        /* Select Input Styling */
+        .premium-select-wrapper {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .premium-select {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: var(--page-bg);
+            border: 1.5px solid var(--card-border);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 0.92rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            appearance: auto;
+            cursor: pointer;
+        }
+
+        .premium-select:focus {
+            outline: none;
+            border-color: var(--violet);
+            box-shadow: 0 0 0 3px var(--brand-glow);
+        }
+
+        /* Theme Selector Cards */
+        .theme-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 8px;
+        }
+
+        .theme-card-option {
+            padding: 16px;
+            border-radius: 16px;
+            border: 2px solid var(--card-border);
+            background: var(--item-bg);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            user-select: none;
+        }
+
+        .theme-card-option:hover {
+            border-color: var(--card-border-hover);
+            transform: translateY(-1px);
+        }
+
+        .theme-card-option.active {
+            border-color: var(--violet);
+            background: rgba(167, 139, 250, 0.08);
+            box-shadow: 0 6px 20px var(--brand-glow);
+        }
+
+        .theme-preview-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .preview-dark {
+            background: #0f1018;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .preview-light {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+        }
+
+        .theme-info-title {
             font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 4px;
+            font-size: 0.92rem;
+            color: var(--text-main);
         }
-        
-        .switch-desc {
+        .theme-info-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Action Buttons Area */
+        .save-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 20px 28px;
+            background: var(--card-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+            margin-top: 24px;
+        }
+
+        .btn-save-main {
+            background: var(--brand-gradient);
+            color: #ffffff;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 999px;
+            font-family: var(--font-body);
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px var(--brand-glow);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 32px rgba(167, 139, 250, 0.45);
+            color: #ffffff;
+        }
+
+        .btn-save-main:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            background: var(--item-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
             font-size: 0.85rem;
-            opacity: 0.7;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .btn-secondary-action:hover {
+            color: var(--text-main);
+            background: var(--item-bg-hover);
+            border-color: var(--card-border-hover);
+        }
+
+        .btn-danger-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: var(--danger);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .btn-danger-action:hover {
+            background: var(--danger);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        /* SVG icon normalization (Anti-carré garanti) */
+        i[class*="ph-"] {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            font-style: normal;
+        }
+
+        i[class*="ph-"] svg,
+        .section-icon-badge svg,
+        .btn-save-main svg,
+        .icon-circle-btn svg,
+        .btn-secondary-action svg,
+        .btn-danger-action svg,
+        .btn-view-profile svg {
+            display: inline-block;
+            vertical-align: middle;
+            width: 1.1em;
+            height: 1.1em;
+            fill: currentColor;
+            flex-shrink: 0;
         }
     </style>
+
     <script src="../../config.js"></script>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body>
 
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark px-4 py-3 fixed-top" style="background: rgba(18, 18, 24, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-    <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="../../index.html" style="font-weight: 900; color: var(--text-primary);">
-            <div style="background: linear-gradient(135deg, #a78bfa, #f472b6); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #fff;">M</div>
-            MYCINÉ
+    <!-- Ambient background glow -->
+    <div class="ambient-glow-top"></div>
+
+    <!-- Floating Pill Navbar -->
+    <nav class="navbar-pill">
+        <a href="../../index.html" class="brand-logo" title="Retour à l'accueil">
+            <div class="logo-box">M</div>
+            <span>MYCINÉ</span>
         </a>
-        
-        <div class="d-flex align-items-center gap-3 ms-auto">
-            <button id="theme-toggle" class="btn btn-link text-theme text-decoration-none px-2 d-flex align-items-center" aria-label="Toggle theme">
-                <i class="ph ph-moon fs-4" id="theme-icon"></i>
+
+        <div class="nav-links-center">
+            <a href="../../index.html" class="nav-pill-link">Accueil</a>
+            <a href="../Films/films.html" class="nav-pill-link">Films</a>
+            <a href="../../series.html" class="nav-pill-link">Séries</a>
+            <a href="../Films/collections-browse.html" class="nav-pill-link">Collections</a>
+            <a href="../Films/profilUser.html" class="nav-pill-link">Mon Profil</a>
+            <a href="settings.html" class="nav-pill-link active">Paramètres</a>
+        </div>
+
+        <div class="navbar-actions">
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="icon-circle-btn" aria-label="Basculer le thème" title="Basculer le thème">
+                <i id="theme-icon" class="ph ph-moon fs-5"></i>
             </button>
-            <div id="auth-section">
-                <!-- Injecté via JS -->
-            </div>
+            <!-- Back to Home -->
+            <a href="../../index.html" class="icon-circle-btn" title="Retourner à l'accueil">
+                <i class="ph ph-house fs-5"></i>
+            </a>
+            <div id="auth-section" class="d-none"></div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<!-- Main Content -->
-<main class="flex-grow-1 d-flex align-items-center justify-content-center" style="margin-top: 80px; padding: 40px 20px;">
-    <div class="container" style="max-width: 700px;">
-        <div class="settings-card">
-            <div class="d-flex align-items-center gap-3 mb-4">
-                <div style="background: rgba(167, 139, 250, 0.2); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                    <i class="ph-fill ph-gear text-accent fs-3"></i>
+    <!-- Main Content Container -->
+    <main class="settings-main">
+        
+        <!-- Header Banner with User Summary -->
+        <div class="settings-header-banner">
+            <h1 class="settings-title">Paramètres & Préférences</h1>
+            <p class="settings-subtitle">Personnalisez votre expérience de navigation, vos catalogues et vos filtres de contenu.</p>
+
+            <!-- User Info Bar -->
+            <div class="profile-summary-box">
+                <div class="profile-summary-left">
+                    <div class="profile-avatar-initial" id="user-avatar-initial">M</div>
+                    <div>
+                        <div class="profile-user-name" id="user-display-name">Utilisateur</div>
+                        <span class="profile-role-badge" id="user-role-badge">
+                            <i class="ph-fill ph-sparkle"></i> Membre MyCiné
+                        </span>
+                    </div>
                 </div>
                 <div>
-                    <h2 class="fw-black mb-0">Paramètres</h2>
-                    <p class="mb-0 opacity-75">Gérez vos préférences de navigation</p>
+                    <a href="../Films/profilUser.html" class="btn-view-profile">
+                        <i class="ph ph-user"></i>
+                        <span>Voir mon profil</span>
+                    </a>
                 </div>
             </div>
-            
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 30px 0;">
-            
-            <h5 class="fw-bold mb-3"><i class="ph-fill ph-shield-warning me-2 text-warning"></i> Préférences de Contenu</h5>
-            
-            <div class="switch-container">
-                <div>
-                    <div class="switch-label">Inclure le contenu adulte (18+)</div>
-                    <div class="switch-desc">Autoriser l'affichage de films, séries et images classés "Adulte" dans les résultats de recherche.</div>
-                </div>
-                <div class="form-check form-switch ms-4">
-                    <input class="form-check-input fs-4" type="checkbox" role="switch" id="toggle-adult-content">
-                </div>
-            </div>
-            <div class="switch-container mt-3">
-                <div class="w-100">
-                    <div class="switch-label">Langue</div>
-                    <div class="switch-desc mb-2">Choisissez la langue d'affichage des titres et résumés.</div>
-                    <select id="select-language" class="form-select bg-dark text-white border-secondary">
-                        <option value="fr-FR">Français (France)</option>
-                        <option value="en-US">English (US)</option>
-                        <option value="es-ES">Español (España)</option>
-                        <option value="de-DE">Deutsch (Deutschland)</option>
-                        <option value="it-IT">Italiano (Italia)</option>
-                        <option value="ja-JP">日本語 (Japan)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="switch-container mt-3">
-                <div class="w-100">
-                    <div class="switch-label">Région / Pays</div>
-                    <div class="switch-desc mb-2">Sélectionnez le pays pour voir le catalogue des plateformes de streaming de cette région.</div>
-                    <select id="select-region" class="form-select bg-dark text-white border-secondary">
-                        <option value="FR">France</option>
-                        <option value="BE">Belgique</option>
-                        <option value="CH">Suisse</option>
-                        <option value="CA">Canada</option>
-                        <option value="US">United States</option>
-                        <option value="GB">United Kingdom</option>
-                        <option value="DE">Deutschland</option>
-                        <option value="ES">España</option>
-                        <option value="IT">Italia</option>
-                        <option value="JP">Japan</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="mt-4 text-end">
-                <button id="btn-save-settings" class="btn btn-primary rounded-pill px-4 fw-bold shadow-lg">ENREGISTRER LES MODIFICATIONS</button>
-            </div>
-            
         </div>
-    </div>
-</main>
 
-<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 1100;"></div>
+        <!-- Section 1: Langue & Régionalisation -->
+        <div class="setting-section-card">
+            <div class="section-header">
+                <div class="section-icon-badge badge-purple">
+                    <i class="ph-fill ph-globe"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Langue & Régionalisation</h2>
+                    <p class="section-desc">Définissez la langue des informations TMDB et le catalogue local des plateformes de streaming.</p>
+                </div>
+            </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../connexion/authUtils.js"></script>
-<script src="../connexion/navbarAuth.js"></script>
-<script src="settings.js"></script>
-<script src="../../theme.js"></script>
+            <!-- Langue Select -->
+            <div class="setting-item-row">
+                <div class="setting-item-info">
+                    <div class="setting-item-title">
+                        <i class="ph-fill ph-translate text-accent"></i>
+                        Langue d'affichage
+                    </div>
+                    <div class="setting-item-desc">Langue utilisée pour les titres, synopsis, genres et biographies d'acteurs.</div>
+                    <div class="premium-select-wrapper">
+                        <select id="select-language" class="premium-select">
+                            <option value="fr-FR">🇫🇷 Français (France)</option>
+                            <option value="en-US">🇺🇸 English (United States)</option>
+                            <option value="es-ES">🇪🇸 Español (España)</option>
+                            <option value="de-DE">🇩🇪 Deutsch (Deutschland)</option>
+                            <option value="it-IT">🇮🇹 Italiano (Italia)</option>
+                            <option value="ja-JP">🇯🇵 日本語 (Japan)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Région Select -->
+            <div class="setting-item-row">
+                <div class="setting-item-info">
+                    <div class="setting-item-title">
+                        <i class="ph-fill ph-map-pin text-accent"></i>
+                        Région de streaming
+                    </div>
+                    <div class="setting-item-desc">Ajuste le catalogue des films et séries disponibles sur Netflix, Prime Video, Disney+, etc.</div>
+                    <div class="premium-select-wrapper">
+                        <select id="select-region" class="premium-select">
+                            <option value="FR">France (FR)</option>
+                            <option value="BE">Belgique (BE)</option>
+                            <option value="CH">Suisse (CH)</option>
+                            <option value="CA">Canada (CA)</option>
+                            <option value="US">États-Unis (US)</option>
+                            <option value="GB">Royaume-Uni (GB)</option>
+                            <option value="DE">Allemagne (DE)</option>
+                            <option value="ES">Espagne (ES)</option>
+                            <option value="IT">Italie (IT)</option>
+                            <option value="JP">Japon (JP)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Filtres & Contenu sensible -->
+        <div class="setting-section-card">
+            <div class="section-header">
+                <div class="section-icon-badge badge-amber">
+                    <i class="ph-fill ph-shield-warning"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Filtres de Contenu</h2>
+                    <p class="section-desc">Contrôlez les restrictions d'âge et les contenus présentés dans les résultats de recherche.</p>
+                </div>
+            </div>
+
+            <!-- Contenu Adulte Toggle -->
+            <div class="setting-item-row">
+                <div class="setting-item-info">
+                    <div class="setting-item-title">
+                        Inclure le contenu adulte
+                        <span class="tag-pill-18">18+</span>
+                    </div>
+                    <div class="setting-item-desc">
+                        Autorise l'apparition des œuvres et médias réservés aux adultes dans la recherche et les catégories.
+                    </div>
+                </div>
+                <div class="form-check form-switch ms-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="toggle-adult-content">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Expérience Vidéo & Autoplay -->
+        <div class="setting-section-card">
+            <div class="section-header">
+                <div class="section-icon-badge badge-rose">
+                    <i class="ph-fill ph-film-slate"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Lecteur & Bandes-annonces</h2>
+                    <p class="section-desc">Personnalisez le comportement des aperçus vidéos sur la page d'accueil et les fiches.</p>
+                </div>
+            </div>
+
+            <!-- Autoplay Trailers Toggle -->
+            <div class="setting-item-row">
+                <div class="setting-item-info">
+                    <div class="setting-item-title">Lecture automatique des aperçus</div>
+                    <div class="setting-item-desc">Lance automatiquement la bande-annonce en arrière-plan lors du survol de l'affiche principale.</div>
+                </div>
+                <div class="form-check form-switch ms-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="toggle-autoplay" checked>
+                </div>
+            </div>
+
+            <!-- Sound Muted Toggle -->
+            <div class="setting-item-row">
+                <div class="setting-item-info">
+                    <div class="setting-item-title">Couper le son des trailers par défaut</div>
+                    <div class="setting-item-desc">Les vidéos démarrent en mode silencieux pour ne pas perturber votre navigation.</div>
+                </div>
+                <div class="form-check form-switch ms-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="toggle-sound-mute" checked>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Apparence Visuelle -->
+        <div class="setting-section-card">
+            <div class="section-header">
+                <div class="section-icon-badge badge-cyan">
+                    <i class="ph-fill ph-palette"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Apparence Visuelle</h2>
+                    <p class="section-desc">Choisissez l'ambiance lumineuse qui correspond le mieux à votre environnement.</p>
+                </div>
+            </div>
+
+            <div class="theme-selector-grid">
+                <div class="theme-card-option" id="theme-card-dark" onclick="selectVisualTheme('dark')">
+                    <div class="theme-preview-circle preview-dark">
+                        <i class="ph-fill ph-moon"></i>
+                    </div>
+                    <div>
+                        <div class="theme-info-title">Mode Sombre</div>
+                        <div class="theme-info-subtitle">Idéal pour l'immersion cinéma</div>
+                    </div>
+                </div>
+
+                <div class="theme-card-option" id="theme-card-light" onclick="selectVisualTheme('light')">
+                    <div class="theme-preview-circle preview-light">
+                        <i class="ph-fill ph-sun"></i>
+                    </div>
+                    <div>
+                        <div class="theme-info-title">Mode Clair</div>
+                        <div class="theme-info-subtitle">Contraste lumineux de jour</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Cache Local & Données -->
+        <div class="setting-section-card">
+            <div class="section-header">
+                <div class="section-icon-badge badge-red">
+                    <i class="ph-fill ph-database"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Stockage Local & Session</h2>
+                    <p class="section-desc">Gérez les données temporaires enregistrées dans votre navigateur pour ce compte.</p>
+                </div>
+            </div>
+
+            <div class="setting-item-row">
+                <div class="setting-item-info">
+                    <div class="setting-item-title">Vider le cache des affiches</div>
+                    <div class="setting-item-desc">Supprime les données d'affiches personnalisées stockées localement en cas de désynchronisation.</div>
+                </div>
+                <div>
+                    <button type="button" class="btn-secondary-action" id="btn-clear-cache">
+                        <i class="ph ph-trash"></i>
+                        <span>Vider le cache</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="setting-item-row">
+                <div class="setting-item-info">
+                    <div class="setting-item-title">Déconnexion</div>
+                    <div class="setting-item-desc">Mettre fin à votre session sur cet appareil.</div>
+                </div>
+                <div>
+                    <button type="button" class="btn-danger-action" id="btn-logout-settings">
+                        <i class="ph ph-sign-out"></i>
+                        <span>Se déconnecter</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Action Save Bar -->
+        <div class="save-bar">
+            <div>
+                <span class="text-muted small fw-semibold">
+                    <i class="ph-fill ph-info me-1 text-accent"></i>
+                    Les modifications prennent effet immédiatement après enregistrement.
+                </span>
+            </div>
+            <div>
+                <button id="btn-save-settings" class="btn-save-main">
+                    <i class="ph-bold ph-floppy-disk"></i>
+                    <span>ENREGISTRER LES MODIFICATIONS</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 9999;"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../connexion/authUtils.js"></script>
+    <script src="../connexion/navbarAuth.js"></script>
+    <script src="settings.js"></script>
+    <script src="../theme.js"></script>
+
+    <!-- Système de secours anti-carré : garantit l'affichage immédiat des icônes sur tout type de PC -->
+    <script>
+    (function() {
+        const svgIcons = {
+            'ph-moon': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M216.7,152.6A91.9,91.9,0,0,1,103.4,39.3,8,8,0,0,0,93,30,104,104,0,1,0,226,163,8,8,0,0,0,216.7,152.6ZM128,216A88,88,0,0,1,64.2,65.8,108.2,108.2,0,0,0,88,128a108.2,108.2,0,0,0,62.2,23.8A88.1,88.1,0,0,1,128,216Z"/></svg>',
+            'ph-sun': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.1,64.1,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.1,48.1,0,0,0,176,128ZM58.3,70.3a8,8,0,0,0,11.4-11.4L53.7,42.9A8,8,0,0,0,42.3,54.3ZM120,216v24a8,8,0,0,0,16,0V216a8,8,0,0,0-16,0Zm77.7-27.7a8,8,0,0,0-11.4,11.4l16,16a8,8,0,0,0,11.4-11.4ZM216,120H240a8,8,0,0,1,0,16H216a8,8,0,0,1,0-16ZM40,120H16a8,8,0,0,0,0,16H40a8,8,0,0,0,0-16ZM186.3,58.9a8,8,0,0,0,11.4,11.4l16-16a8,8,0,0,0-11.4-11.4ZM58.3,185.7l-16,16a8,8,0,0,0,11.4,11.4l16-16a8,8,0,0,0-11.4-11.4Z"/></svg>',
+            'ph-house': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M219.3,108.3l-80-72a15.9,15.9,0,0,0-21.4,0l-80,72a16,16,0,0,0-5.3,11.9V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V120.2A16,16,0,0,0,219.3,108.3ZM208,208H48V120.2l80-72,80,72Z"/></svg>',
+            'ph-globe': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.2,104.2,0,0,0,128,24Zm0,16a88.1,88.1,0,0,1,72.4,38.1A176.6,176.6,0,0,0,144,72.9V41.8A89.7,89.7,0,0,1,128,40ZM96,128a113.8,113.8,0,0,1,5.5-35.3,160.7,160.7,0,0,1,53,0A113.8,113.8,0,0,1,160,128a113.8,113.8,0,0,1-5.5,35.3,160.7,160.7,0,0,1-53,0A113.8,113.8,0,0,1,96,128Z"/></svg>',
+            'ph-shield-warning': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,82.4,89.5,117.7,93.4,119.2a8.2,8.2,0,0,0,5.2,0c3.9-1.5,93.4-36.8,93.4-119.2V56A16,16,0,0,0,208,40Zm-80,88a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0Zm0,40a12,12,0,1,1,12-12A12,12,0,0,1,128,168Z"/></svg>',
+            'ph-film-slate': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM208,200H48V104H208Zm0-112H48V56H208Z"/></svg>',
+            'ph-palette': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M200,32H56A24,24,0,0,0,32,56V200a24,24,0,0,0,24,24H200a24,24,0,0,0,24-24V56A24,24,0,0,0,200,32Zm-48,48a16,16,0,1,1-16,16A16,16,0,0,1,152,80ZM88,80a16,16,0,1,1-16,16A16,16,0,0,1,88,80Zm0,64a16,16,0,1,1-16,16A16,16,0,0,1,88,144Zm96,32a16,16,0,1,1,16-16A16,16,0,0,1,184,176Z"/></svg>',
+            'ph-database': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M128,24C66.1,24,16,45.5,16,72v112c0,26.5,50.1,48,112,48s112-21.5,112-48V72C240,45.5,189.9,24,128,24Zm96,48c0,16.2-39.7,32-96,32S32,88.2,32,72,71.7,40,128,40s96,15.8,96,32Z"/></svg>',
+            'ph-user': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M231.9,212a120.7,120.7,0,0,0-67.1-54.2,72,72,0,1,0-73.6,0A120.7,120.7,0,0,0,24.1,212a8,8,0,1,0,13.8,8,104.1,104.1,0,0,1,180.2,0,8,8,0,1,0,13.8-8ZM72,96a56,56,0,1,1,56,56A56.1,56.1,0,0,1,72,96Z"/></svg>',
+            'ph-sparkle': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M208,128a80,80,0,0,1-80,80,80,80,0,0,1-80-80,80,80,0,0,1,80-80A80,80,0,0,1,208,128Z"/></svg>',
+            'ph-translate': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M216,72H168V48a8,8,0,0,0-16,0V72H104V48a8,8,0,0,0-16,0V72H40a8,8,0,0,0,0,16H184.7A128.2,128.2,0,0,1,128,176a127.3,127.3,0,0,1-32.9-22.3,8.1,8.1,0,0,0-11.4,11.4A143.4,143.4,0,0,0,128,192a144.1,144.1,0,0,0,76.5-22.1l20.1,20.2a8.1,8.1,0,0,0,11.4-11.4l-20.1-20.2A144,144,0,0,0,230.9,88H240a8,8,0,0,0,0-16Z"/></svg>',
+            'ph-map-pin': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.2,83.4,134.6a8.2,8.2,0,0,0,9.2,0C136,236.2,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,112a24,24,0,1,1,24-24A24.1,24.1,0,0,1,128,128Z"/></svg>',
+            'ph-trash': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96ZM192,208H64V64H192Z"/></svg>',
+            'ph-sign-out': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M112,216a8,8,0,0,1-8,8H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h56a8,8,0,0,1,0,16H48V208h56A8,8,0,0,1,112,216Zm109.7-93.7-40-40a8.1,8.1,0,0,0-11.4,11.4L196.7,120H104a8,8,0,0,0,0,16h92.7l-26.4,26.3a8.1,8.1,0,0,0,11.4,11.4l40-40A8.1,8.1,0,0,0,221.7,122.3Z"/></svg>',
+            'ph-floppy-disk': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M219.3,76.7l-40-40A15.9,15.9,0,0,0,168,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V88A15.9,15.9,0,0,0,219.3,76.7ZM160,48V80H96V48ZM208,208H48V48H80V88a8,8,0,0,0,8,8h72a8,8,0,0,0,8-8V51.3L208,91.3Z"/></svg>',
+            'ph-info': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.2,104.2,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80a8,8,0,0,1,16,0v48a8,8,0,0,1-16,0Zm20-36a12,12,0,1,1-12-12A12,12,0,0,1,140,100Z"/></svg>',
+            'ph-check-circle': '<svg viewBox="0 0 256 256" width="1em" height="1em" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.2,104.2,0,0,0,128,24Zm49.5,85.8-58.4,58.4a8.2,8.2,0,0,1-11.4,0l-28.8-28.8a8.1,8.1,0,0,1,11.4-11.4l23.1,23.1,52.7-52.7a8.1,8.1,0,0,1,11.4,11.4Z"/></svg>'
+        };
+
+        function applySvgFallback() {
+            document.querySelectorAll('i[class*="ph-"]').forEach(el => {
+                if (el.querySelector('svg')) return;
+                for (const [key, svgHtml] of Object.entries(svgIcons)) {
+                    if (el.classList.contains(key)) {
+                        el.innerHTML = svgHtml;
+                        break;
+                    }
+                }
+            });
+        }
+
+        applySvgFallback();
+        document.addEventListener('DOMContentLoaded', applySvgFallback);
+        setTimeout(applySvgFallback, 300);
+        setTimeout(applySvgFallback, 1000);
+
+        const observer = new MutationObserver(() => applySvgFallback());
+        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    })();
+    </script>
 </body>
 </html>
