@@ -85,8 +85,18 @@ async function chargerDonneesListe(type, uid) {
     try {
         const res = await fetch(`${type}.php?user_id=${uid}&_t=${Date.now()}`, { cache: 'no-cache' }).then(r => r.json());
         if (res.success && res[type]) {
-            ETAT[type] = await Promise.all(res[type].map(i => recupererDetails(i.tmdb_id, i.media_type || 'movie')));
-            renderListeType(type);
+            ETAT[type] = await Promise.all(res[type].map(async (i, index) => {
+                const details = await recupererDetails(i.tmdb_id, i.media_type || 'movie');
+                if (!details) return null;
+                return {
+                    ...details,
+                    _added_order: res[type].length - index,
+                    _db_id: i.id || (res[type].length - index)
+                };
+            }));
+            const valid = ETAT[type].filter(d => d);
+            ETAT[type] = valid;
+            appliquerFiltres(type);
         }
     } catch (e) { console.error(e); }
 }
@@ -163,14 +173,60 @@ function appliquerFiltres(type) {
     }
 
     filtered.sort((a, b) => {
-        if (sort === "title-asc") return (a.title || a.name).localeCompare(b.title || b.name);
-        if (sort === "rating-desc") return (b.vote_average || 0) - (a.vote_average || 0);
-        if (sort === "date-desc") {
-            const dateA = new Date(a.release_date || a.first_air_date || "1900-01-01");
-            const dateB = new Date(b.release_date || b.first_air_date || "1900-01-01");
-            return dateB - dateA;
+        const titleA = (a.title || a.name || "").trim();
+        const titleB = (b.title || b.name || "").trim();
+        const parseDate = (item) => {
+            const raw = item.release_date || item.first_air_date;
+            if (!raw) return 0;
+            const t = new Date(raw).getTime();
+            return isNaN(t) ? 0 : t;
+        };
+        const dateA = parseDate(a);
+        const dateB = parseDate(b);
+        const ratingA = typeof a.vote_average === 'number' ? a.vote_average : 0;
+        const ratingB = typeof b.vote_average === 'number' ? b.vote_average : 0;
+        const popA = typeof a.popularity === 'number' ? a.popularity : 0;
+        const popB = typeof b.popularity === 'number' ? b.popularity : 0;
+        const votesA = typeof a.vote_count === 'number' ? a.vote_count : 0;
+        const votesB = typeof b.vote_count === 'number' ? b.vote_count : 0;
+        const getRuntime = (item) => {
+            if (typeof item.runtime === 'number' && item.runtime > 0) return item.runtime;
+            if (Array.isArray(item.episode_run_time) && item.episode_run_time.length > 0) return item.episode_run_time[0];
+            return 0;
+        };
+        const orderA = typeof a._added_order === 'number' ? a._added_order : 0;
+        const orderB = typeof b._added_order === 'number' ? b._added_order : 0;
+        const runtimeA = getRuntime(a);
+        const runtimeB = getRuntime(b);
+
+        switch (sort) {
+            case "added-desc":
+                return orderB - orderA;
+            case "added-asc":
+                return orderA - orderB;
+            case "date-desc":
+                return dateB - dateA;
+            case "date-asc":
+                return dateA - dateB;
+            case "rating-desc":
+                return ratingB - ratingA;
+            case "rating-asc":
+                return ratingA - ratingB;
+            case "popularity-desc":
+                return popB - popA;
+            case "votes-desc":
+                return votesB - votesA;
+            case "title-asc":
+                return titleA.localeCompare(titleB, 'fr', { sensitivity: 'base' });
+            case "title-desc":
+                return titleB.localeCompare(titleA, 'fr', { sensitivity: 'base' });
+            case "runtime-desc":
+                return runtimeB - runtimeA;
+            case "runtime-asc":
+                return runtimeA - runtimeB;
+            default:
+                return 0;
         }
-        return 0;
     });
 
     const films = filtered.filter(i => i.media_type === 'movie');
@@ -184,10 +240,17 @@ async function chargerActeurs(uid) {
     try {
         const res = await fetch(`favorite-actors.php?user_id=${uid}&_t=${Date.now()}`, { cache: 'no-cache' }).then(r => r.json());
         if (res.success && res.favorite_actors) {
-            ETAT.acteursFavorisDetails = await Promise.all(res.favorite_actors.map(a => 
-                fetch(`${CONFIG.URL_BASE}/person/${a.tmdb_id}?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.json())
-            ));
-            renderActeurs(ETAT.acteursFavorisDetails);
+            ETAT.acteursFavorisDetails = await Promise.all(res.favorite_actors.map(async (a, index) => {
+                const details = await fetch(`${CONFIG.URL_BASE}/person/${a.tmdb_id}?api_key=${CONFIG.CLE_API}&language=${localStorage.getItem('user_lang') || 'fr-FR'}`).then(r => r.json());
+                return {
+                    ...details,
+                    _added_order: res.favorite_actors.length - index,
+                    _db_id: a.favorite_id || a.id || (res.favorite_actors.length - index)
+                };
+            }));
+            const valid = ETAT.acteursFavorisDetails.filter(d => d);
+            ETAT.acteursFavorisDetails = valid;
+            appliquerFiltresActeurs();
         }
     } catch (e) { console.error(e); }
 }
@@ -246,10 +309,13 @@ function appliquerFiltresActeurs() {
     }
     const sort = document.getElementById("sort-actor").value;
     results.sort((a, b) => {
-        if (sort === "name-asc") return a.name.localeCompare(b.name);
-        if (sort === "name-desc") return b.name.localeCompare(a.name);
-        if (sort === "age-asc") return (a.birthday?calculerAge(a.birthday):999) - (b.birthday?calculerAge(b.birthday):999);
-        if (sort === "age-desc") return (b.birthday?calculerAge(b.birthday):-1) - (a.birthday?calculerAge(a.birthday):-1);
+        if (sort === "added-desc") return (b._added_order || 0) - (a._added_order || 0);
+        if (sort === "added-asc") return (a._added_order || 0) - (b._added_order || 0);
+        if (sort === "name-asc") return a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' });
+        if (sort === "name-desc") return b.name.localeCompare(a.name, 'fr', { sensitivity: 'base' });
+        if (sort === "popularity-desc") return (b.popularity || 0) - (a.popularity || 0);
+        if (sort === "age-asc") return (a.birthday ? calculerAge(a.birthday) : 999) - (b.birthday ? calculerAge(b.birthday) : 999);
+        if (sort === "age-desc") return (b.birthday ? calculerAge(b.birthday) : -1) - (a.birthday ? calculerAge(a.birthday) : -1);
         return 0;
     });
     renderActeurs(results);

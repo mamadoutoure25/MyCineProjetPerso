@@ -1,8 +1,8 @@
 // Configuration API TMDB
 const CONFIG = {
   BASE_URL: window.TMDB_CONFIG?.BASE_URL || "https://api.themoviedb.org/3",
-  API_KEY: window.TMDB_CONFIG?.API_KEY || window.TMDB_CONFIG.API_KEY,
-  IMAGE_BASE_URL: window.TMDB_CONFIG?.IMG_BASE || "https://image.tmdb.org/t/p",
+  API_KEY: window.TMDB_CONFIG?.API_KEY || "04c35731a5ee918f014970082a0088b1",
+  IMAGE_BASE_URL: "https://image.tmdb.org/t/p",
   POSTER_SIZE: "w500",
   BACKDROP_SIZE: "w1280",
   PROFILE_SIZE: "w185",
@@ -260,16 +260,20 @@ function afficherCast(cast) {
     return
   }
 
-  castContainer.innerHTML = cast.map(actor => `
-    <div class="small-actor-card" onclick="voirActeur(${actor.id})">
-      <img src="${actor.profile_path ? `${CONFIG.IMAGE_BASE_URL}/w500${actor.profile_path}` : 'https://via.placeholder.com/300x450?text=Photo'}" 
-           alt="${actor.name}" loading="lazy">
+  castContainer.innerHTML = cast.map(actor => {
+    const photoUrl = actor.profile_path ? `${CONFIG.IMAGE_BASE_URL}/w500${actor.profile_path}` : 'https://via.placeholder.com/300x450/1a1a24/ffffff?text=Photo';
+    return `
+    <div class="small-actor-card" onclick="voirActeur(${actor.id})" title="${actor.name}">
+      <img src="${photoUrl}" 
+           alt="${actor.name}" 
+           loading="lazy" 
+           onerror="this.onerror=null; this.src='https://via.placeholder.com/300x450/1a1a24/ffffff?text=Photo';">
       <div class="actor-hover-overlay">
         <div class="actor-name text-truncate">${actor.name}</div>
         <div class="actor-role text-truncate">${actor.character || "N/A"}</div>
       </div>
     </div>
-  `).join("")
+  `}).join("")
 }
 
 // Afficher l'équipe

@@ -100,10 +100,10 @@ try {
                 echo json_encode(['success' => true, 'is_favorite' => $stmt->fetchColumn() > 0]);
             } else {
                 $stmt = $pdo->prepare('
-                    SELECT a.id, a.tmdb_id, a.nom FROM favorite_actors fa
+                    SELECT fa.id AS favorite_id, a.id, a.tmdb_id, a.nom FROM favorite_actors fa
                     JOIN Acteurs a ON fa.acteur_id = a.id
                     WHERE fa.user_id = ? 
-                    ORDER BY a.nom ASC
+                    ORDER BY fa.id DESC
                 ');
                 $stmt->execute([$userId]);
                 echo json_encode(['success' => true, 'favorite_actors' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);

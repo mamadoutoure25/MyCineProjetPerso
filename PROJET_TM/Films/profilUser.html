@@ -391,9 +391,18 @@
                             <option value="10765">Sci-Fi & Fantasy (Série)</option>
                         </select>
                         <select id="sort-fav" class="btn-outline-premium bg-theme" onchange="appliquerFiltres('favorites')">
-                            <option value="date-desc">Récent</option>
+                            <option value="added-desc">Derniers ajouts</option>
+                            <option value="added-asc">Premiers ajouts</option>
+                            <option value="date-desc">Sortie (Plus récents)</option>
+                            <option value="date-asc">Sortie (Plus anciens)</option>
                             <option value="rating-desc">Mieux notés</option>
+                            <option value="rating-asc">Moins bien notés</option>
+                            <option value="popularity-desc">Plus populaires</option>
+                            <option value="votes-desc">Nombre d'avis</option>
                             <option value="title-asc">Nom (A-Z)</option>
+                            <option value="title-desc">Nom (Z-A)</option>
+                            <option value="runtime-desc">Durée (Plus long)</option>
+                            <option value="runtime-asc">Durée (Plus court)</option>
                         </select>
                         <button class="btn-outline-premium" id="clear-favorites"><i class="ph ph-trash me-2"></i>VIDER</button>
                     </div>
@@ -437,8 +446,18 @@
                             <option value="27">Horreur</option>
                         </select>
                         <select id="sort-watch" class="btn-outline-premium bg-theme" onchange="appliquerFiltres('watchlist')">
-                            <option value="date-desc">Récent</option>
+                            <option value="added-desc">Derniers ajouts</option>
+                            <option value="added-asc">Premiers ajouts</option>
+                            <option value="date-desc">Sortie (Plus récents)</option>
+                            <option value="date-asc">Sortie (Plus anciens)</option>
+                            <option value="rating-desc">Mieux notés</option>
+                            <option value="rating-asc">Moins bien notés</option>
+                            <option value="popularity-desc">Plus populaires</option>
+                            <option value="votes-desc">Nombre d'avis</option>
                             <option value="title-asc">Nom (A-Z)</option>
+                            <option value="title-desc">Nom (Z-A)</option>
+                            <option value="runtime-desc">Durée (Plus long)</option>
+                            <option value="runtime-asc">Durée (Plus court)</option>
                         </select>
                     </div>
                 </div>
@@ -480,8 +499,18 @@
                             <option value="878">Sci-Fi</option>
                         </select>
                         <select id="sort-watched" class="btn-outline-premium bg-theme" onchange="appliquerFiltres('watched')">
-                            <option value="date-desc">Récent</option>
+                            <option value="added-desc">Derniers ajouts</option>
+                            <option value="added-asc">Premiers ajouts</option>
+                            <option value="date-desc">Sortie (Plus récents)</option>
+                            <option value="date-asc">Sortie (Plus anciens)</option>
                             <option value="rating-desc">Mieux notés</option>
+                            <option value="rating-asc">Moins bien notés</option>
+                            <option value="popularity-desc">Plus populaires</option>
+                            <option value="votes-desc">Nombre d'avis</option>
+                            <option value="title-asc">Nom (A-Z)</option>
+                            <option value="title-desc">Nom (Z-A)</option>
+                            <option value="runtime-desc">Durée (Plus long)</option>
+                            <option value="runtime-asc">Durée (Plus court)</option>
                         </select>
                     </div>
                 </div>
@@ -526,10 +555,13 @@
                             <option value="81-120">+ 80 ans</option>
                         </select>
                         <select id="sort-actor" class="btn-outline-premium bg-theme" onchange="appliquerFiltresActeurs()">
+                            <option value="added-desc">Derniers ajouts</option>
+                            <option value="added-asc">Premiers ajouts</option>
                             <option value="name-asc">Nom (A-Z)</option>
                             <option value="name-desc">Nom (Z-A)</option>
-                            <option value="age-asc">Âge (Croissant)</option>
-                            <option value="age-desc">Âge (Décroissant)</option>
+                            <option value="popularity-desc">Popularité (Plus connus)</option>
+                            <option value="age-asc">Âge (Plus jeune au plus âgé)</option>
+                            <option value="age-desc">Âge (Plus âgé au plus jeune)</option>
                         </select>
                     </div>
                 </div>

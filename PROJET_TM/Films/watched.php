@@ -62,7 +62,7 @@ try {
                 $stmt->execute([$userId, $filmId, $mediaType]);
                 echo json_encode(['success' => true, 'is_watched' => $stmt->fetchColumn() > 0]);
             } else {
-                $stmt = $pdo->prepare('SELECT tmdb_id, media_type FROM watched WHERE user_id = ? ORDER BY id DESC');
+                $stmt = $pdo->prepare('SELECT id, tmdb_id, media_type FROM watched WHERE user_id = ? ORDER BY id DESC');
                 $stmt->execute([$userId]);
                 echo json_encode(['success' => true, 'watched' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
             }
